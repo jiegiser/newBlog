@@ -1,103 +1,105 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>webpack4.X 基础知识笔记 | jiegiser的博客</title>
-<meta name="description" content="温故而知新" />
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598234582">
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598610801">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://jiegiser.github.io/newBlog">
-  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598234582" alt="">
-  </a>
-  <h1 class="site-title">
-    jiegiser的博客
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598610801" class="site-logo">
+        <h1 class="site-title">jiegiser的博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/" class="menu">
-          首页
-        </a>
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
       
-    
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-    
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-        <a href="https://github.com/jiegiser" target="_blank">
-          <i class="fab fa-github"></i>
-        </a>
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              webpack4.X 基础知识笔记
-            </h2>
-            <div class="post-info">
-              <span>
-                2019-12-06
-              </span>
-              <span>
-                42 min read
-              </span>
-              
-                <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-                  # 前端
-                </a>
-              
-            </div>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">webpack4.X 基础知识笔记</h2>
+            <div class="post-date">2019-12-06</div>
             
-              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/webpack4x-ji-chu-zhi-shi-bi-ji.png" alt="">
+              <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/webpack4x-ji-chu-zhi-shi-bi-ji.png')">
+              </div>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h4 id="1-webpack-基础知识">1. WebPack 基础知识</h4>
+            <div class="post-content">
+              <h4 id="1-webpack-基础知识">1. WebPack 基础知识</h4>
 <p>首先需要明白<code>webpack</code>为什么会出现，作用是什么，总之他就是一个模块打包工具；<br>
 <code>commonJS</code>的模块导出方式为:</p>
 <pre><code class="language-javascript">function SiderBar() {
@@ -1031,139 +1033,54 @@ module.exports = {
 </code></pre>
 <p>这样就可以了，不要配置，打包输出的文件名以及地址就可以，虽然是解决了允许服务器没有显示页面的问题，但是这个解决办法还不是最佳。</p>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#1-webpack-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86">1. WebPack 基础知识</a></li>
-<li><a href="#2-webpack-%E5%AE%89%E8%A3%85-%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-%E6%B5%85%E6%9E%90%E6%89%93%E5%8C%85%E8%BE%93%E5%87%BA%E7%9A%84%E5%86%85%E5%AE%B9-loader-%E4%BD%BF%E7%94%A8-loader-%E6%89%93%E5%8C%85%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%9B%BE%E7%89%87%E7%AF%87-%E4%BD%BF%E7%94%A8-loader-%E6%89%93%E5%8C%85%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E6%A0%B7%E5%BC%8F%E7%AF%87">2. Webpack 安装、使用配置文件、浅析打包输出的内容、Loader、使用 Loader 打包静态资源（图片篇）、使用 Loader 打包静态资源（样式篇）</a>
-<ul>
-<li><a href="#21-%E5%AE%89%E8%A3%85%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%85%A8%E5%B1%80%E5%AE%89%E8%A3%85%E4%B8%8E%E5%B1%80%E9%83%A8%E5%AE%89%E8%A3%85">2.1 安装有两种方式：全局安装与局部安装</a></li>
-<li><a href="#22-%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">2.2 使用配置文件</a></li>
-<li><a href="#23-%E6%B5%85%E6%9E%90%E6%89%93%E5%8C%85%E8%BE%93%E5%87%BA%E7%9A%84%E5%86%85%E5%AE%B9">2.3 浅析打包输出的内容</a></li>
-<li><a href="#24-loader%E8%A7%A3%E6%9E%90">2.4 Loader解析</a></li>
-<li><a href="#25-%E4%BD%BF%E7%94%A8-loader-%E6%89%93%E5%8C%85%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%9B%BE%E7%89%87%E7%AF%87-url-loader%E7%9A%84%E4%BD%BF%E7%94%A8">2.5 使用 Loader 打包静态资源（图片篇）、url-loader的使用</a>
-<ul>
-<li><a href="#url-loader-%E7%9A%84%E4%BD%BF%E7%94%A8">url-loader 的使用:</a></li>
-</ul>
-</li>
-<li><a href="#26-%E4%BD%BF%E7%94%A8-loader-%E6%89%93%E5%8C%85%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E6%A0%B7%E5%BC%8F%E7%AF%87">2.6 使用 Loader 打包静态资源（样式篇）</a>
-<ul>
-<li><a href="#261-%E5%AF%B9%E4%BA%8E-css-%E6%89%93%E5%8C%85%E8%BF%9B%E8%A1%8C%E6%B7%BB%E5%8A%A0%E5%8E%82%E5%95%86%E5%89%8D%E7%BC%80%E4%BD%BF%E7%94%A8postcss-loader%E8%87%AA%E5%8A%A8%E6%B7%BB%E5%8A%A0%E5%8E%82%E5%95%86%E5%89%8D%E7%BC%80">2.6.1 对于 css 打包进行添加厂商前缀，使用<code>postcss-loader</code>自动添加厂商前缀:</a></li>
-<li><a href="#262-css-loader-%E4%B8%AD%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E9%A1%B9">2.6.2 css-loader 中一些常用的配置项：</a></li>
-<li><a href="#263-css-%E6%96%87%E4%BB%B6%E6%A8%A1%E5%9D%97%E5%8C%96%E6%89%93%E5%8C%85%E5%8F%AA%E5%9C%A8%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9D%97%E5%86%85%E6%9C%89%E6%95%88">2.6.3 css 文件模块化打包：只在一个模块内有效</a></li>
-<li><a href="#264-%E6%89%93%E5%8C%85%E5%AD%97%E4%BD%93%E6%96%87%E4%BB%B6">2.6.4  打包字体文件：</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#3-%E4%BD%BF%E7%94%A8plugins%E8%AE%A9%E6%89%93%E5%8C%85%E6%9B%B4%E4%BE%BF%E6%8D%B7">3. 使用Plugins让打包更便捷</a>
-<ul>
-<li><a href="#3-1-html-webpack-plugin-%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8%E5%B0%86html%E8%BF%9B%E8%A1%8C%E6%89%93%E5%8C%85%E5%B9%B6%E6%A0%B9%E6%8D%AE%E8%AE%BE%E7%BD%AE%E7%9A%84html%E6%A8%A1%E6%9D%BF%E8%BF%9B%E8%A1%8C%E6%89%93%E5%8C%85">3. 1    html-webpack-plugin 插件的使用——将html进行打包，并根据设置的html模板进行打包</a></li>
-<li><a href="#32-clean-webpack-plugin-%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8%E6%B8%85%E9%99%A4%E6%89%93%E5%8C%85%E5%9C%B0%E5%9D%80%E7%9A%84%E6%96%87%E4%BB%B6">3.2  clean-webpack-plugin 插件的使用——清除打包地址的文件</a></li>
-</ul>
-</li>
-<li><a href="#4-entry-%E4%B8%8E-output-%E7%9A%84%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE">4. Entry 与 Output 的基础配置</a>
-<ul>
-<li><a href="#41-%E5%A4%9A%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E6%89%93%E5%8C%85">4.1 多个文件的打包</a></li>
-<li><a href="#42-%E5%B0%86%E6%89%93%E5%8C%85%E5%90%8E%E7%9A%84js%E6%96%87%E4%BB%B6%E5%9C%A8html%E4%B8%AD%E9%80%9A%E8%BF%87%E9%85%8D%E7%BD%AEcdn%E5%9C%B0%E5%9D%80%E8%BF%9B%E8%A1%8C%E5%BC%95%E5%85%A5">4.2 将打包后的js文件在html中，通过配置cdn地址进行引入</a></li>
-</ul>
-</li>
-<li><a href="#5-sourcemap-%E7%9A%84%E9%85%8D%E7%BD%AE">5. SourceMap 的配置</a></li>
-<li><a href="#6-%E4%BD%BF%E7%94%A8-webpackdevserver-%E6%8F%90%E5%8D%87%E5%BC%80%E5%8F%91%E6%95%88%E7%8E%87">6. 使用 WebpackDevServer 提升开发效率</a>
-<ul>
-<li><a href="#61-%E7%AC%AC%E4%B8%80%E7%A7%8D%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E5%9C%A8packagejson%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE%E7%9B%91%E5%90%AC%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96">6.1 第一种：我们可以在package.json进行配置，监听文件变化</a></li>
-<li><a href="#62-%E7%AC%AC%E4%BA%8C%E7%A7%8D%E7%9B%91%E5%90%AC%E6%89%93%E5%8C%85%E6%96%87%E4%BB%B6%E5%8F%98%E5%8C%96%E5%B9%B6%E8%87%AA%E5%8A%A8%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8A%A0%E8%BD%BDhtml%E6%96%87%E4%BB%B6">6.2 第二种：监听打包文件变化，并自动启动服务器，加载html文件</a></li>
-<li><a href="#63-%E7%AC%AC%E4%B8%89%E7%A7%8D%E8%87%AA%E5%B7%B1%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCwebpack-dev-server%E7%9A%84%E6%95%88%E6%9E%9C">6.3 第三种：自己手写一个服务器，实现类似Webpack-dev-server的效果</a></li>
-</ul>
-</li>
-<li><a href="#7-hot-module-replacement-%E7%83%AD%E6%A8%A1%E5%9D%97%E6%9B%B4%E6%96%B0">7. Hot Module Replacement 热模块更新</a></li>
-<li><a href="#8-%E4%BD%BF%E7%94%A8-babel-%E5%A4%84%E7%90%86-es6-%E8%AF%AD%E6%B3%95">8. 使用 Babel 处理 ES6 语法</a>
-<ul>
-<li><a href="#81-%E4%BD%BF%E7%94%A8-babel-%E6%8C%89%E9%9C%80%E6%89%93%E5%8C%85js%E6%96%87%E4%BB%B6">8.1 使用 Babel 按需打包js文件</a></li>
-<li><a href="#82-%E6%89%93%E5%8C%85%E8%BD%AC%E6%8D%A2%E4%B8%AD%E7%9A%84%E5%85%B6%E4%BB%96%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE%E6%89%93%E5%8C%85%E6%94%AF%E6%8C%81%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E7%89%88%E6%9C%AC-%E7%BC%96%E5%86%99%E7%B1%BB%E5%BA%93%E6%96%87%E4%BB%B6babel%E8%BD%AC%E6%8D%A2%E9%85%8D%E7%BD%AE">8.2 打包转换中的其他参数（设置打包支持浏览器的版本、编写类库文件babel转换配置）</a></li>
-</ul>
-</li>
-<li><a href="#9-webpack-%E5%AE%9E%E7%8E%B0%E5%AF%B9react%E6%A1%86%E6%9E%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E6%89%93%E5%8C%85">9. Webpack 实现对React框架代码的打包</a></li>
-<li><a href="#10-webpack-%E6%89%93%E5%8C%85%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91">10. Webpack 打包的一些坑</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
-          </article>
-        </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="tag">
+                    前端
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jiegiser.github.io/newBlog/post/webpack-4x-gao-ji-gai-nian-bi-ji">
+                  <h3 class="post-title">
+                    WebPack 4.X 高级概念笔记
+                  </h3>
+                </a>
+              </div>
+            
 
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://jiegiser.github.io/newBlog/post/webpack-4x-gao-ji-gai-nian-bi-ji">
-              <h3 class="post-title">
-                WebPack 4.X 高级概念笔记
-              </h3>
-            </a>
+            
+
           </div>
-        
 
-        
+        </div>
+      </div>
+    </div>
 
-        <div class="site-footer">
-  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
-  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
-</div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-<script>
-  hljs.initHighlightingOnLoad()
+<script type="application/javascript">
 
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+AOS.init();
 
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
+hljs.initHighlightingOnLoad()
 
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
-      </div>
-    </div>
+
+
+
   </body>
 </html>

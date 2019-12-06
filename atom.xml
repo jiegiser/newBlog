@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2019-12-06T02:12:04.198Z</updated>
+    <updated>2019-12-06T02:16:56.127Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -16,10 +16,18 @@
         <link href="https://jiegiser.github.io/newBlog/post/vue-bi-ji">
         </link>
         <updated>2019-12-06T01:57:39.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="1-传统的-mvp-开发模式与-mvvm-开发模式对比">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</h4>
+<ol>
+<li>对于传统的<code>mvp</code>开发模式，<code>m</code>也就是<code>model</code>一般是通过发送<code>ajax</code>请求获取到的数据，<code>v</code>也就是视图，<code>p</code>就是<code>Presenter</code>相当于控制器，</li>
+</ol>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="1-传统的-mvp-开发模式与-mvvm-开发模式对比">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</h4>
 <ol>
-<li>对于传统的<code>mvp</code>开发模式，<code>m</code>也就是<code>model</code>一般是通过发送<code>ajax</code>请求获取到的数据，<code>v</code>也就是视图，<code>p</code>就是<code>Presenter</code>相当于控制器，<br>
-<code>Presenter</code>作为View和<code>Model</code>之间的“中间人”，除了基本的业务逻辑外，还有大量代码需要对从<code>View</code>到<code>Model</code>和从<code>Model</code>到<code>View</code>的数据进行“手动同步”，这样<code>Presenter</code>显得很重，维护起来会比较困难。而且由于没有数据绑定，如果<code>Presenter</code>对视图渲染的需求增多，它不得不过多关注特定的视图，一旦视图需求发生改变，<code>Presenter</code>也需要改动,我们大部分的关注点是在视图与数据，以及通过控制器进行操作。</li>
+<li>对于传统的<code>mvp</code>开发模式，<code>m</code>也就是<code>model</code>一般是通过发送<code>ajax</code>请求获取到的数据，<code>v</code>也就是视图，<code>p</code>就是<code>Presenter</code>相当于控制器，</li>
+</ol>
+<!-- more -->
+<p><code>Presenter</code>作为View和<code>Model</code>之间的“中间人”，除了基本的业务逻辑外，还有大量代码需要对从<code>View</code>到<code>Model</code>和从<code>Model</code>到<code>View</code>的数据进行“手动同步”，这样<code>Presenter</code>显得很重，维护起来会比较困难。而且由于没有数据绑定，如果<code>Presenter</code>对视图渲染的需求增多，它不得不过多关注特定的视图，一旦视图需求发生改变，<code>Presenter</code>也需要改动,我们大部分的关注点是在视图与数据，以及通过控制器进行操作。</p>
+<ol>
 <li>对于<code>vue</code>的开发模式<code>mvvm</code>，他把<code>View</code>和<code>Model</code>的同步逻辑自动化了，与<code>MVP</code>不同，没有了<code>View</code>为<code>Presenter</code>提供的接口，之前由<code>Presenter</code>负责的<code>View</code>和<code>Model</code>之间的数据同步交给了<code>ViewModel</code>中的数据绑定进行处理，当<code>Model</code>发生变化，<code>ViewModel</code>就会自动更新；<code>ViewModel</code>变化，<code>Model</code>也会更新。我们的关注点主要是在<code>model</code>与<code>view</code>之间，而<code>model</code>发生变化，<code>view</code>进行同步更新，这些都交给了<code>viewmodel</code>，<code>mvp</code>的模式我们大部分的关注点是在操作了<code>dom</code>，提高了开发效率。</li>
 </ol>
 <h4 id="2-一些指令以及使用技巧">2. 一些指令以及使用技巧</h4>
