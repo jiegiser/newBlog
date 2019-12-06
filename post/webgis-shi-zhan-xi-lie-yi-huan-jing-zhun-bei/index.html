@@ -1,0 +1,235 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WebGIS实战系列 一、环境准备 | jiegiser的博客</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575590514242">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jiegiser.github.io/newBlog">
+  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575590514242" alt="">
+  </a>
+  <h1 class="site-title">
+    jiegiser的博客
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              WebGIS实战系列 一、环境准备
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-04
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://img-blog.csdnimg.cn/20190628152905746.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <!-- more -->
+<h4 id="前言">前言</h4>
+<p>近期会在博客发布一系列有关<code>WebGIS</code>的实战课程，技术栈：<code>vue</code>全家桶+<code>arcgis Server</code>+<code>arcgis API 3.x</code>+<code>asp.net</code>实现一个简单的城市供水管网系统。<br>
+前置知识准备：</p>
+<ul>
+<li><code>es6</code>语法</li>
+<li><code>node</code>的简单安装包</li>
+<li><code>vue</code>、<code>vue-cli 3.0</code>、<code>vuex</code>，<code>vue-router</code>，以及<code>elementUI</code>框架</li>
+<li><code>axios</code></li>
+<li><code>asp net mvc</code>框架（后台可能会使用<code>koa2</code>）</li>
+<li><code>arcgis SOE</code>开发扩展<code>arcgis server</code>功能</li>
+<li><code>arcgis</code>的简单操作：发布地图服务，矢量化地图等等。</li>
+<li><code>arcgis sde for postgresql</code>安装</li>
+<li><code>ThreeJS</code>实现三维管道展示</li>
+</ul>
+<blockquote>
+<p>我的环境是 <code>arcgis 10.2</code>版本的，大家也可以进行安装。</p>
+</blockquote>
+<p>可以补充一下这些知识，我也会在博客里面写有关代码的说明。</p>
+<h4 id="1-加载地图">1. 加载地图</h4>
+<p>首先使用<code>vue-cli</code>创建一个项目，我是使用<code>element UI</code>进行搭建项目的整体框架，界面如下，代码我会上传到我的<code>github</code>上面<br>
+<img src="https://img-blog.csdnimg.cn/20190628130217229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+<code>esri</code>推出了一个非<code>dojo</code>框架加载地图的一个包<code>esri-loader</code>，我们可以查看 https://github.com/Esri/esri-loader ，按照提示的步骤进行操作，首先输入命令：<code>npm install --save esri-loader</code>进行安装，然后在<code>main.js</code>入口引用<code>esri-loader</code>：</p>
+<pre><code class="language-js">import { loadScript } from 'esri-loader'
+const options = {
+  url: 'https://js.arcgis.com/3.23/',
+}
+//加载脚本
+loadScript(options)
+</code></pre>
+<p>然后在我们加载地图的组件中进行加载地图操作：</p>
+<pre><code class="language-js">import { loadModules } from 'esri-loader';
+export default {
+  mounted () {
+    this.initMap()
+  },
+  methods: {
+    initMap () {
+      loadModules(['esri/map', 'esri/dijit/HomeButton', 'esri/layers/ArcGISTiledMapServiceLayer'])
+        .then(([Map, HomeButton, ArcGISTiledMapServiceLayer]) =&gt; {
+          // 创建地图以及配置参数
+          const map = new Map(this.$refs.map, {
+            center: [114.3, 30.51667],
+            zoom: 12,
+          })
+          // 实例化home按钮
+          const button = new HomeButton({
+            map
+          }, this.$refs.button)
+          // 启用按钮
+          button.startup()
+          let basemapurl=&quot;http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineStreetWarm/MapServer&quot;;
+          let graybasemap = new ArcGISTiledMapServiceLayer(basemapurl);
+          // 加载地图
+          map.addLayer(graybasemap);
+        })
+        .catch(err =&gt; {
+          console.log(err)
+        })
+    }
+  }
+}
+</code></pre>
+<p>实现效果：<br>
+<img src="https://img-blog.csdnimg.cn/20190628152905746.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#1-%E5%8A%A0%E8%BD%BD%E5%9C%B0%E5%9B%BE">1. 加载地图</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
+  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>

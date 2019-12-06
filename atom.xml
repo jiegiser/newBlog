@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://jiegiser.github.io/newBlog</id>
+    <title>jiegiser的博客</title>
+    <updated>2019-12-06T00:02:22.465Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
+    <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://jiegiser.github.io/newBlog/images/avatar.png</logo>
+    <icon>https://jiegiser.github.io/newBlog/favicon.ico</icon>
+    <rights>All rights reserved 2019, jiegiser的博客</rights>
+    <entry>
+        <title type="html"><![CDATA[WebGIS实战系列 三 项目的重新开始]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi</id>
+        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
+        </link>
+        <updated>2019-12-04T12:05:35.000Z</updated>
+        <content type="html"><![CDATA[<h4 id="说明">说明</h4>
+<p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
+<hr>
+<p>上面的项目截图：</p>
+<p>界面搭建使用模板   <a href="https://panjiachen.github.io/vue-element-admin">vue-element-admin</a></p>
+<p>该项目是Geoserver+openlayers5的一些例子，<br>
+完成的功能如下：</p>
+<h4 id="1-地图控件">1. 地图控件</h4>
+<pre><code>1.1  导航控件
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20191119080035550.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+1.2  zoomslider<br>
+<img src="https://img-blog.csdnimg.cn/20191119080116925.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+1.3 鼠标位置</p>
+<h4 id="2-属性查询">2. 属性查询</h4>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191119080228618.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="3-空间查询">3. 空间查询</h4>
+<p><img src="https://img-blog.csdnimg.cn/20191119080405552.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+<img src="https://img-blog.csdnimg.cn/20191119080441815.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="4-在线编辑">4. 在线编辑</h4>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191119080323688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="5-测量">5. 测量</h4>
+<pre><code>5.1 长度测量
+
+5.2 面积测量
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+5.3 面积测量填充</p>
+<h4 id="6-加载天地图">6. 加载天地图</h4>
+<h4 id="7-加载天地图投影转换">7. 加载天地图投影转换</h4>
+<h4 id="8-缓冲区绘制turf">8. 缓冲区绘制（turf）</h4>
+<h4 id="9-拉框放大缩小">9. 拉框放大缩小</h4>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191119080523328.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="10-点生成缓冲范围查询">10. 点生成缓冲范围查询（√）</h4>
+<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191125171230587.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="11-轨迹回放">11. 轨迹回放（√）</h4>
+<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191126124814612.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="12-位置监控">12. 位置监控（√）</h4>
+<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191127140600667.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h4 id="13-面添加标注">13. 面添加标注（√）</h4>
+<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20191127140454748.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<hr>
+<p>设置高亮显示关键代码：</p>
+<pre><code class="language-js">if (this.resultVterSource.clear) {
+  this.resultVterSource.clear();
+}
+const feature = this.vectorSource.getFeatureById(item.id);
+this.resultVterSource.addFeature(feature);
+// 设置显示区域偏移
+this.getMap.getView().fit(this.resultVterSource.getExtent(), {
+  padding: [0, 0, 0, document.body.clientWidth * 0.5]
+});
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[WebGIS实战系列 二、 加载geoserver发布的WMS服务]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu</id>
+        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
+        </link>
+        <updated>2019-12-04T12:04:12.000Z</updated>
+        <content type="html"><![CDATA[<p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
+我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;div class=&quot;map&quot; id=&quot;home&quot; ref=&quot;map&quot;&gt;
+    &lt;div ref=&quot;button&quot;&gt;&lt;/div&gt;
+    &lt;div ref=&quot;location&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;touch&quot;&gt;
+      &lt;el-button @click=&quot;zoomIn&quot;&gt;放大&lt;/el-button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { loadModules } from 'esri-loader';
+export default {
+  name: 'user-special',
+  data () {
+    return {
+      map: null,
+      navToolbar: null
+    }
+  },
+  mounted () {
+    this.initMap()
+  },
+  methods: {
+    initMap () {
+      loadModules([
+      'esri/map', 'esri/layers/WMSLayer', 'esri/geometry/Extent'
+    ])
+        .then(([Map, WMSLayer, Extent]) =&gt; {
+          // 创建地图以及配置参数
+          const map = new Map(this.$refs.map, {
+            center: [599206, 4921137],
+            zoom: 5,
+          })
+          let resourceInfo = {
+              extent: new Extent(589434.8564686741,4914006.337837095,609527.2102150217,4928063.398014731, {
+                  wkid: 26713
+              }),
+              layerInfos: [],
+              version: '1.1.0'
+          };
+          //注：setVisibleLayers中的参数对应网址中的“LAYERS=”后面的值
+          let geoWmsUrl = &quot;http://localhost:8088/geoserver/sf/wms&quot;;
+          var geoWmsLayer = new WMSLayer(geoWmsUrl, {resourceInfo: resourceInfo});
+          geoWmsLayer.setImageFormat(&quot;png&quot;);
+          geoWmsLayer.setVisibleLayers(&quot;sf:roads&quot;);
+          map.addLayer(geoWmsLayer);
+          this.map = map
+        })
+        .catch(err =&gt; {
+          console.log(err)
+        })
+    },
+    zoomIn () {
+      loadModules(['esri/toolbars/navigation'])
+        .then(([Navigation]) =&gt; {
+          let navToolbar = new Navigation(this.map)
+          navToolbar.activate(Navigation.ZOOM_IN)
+        })
+    }
+  }
+
+}
+&lt;/script&gt;
+
+</code></pre>
+<p>实现效果如下：<br>
+<img src="https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[WebGIS实战系列 一、环境准备]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-yi-huan-jing-zhun-bei</id>
+        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-yi-huan-jing-zhun-bei">
+        </link>
+        <updated>2019-12-04T11:59:22.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<h4 id="前言">前言</h4>
+<p>近期会在博客发布一系列有关<code>WebGIS</code>的实战课程，技术栈：<code>vue</code>全家桶+<code>arcgis Server</code>+<code>arcgis API 3.x</code>+<code>asp.net</code>实现一个简单的城市供水管网系统。<br>
+前置知识准备：</p>
+<ul>
+<li><code>es6</code>语法</li>
+<li><code>node</code>的简单安装包</li>
+<li><code>vue</code>、<code>vue-cli 3.0</code>、<code>vuex</code>，<code>vue-router</code>，以及<code>elementUI</code>框架</li>
+<li><code>axios</code></li>
+<li><code>asp net mvc</code>框架（后台可能会使用<code>koa2</code>）</li>
+<li><code>arcgis SOE</code>开发扩展<code>arcgis server</code>功能</li>
+<li><code>arcgis</code>的简单操作：发布地图服务，矢量化地图等等。</li>
+<li><code>arcgis sde for postgresql</code>安装</li>
+<li><code>ThreeJS</code>实现三维管道展示</li>
+</ul>
+<blockquote>
+<p>我的环境是 <code>arcgis 10.2</code>版本的，大家也可以进行安装。</p>
+</blockquote>
+<p>可以补充一下这些知识，我也会在博客里面写有关代码的说明。</p>
+<h4 id="1-加载地图">1. 加载地图</h4>
+<p>首先使用<code>vue-cli</code>创建一个项目，我是使用<code>element UI</code>进行搭建项目的整体框架，界面如下，代码我会上传到我的<code>github</code>上面<br>
+<img src="https://img-blog.csdnimg.cn/20190628130217229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+<code>esri</code>推出了一个非<code>dojo</code>框架加载地图的一个包<code>esri-loader</code>，我们可以查看 https://github.com/Esri/esri-loader ，按照提示的步骤进行操作，首先输入命令：<code>npm install --save esri-loader</code>进行安装，然后在<code>main.js</code>入口引用<code>esri-loader</code>：</p>
+<pre><code class="language-js">import { loadScript } from 'esri-loader'
+const options = {
+  url: 'https://js.arcgis.com/3.23/',
+}
+//加载脚本
+loadScript(options)
+</code></pre>
+<p>然后在我们加载地图的组件中进行加载地图操作：</p>
+<pre><code class="language-js">import { loadModules } from 'esri-loader';
+export default {
+  mounted () {
+    this.initMap()
+  },
+  methods: {
+    initMap () {
+      loadModules(['esri/map', 'esri/dijit/HomeButton', 'esri/layers/ArcGISTiledMapServiceLayer'])
+        .then(([Map, HomeButton, ArcGISTiledMapServiceLayer]) =&gt; {
+          // 创建地图以及配置参数
+          const map = new Map(this.$refs.map, {
+            center: [114.3, 30.51667],
+            zoom: 12,
+          })
+          // 实例化home按钮
+          const button = new HomeButton({
+            map
+          }, this.$refs.button)
+          // 启用按钮
+          button.startup()
+          let basemapurl=&quot;http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineStreetWarm/MapServer&quot;;
+          let graybasemap = new ArcGISTiledMapServiceLayer(basemapurl);
+          // 加载地图
+          map.addLayer(graybasemap);
+        })
+        .catch(err =&gt; {
+          console.log(err)
+        })
+    }
+  }
+}
+</code></pre>
+<p>实现效果：<br>
+<img src="https://img-blog.csdnimg.cn/20190628152905746.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+]]></content>
+    </entry>
+</feed>
