@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598610801">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598776606">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
-        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598610801" class="site-logo">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598776606" class="site-logo">
         <h1 class="site-title">jiegiser的博客</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -126,7 +126,10 @@
                   2019-12-06
                 </div>
                 <div class="post-abstract">
-                  
+                  <h4 id="1-webpack-基础知识">1. WebPack 基础知识</h4>
+<p>首先需要明白<code>webpack</code>为什么会出现，作用是什么，总之他就是一个模块打包工具；<br>
+<code>commonJS</code>的模块导出方式为:</p>
+
                 </div>
               </div>
               
@@ -146,7 +149,10 @@
                   2019-12-06
                 </div>
                 <div class="post-abstract">
-                  
+                  <h4 id="1-tree-shaking-概念详解">1. Tree Shaking 概念详解</h4>
+<h5 id="11-babelpolyfill与babelpreset-env之间的引用小冲突">1.1 babel/polyfill与babel/preset-env之间的引用小冲突</h5>
+<p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：</p>
+
                 </div>
               </div>
               
@@ -166,7 +172,11 @@
                   2019-12-06
                 </div>
                 <div class="post-abstract">
-                  
+                  <h4 id="1-变量">1. 变量</h4>
+<ul>
+<li><code>var</code>声明的变量是<code>function scope</code>也就是在函数中可以访问到，并不是在大括号里面声明的，外层就访问不到。<code>let const</code>声明的变量都是<code>block scope</code>块级作用域，也就是在大括号里面可以访问到。</li>
+</ul>
+
                 </div>
               </div>
               
@@ -186,7 +196,10 @@
                   2019-12-06
                 </div>
                 <div class="post-abstract">
-                  
+                  <h4 id="1-如何编写一个loader">1. 如何编写一个Loader</h4>
+<h5 id="11-实现一个简单的loader">1.1 实现一个简单的Loader</h5>
+<p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。</p>
+
                 </div>
               </div>
               
@@ -206,7 +219,10 @@
                   2019-12-06
                 </div>
                 <div class="post-abstract">
-                  
+                  <h4 id="1-动态规划算法">1. 动态规划算法：</h4>
+<p>题目：<br>
+给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。</p>
+
                 </div>
               </div>
               
@@ -226,7 +242,11 @@
                   2019-12-06
                 </div>
                 <div class="post-abstract">
-                  
+                  <h5 id="1-js-的对象">1. JS 的对象</h5>
+<ul>
+<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。</li>
+</ul>
+
                 </div>
               </div>
               
@@ -246,7 +266,9 @@
                   2019-12-04
                 </div>
                 <div class="post-abstract">
-                  
+                  <h4 id="说明">说明</h4>
+<p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
+
                 </div>
               </div>
               
@@ -266,7 +288,9 @@
                   2019-12-04
                 </div>
                 <div class="post-abstract">
-                  
+                  <p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
+我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
+
                 </div>
               </div>
               

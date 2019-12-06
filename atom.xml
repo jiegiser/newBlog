@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2019-12-06T02:16:56.127Z</updated>
+    <updated>2019-12-06T02:19:45.849Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -1346,9 +1346,14 @@ router.push({ path: '/user', params: { userId }}) // -&gt; /user
         <link href="https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji">
         </link>
         <updated>2019-12-06T01:50:32.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="1-webpack-基础知识">1. WebPack 基础知识</h4>
+<p>首先需要明白<code>webpack</code>为什么会出现，作用是什么，总之他就是一个模块打包工具；<br>
+<code>commonJS</code>的模块导出方式为:</p>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="1-webpack-基础知识">1. WebPack 基础知识</h4>
 <p>首先需要明白<code>webpack</code>为什么会出现，作用是什么，总之他就是一个模块打包工具；<br>
 <code>commonJS</code>的模块导出方式为:</p>
+<!-- more -->
 <pre><code class="language-javascript">function SiderBar() {
     var dom = document.getElementById('root');
     var siderbar = document.createElement('div');
@@ -2287,10 +2292,15 @@ module.exports = {
         <link href="https://jiegiser.github.io/newBlog/post/webpack-4x-gao-ji-gai-nian-bi-ji">
         </link>
         <updated>2019-12-06T01:39:56.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="1-tree-shaking-概念详解">1. Tree Shaking 概念详解</h4>
+<h5 id="11-babelpolyfill与babelpreset-env之间的引用小冲突">1.1 babel/polyfill与babel/preset-env之间的引用小冲突</h5>
+<p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：</p>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="1-tree-shaking-概念详解">1. Tree Shaking 概念详解</h4>
 <h5 id="11-babelpolyfill与babelpreset-env之间的引用小冲突">1.1 babel/polyfill与babel/preset-env之间的引用小冲突</h5>
-<p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：<br>
-<img src="https://img-blog.csdnimg.cn/20190523200107374.png" alt="在这里插入图片描述"><br>
+<p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：</p>
+<!-- more -->
+<p><img src="https://img-blog.csdnimg.cn/20190523200107374.png" alt="在这里插入图片描述"><br>
 提示的意思是，如果我们在<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，可以不再业务代码里面，再次引入<code>impport @babel/polyfill</code>，<code>@babel/preset-env</code>插件会自动进行查看代码中<code>es6</code>语法进行添加对应的实现函数。</p>
 <h5 id="12-tree-shaking-概念">1.2 Tree Shaking 概念</h5>
 <p>我们在打包文件的时候，比如下面代码，有一个<code>math.js</code>文件，然后在<code>index.js</code>进行引入，代码如下：<br>
@@ -3521,10 +3531,15 @@ module.exports = (env) =&gt; {
         <link href="https://jiegiser.github.io/newBlog/post/webpack-shi-zhan-pei-zhi-an-li">
         </link>
         <updated>2019-12-06T01:37:45.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="1-library打包">1. Library打包</h4>
+<h5 id="11-对库文件进行打包">1.1 对库文件进行打包</h5>
+<p>库文件的打包：我们新建一个工程，新建<code>index.js math.js string.js</code>,代码如下：</p>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="1-library打包">1. Library打包</h4>
 <h5 id="11-对库文件进行打包">1.1 对库文件进行打包</h5>
-<p>库文件的打包：我们新建一个工程，新建<code>index.js math.js string.js</code>,代码如下：<br>
-<code>index.js</code>文件</p>
+<p>库文件的打包：我们新建一个工程，新建<code>index.js math.js string.js</code>,代码如下：</p>
+<!-- more -->
+<p><code>index.js</code>文件</p>
 <pre><code class="language-js">import * as math from './math.js'
 import * as string from './string.js'
 export default { math, string }
@@ -4401,9 +4416,17 @@ configs.plugins = makePlugins(configs)
         <link href="https://jiegiser.github.io/newBlog/post/es6-bi-ji">
         </link>
         <updated>2019-12-06T01:36:57.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="1-变量">1. 变量</h4>
+<ul>
+<li><code>var</code>声明的变量是<code>function scope</code>也就是在函数中可以访问到，并不是在大括号里面声明的，外层就访问不到。<code>let const</code>声明的变量都是<code>block scope</code>块级作用域，也就是在大括号里面可以访问到。</li>
+</ul>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="1-变量">1. 变量</h4>
 <ul>
 <li><code>var</code>声明的变量是<code>function scope</code>也就是在函数中可以访问到，并不是在大括号里面声明的，外层就访问不到。<code>let const</code>声明的变量都是<code>block scope</code>块级作用域，也就是在大括号里面可以访问到。</li>
+</ul>
+<!-- more -->
+<ul>
 <li><code>let</code>和 <code>const</code> 都不允许重复声明。他们两个都不可以在同一个作用域中进行重复声明，比如，在函数中声明的变量跟在函数外声明的同名的变量是不同的。<code>let</code> 定义的变量可以重新赋值，<code>const</code>是不可以的。</li>
 <li><code>const</code> 声明的对象，对象是一个引用类型的值，可以进行修改对象的属性。如果想要定义的对象的属性是不可以改变可以使用<code>es5</code>中的<code>Object.freeze()</code>这个方法：<code>const jelly = Object.freeze(person)</code></li>
 <li><code>let</code> 跟<code>const</code>都是存在暂时性死区的，也就是说；我们在声明前使用调用变量，会报<code>RefrenceError</code>的错误；而<code>var</code>声明的变量是没有的；这样，我们也可以养成习惯，在使用变量之前，进行声明。</li>
@@ -5164,10 +5187,15 @@ people.set('{}',3)
         <link href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
         </link>
         <updated>2019-12-06T01:33:10.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="1-如何编写一个loader">1. 如何编写一个Loader</h4>
+<h5 id="11-实现一个简单的loader">1.1 实现一个简单的Loader</h5>
+<p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。</p>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="1-如何编写一个loader">1. 如何编写一个Loader</h4>
 <h5 id="11-实现一个简单的loader">1.1 实现一个简单的Loader</h5>
-<p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。<br>
-然后新建<code>webpack</code>的配置文件<code>webpack.config.js</code>，内容如下：在<code>module</code>使用我们的<code>loader</code></p>
+<p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。</p>
+<!-- more -->
+<p>然后新建<code>webpack</code>的配置文件<code>webpack.config.js</code>，内容如下：在<code>module</code>使用我们的<code>loader</code></p>
 <pre><code class="language-js">const path = require('path')
 module.exports = {
     mode: 'development',
@@ -5986,9 +6014,14 @@ module.exports = {
         <link href="https://jiegiser.github.io/newBlog/post/suan-fa">
         </link>
         <updated>2019-12-06T00:54:38.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="1-动态规划算法">1. 动态规划算法：</h4>
+<p>题目：<br>
+给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。</p>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="1-动态规划算法">1. 动态规划算法：</h4>
 <p>题目：<br>
 给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。</p>
+<!-- more -->
 <p>'?' 可以匹配任何单个字符。<br>
 '*' 可以匹配任意字符串（包括空字符串）。<br>
 两个字符串完全匹配才算匹配成功。<br>
@@ -6076,10 +6109,18 @@ var twoSum = function(nums, target) {
         <link href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji">
         </link>
         <updated>2019-12-06T00:50:02.000Z</updated>
+        <summary type="html"><![CDATA[<h5 id="1-js-的对象">1. JS 的对象</h5>
+<ul>
+<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。</li>
+</ul>
+]]></summary>
         <content type="html"><![CDATA[<h5 id="1-js-的对象">1. JS 的对象</h5>
 <ul>
-<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。<br>
-使用内置函数 <code>Object.getOwnPropertyDescripter</code>来查看设置的属性的描述属性。我们可以使用<code>Object.defineProperty</code>来修改属性的特征。实际上<code>JavaSCript</code>对象的运行时是一个&quot;属性的集合&quot;，属性以字符串或者<code>Symbol</code>为<code>key</code>，以数据属性特征值或者访问器属性特征值为<code>value</code>。</li>
+<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。</li>
+</ul>
+<!-- more -->
+<p>使用内置函数 <code>Object.getOwnPropertyDescripter</code>来查看设置的属性的描述属性。我们可以使用<code>Object.defineProperty</code>来修改属性的特征。实际上<code>JavaSCript</code>对象的运行时是一个&quot;属性的集合&quot;，属性以字符串或者<code>Symbol</code>为<code>key</code>，以数据属性特征值或者访问器属性特征值为<code>value</code>。</p>
+<ul>
 <li><code>typeOf</code>:<code>typeof</code>返回数据类型的字符串表达，</li>
 <li><code>unddefined</code>是声明了未赋值，如果直接使用没有定义的变量会直接提示<code>is not defined</code>，值<code>null</code>是一个字面量，它不像<code>undefined</code>是全局对象的一个属性。<code>null</code>是表示缺少的标识，指示变量未指向任何对象。把<code>null</code>作为尚未创建的对象，也许更好理解。在 <code>APIs</code>中，<code>null</code>常在返回类型是对象，但没关联值的地方使用。</li>
 </ul>
@@ -8260,9 +8301,12 @@ scrolldelay  设置活动字幕两次滚动之间的延迟时间
         <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
         </link>
         <updated>2019-12-04T12:05:35.000Z</updated>
+        <summary type="html"><![CDATA[<h4 id="说明">说明</h4>
+<p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
+]]></summary>
         <content type="html"><![CDATA[<h4 id="说明">说明</h4>
 <p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
-<hr>
+<h2 id="-more-"><!-- more --></h2>
 <p>上面的项目截图：</p>
 <p>界面搭建使用模板   <a href="https://panjiachen.github.io/vue-element-admin">vue-element-admin</a></p>
 <p>该项目是Geoserver+openlayers5的一些例子，<br>
@@ -8321,8 +8365,12 @@ this.getMap.getView().fit(this.resultVterSource.getExtent(), {
         <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
         </link>
         <updated>2019-12-04T12:04:12.000Z</updated>
+        <summary type="html"><![CDATA[<p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
+我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
+]]></summary>
         <content type="html"><![CDATA[<p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
 我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
+<!-- more -->
 <pre><code class="language-js">&lt;template&gt;
   &lt;div class=&quot;map&quot; id=&quot;home&quot; ref=&quot;map&quot;&gt;
     &lt;div ref=&quot;button&quot;&gt;&lt;/div&gt;

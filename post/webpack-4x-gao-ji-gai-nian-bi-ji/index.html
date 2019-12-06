@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598610801">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598776606">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
-        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598610801" class="site-logo">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598776606" class="site-logo">
         <h1 class="site-title">jiegiser的博客</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -101,8 +101,9 @@
             <div class="post-content">
               <h4 id="1-tree-shaking-概念详解">1. Tree Shaking 概念详解</h4>
 <h5 id="11-babelpolyfill与babelpreset-env之间的引用小冲突">1.1 babel/polyfill与babel/preset-env之间的引用小冲突</h5>
-<p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：<br>
-<img src="https://img-blog.csdnimg.cn/20190523200107374.png" alt="在这里插入图片描述"><br>
+<p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：</p>
+<!-- more -->
+<p><img src="https://img-blog.csdnimg.cn/20190523200107374.png" alt="在这里插入图片描述"><br>
 提示的意思是，如果我们在<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，可以不再业务代码里面，再次引入<code>impport @babel/polyfill</code>，<code>@babel/preset-env</code>插件会自动进行查看代码中<code>es6</code>语法进行添加对应的实现函数。</p>
 <h5 id="12-tree-shaking-概念">1.2 Tree Shaking 概念</h5>
 <p>我们在打包文件的时候，比如下面代码，有一个<code>math.js</code>文件，然后在<code>index.js</code>进行引入，代码如下：<br>

@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598610801">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598776606">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
-        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598610801" class="site-logo">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598776606" class="site-logo">
         <h1 class="site-title">jiegiser的博客</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -102,6 +102,9 @@
               <h4 id="1-变量">1. 变量</h4>
 <ul>
 <li><code>var</code>声明的变量是<code>function scope</code>也就是在函数中可以访问到，并不是在大括号里面声明的，外层就访问不到。<code>let const</code>声明的变量都是<code>block scope</code>块级作用域，也就是在大括号里面可以访问到。</li>
+</ul>
+<!-- more -->
+<ul>
 <li><code>let</code>和 <code>const</code> 都不允许重复声明。他们两个都不可以在同一个作用域中进行重复声明，比如，在函数中声明的变量跟在函数外声明的同名的变量是不同的。<code>let</code> 定义的变量可以重新赋值，<code>const</code>是不可以的。</li>
 <li><code>const</code> 声明的对象，对象是一个引用类型的值，可以进行修改对象的属性。如果想要定义的对象的属性是不可以改变可以使用<code>es5</code>中的<code>Object.freeze()</code>这个方法：<code>const jelly = Object.freeze(person)</code></li>
 <li><code>let</code> 跟<code>const</code>都是存在暂时性死区的，也就是说；我们在声明前使用调用变量，会报<code>RefrenceError</code>的错误；而<code>var</code>声明的变量是没有的；这样，我们也可以养成习惯，在使用变量之前，进行声明。</li>

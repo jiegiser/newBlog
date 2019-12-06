@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598610801">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598776606">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
-        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598610801" class="site-logo">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598776606" class="site-logo">
         <h1 class="site-title">jiegiser的博客</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -101,8 +101,11 @@
             <div class="post-content">
               <h5 id="1-js-的对象">1. JS 的对象</h5>
 <ul>
-<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。<br>
-使用内置函数 <code>Object.getOwnPropertyDescripter</code>来查看设置的属性的描述属性。我们可以使用<code>Object.defineProperty</code>来修改属性的特征。实际上<code>JavaSCript</code>对象的运行时是一个&quot;属性的集合&quot;，属性以字符串或者<code>Symbol</code>为<code>key</code>，以数据属性特征值或者访问器属性特征值为<code>value</code>。</li>
+<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。</li>
+</ul>
+<!-- more -->
+<p>使用内置函数 <code>Object.getOwnPropertyDescripter</code>来查看设置的属性的描述属性。我们可以使用<code>Object.defineProperty</code>来修改属性的特征。实际上<code>JavaSCript</code>对象的运行时是一个&quot;属性的集合&quot;，属性以字符串或者<code>Symbol</code>为<code>key</code>，以数据属性特征值或者访问器属性特征值为<code>value</code>。</p>
+<ul>
 <li><code>typeOf</code>:<code>typeof</code>返回数据类型的字符串表达，</li>
 <li><code>unddefined</code>是声明了未赋值，如果直接使用没有定义的变量会直接提示<code>is not defined</code>，值<code>null</code>是一个字面量，它不像<code>undefined</code>是全局对象的一个属性。<code>null</code>是表示缺少的标识，指示变量未指向任何对象。把<code>null</code>作为尚未创建的对象，也许更好理解。在 <code>APIs</code>中，<code>null</code>常在返回类型是对象，但没关联值的地方使用。</li>
 </ul>

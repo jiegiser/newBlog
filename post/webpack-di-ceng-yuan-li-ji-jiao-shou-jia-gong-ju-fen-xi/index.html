@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598610801">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598776606">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
-        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598610801" class="site-logo">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598776606" class="site-logo">
         <h1 class="site-title">jiegiser的博客</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -101,8 +101,9 @@
             <div class="post-content">
               <h4 id="1-如何编写一个loader">1. 如何编写一个Loader</h4>
 <h5 id="11-实现一个简单的loader">1.1 实现一个简单的Loader</h5>
-<p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。<br>
-然后新建<code>webpack</code>的配置文件<code>webpack.config.js</code>，内容如下：在<code>module</code>使用我们的<code>loader</code></p>
+<p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。</p>
+<!-- more -->
+<p>然后新建<code>webpack</code>的配置文件<code>webpack.config.js</code>，内容如下：在<code>module</code>使用我们的<code>loader</code></p>
 <pre><code class="language-js">const path = require('path')
 module.exports = {
     mode: 'development',
