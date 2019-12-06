@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>WebGIS实战系列 二、 加载geoserver发布的WMS服务 | jiegiser的博客</title>
+<title>算法 | jiegiser的博客</title>
 <meta name="description" content="温故而知新" />
 <link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575594009908">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -73,96 +73,124 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              WebGIS实战系列 二、 加载geoserver发布的WMS服务
+              算法
             </h2>
             <div class="post-info">
               <span>
-                2019-12-04
+                2019-12-06
               </span>
               <span>
-                2 min read
+                3 min read
               </span>
               
             </div>
             
-              <img class="post-feature-image" src="https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="">
+              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/suan-fa.png" alt="">
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
-我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
-<pre><code class="language-js">&lt;template&gt;
-  &lt;div class=&quot;map&quot; id=&quot;home&quot; ref=&quot;map&quot;&gt;
-    &lt;div ref=&quot;button&quot;&gt;&lt;/div&gt;
-    &lt;div ref=&quot;location&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;touch&quot;&gt;
-      &lt;el-button @click=&quot;zoomIn&quot;&gt;放大&lt;/el-button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
+                <h4 id="1-动态规划算法">1. 动态规划算法：</h4>
+<p>题目：<br>
+给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。</p>
+<p>'?' 可以匹配任何单个字符。<br>
+'*' 可以匹配任意字符串（包括空字符串）。<br>
+两个字符串完全匹配才算匹配成功。<br>
+说明:</p>
+<p>s 可能为空，且只包含从 a-z 的小写字母。<br>
+p 可能为空，且只包含从 a-z 的小写字母，以及字符 ? 和 *。</p>
+<p>来源：力扣（LeetCode）<br>
+链接：https://leetcode-cn.com/problems/wildcard-matching</p>
+<pre><code class="language-js">var isMatch = function(s, p) {
+  let cur = new Array(s.length + 1).fill(false)
+  cur[0] = true
+  
+  for (const c of p) {
+    if (c == '*'){
+      let begin = cur.indexOf(true)
+      if (begin == -1) {
+        return false
+      }
+      cur.fill(true, begin)
+    } else {
+      for(let j = s.length;j &gt; 0; --j){
+        cur[j] = (c == '?' || c == s[j-1]) &amp;&amp; cur[j-1]
+      }
+      cur[0] = false
+    }
 
-&lt;script&gt;
-import { loadModules } from 'esri-loader';
-export default {
-  name: 'user-special',
-  data () {
-    return {
-      map: null,
-      navToolbar: null
-    }
-  },
-  mounted () {
-    this.initMap()
-  },
-  methods: {
-    initMap () {
-      loadModules([
-      'esri/map', 'esri/layers/WMSLayer', 'esri/geometry/Extent'
-    ])
-        .then(([Map, WMSLayer, Extent]) =&gt; {
-          // 创建地图以及配置参数
-          const map = new Map(this.$refs.map, {
-            center: [599206, 4921137],
-            zoom: 5,
-          })
-          let resourceInfo = {
-              extent: new Extent(589434.8564686741,4914006.337837095,609527.2102150217,4928063.398014731, {
-                  wkid: 26713
-              }),
-              layerInfos: [],
-              version: '1.1.0'
-          };
-          //注：setVisibleLayers中的参数对应网址中的“LAYERS=”后面的值
-          let geoWmsUrl = &quot;http://localhost:8088/geoserver/sf/wms&quot;;
-          var geoWmsLayer = new WMSLayer(geoWmsUrl, {resourceInfo: resourceInfo});
-          geoWmsLayer.setImageFormat(&quot;png&quot;);
-          geoWmsLayer.setVisibleLayers(&quot;sf:roads&quot;);
-          map.addLayer(geoWmsLayer);
-          this.map = map
-        })
-        .catch(err =&gt; {
-          console.log(err)
-        })
-    },
-    zoomIn () {
-      loadModules(['esri/toolbars/navigation'])
-        .then(([Navigation]) =&gt; {
-          let navToolbar = new Navigation(this.map)
-          navToolbar.activate(Navigation.ZOOM_IN)
-        })
-    }
   }
+  return cur[s.length]
 
-}
-&lt;/script&gt;
-
+};
 </code></pre>
-<p>实现效果如下：<br>
-<img src="https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="2-两数相加">2. 两数相加</h4>
+<p>给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。</p>
+<p>你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。</p>
+<p>示例:</p>
+<pre><code class="language-js">给定 nums = [2, 7, 11, 15], target = 9
+
+因为 nums[0] + nums[1] = 2 + 7 = 9
+所以返回 [0, 1]
+</code></pre>
+<p>解答：</p>
+<pre><code class="language-js">// 第一种
+var twoSum = function(nums, target) {
+    let re = []
+    for (let i = 0;i&lt;nums.length;i++){
+        let item = nums[i]
+        let j = nums.indexOf(target-item)
+        if (j &gt; -1) {
+            if (j !==i){
+              return [i, j]
+            }
+
+        }
+    }
+};
+
+// 第二种
+var twoSum = function (nums, target) {
+    let map = {};
+    for (let i = 0, len = nums.length; i &lt; len; i++) {
+        let num = target - nums[i];
+        if (typeof map[nums[i]] === 'number') return [map[nums[i]], i];
+        map[num] = i;
+    }
+};
+
+// 第三种 （超出输出范围？）
+var twoSum = function(nums, target) {
+    for(let j =0;j&lt;nums.length;j ++) {
+        console.log(j,nums[j])
+      for(i=nums.length-1 ;i &gt;j; i--) {
+          console.log(nums[j],nums[i])
+          if(nums[j] + nums[i] === target) {
+              return [i, j]
+          }
+      }  
+    }
+};
+</code></pre>
 
               </div>
               <div class="toc-container">
-                
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%AE%97%E6%B3%95">1. 动态规划算法：</a></li>
+<li><a href="#2-%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0">2. 两数相加</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
               </div>
             </div>
           </article>
@@ -171,9 +199,9 @@ export default {
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-yi-huan-jing-zhun-bei">
+            <a href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji">
               <h3 class="post-title">
-                WebGIS实战系列 一、环境准备
+                前端笔记
               </h3>
             </a>
           </div>

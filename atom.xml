@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2019-12-06T00:53:06.642Z</updated>
+    <updated>2019-12-06T01:00:23.303Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -10,6 +10,96 @@
     <logo>https://jiegiser.github.io/newBlog/images/avatar.png</logo>
     <icon>https://jiegiser.github.io/newBlog/favicon.ico</icon>
     <rights>All rights reserved 2019, jiegiser的博客</rights>
+    <entry>
+        <title type="html"><![CDATA[算法]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/suan-fa</id>
+        <link href="https://jiegiser.github.io/newBlog/post/suan-fa">
+        </link>
+        <updated>2019-12-06T00:54:38.000Z</updated>
+        <content type="html"><![CDATA[<h4 id="1-动态规划算法">1. 动态规划算法：</h4>
+<p>题目：<br>
+给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。</p>
+<p>'?' 可以匹配任何单个字符。<br>
+'*' 可以匹配任意字符串（包括空字符串）。<br>
+两个字符串完全匹配才算匹配成功。<br>
+说明:</p>
+<p>s 可能为空，且只包含从 a-z 的小写字母。<br>
+p 可能为空，且只包含从 a-z 的小写字母，以及字符 ? 和 *。</p>
+<p>来源：力扣（LeetCode）<br>
+链接：https://leetcode-cn.com/problems/wildcard-matching</p>
+<pre><code class="language-js">var isMatch = function(s, p) {
+  let cur = new Array(s.length + 1).fill(false)
+  cur[0] = true
+  
+  for (const c of p) {
+    if (c == '*'){
+      let begin = cur.indexOf(true)
+      if (begin == -1) {
+        return false
+      }
+      cur.fill(true, begin)
+    } else {
+      for(let j = s.length;j &gt; 0; --j){
+        cur[j] = (c == '?' || c == s[j-1]) &amp;&amp; cur[j-1]
+      }
+      cur[0] = false
+    }
+
+  }
+  return cur[s.length]
+
+};
+</code></pre>
+<h4 id="2-两数相加">2. 两数相加</h4>
+<p>给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。</p>
+<p>你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。</p>
+<p>示例:</p>
+<pre><code class="language-js">给定 nums = [2, 7, 11, 15], target = 9
+
+因为 nums[0] + nums[1] = 2 + 7 = 9
+所以返回 [0, 1]
+</code></pre>
+<p>解答：</p>
+<pre><code class="language-js">// 第一种
+var twoSum = function(nums, target) {
+    let re = []
+    for (let i = 0;i&lt;nums.length;i++){
+        let item = nums[i]
+        let j = nums.indexOf(target-item)
+        if (j &gt; -1) {
+            if (j !==i){
+              return [i, j]
+            }
+
+        }
+    }
+};
+
+// 第二种
+var twoSum = function (nums, target) {
+    let map = {};
+    for (let i = 0, len = nums.length; i &lt; len; i++) {
+        let num = target - nums[i];
+        if (typeof map[nums[i]] === 'number') return [map[nums[i]], i];
+        map[num] = i;
+    }
+};
+
+// 第三种 （超出输出范围？）
+var twoSum = function(nums, target) {
+    for(let j =0;j&lt;nums.length;j ++) {
+        console.log(j,nums[j])
+      for(i=nums.length-1 ;i &gt;j; i--) {
+          console.log(nums[j],nums[i])
+          if(nums[j] + nums[i] === target) {
+              return [i, j]
+          }
+      }  
+    }
+};
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[前端笔记]]></title>
         <id>https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji</id>
