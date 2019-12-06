@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2019-12-06T01:55:59.238Z</updated>
+    <updated>2019-12-06T01:58:08.123Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -10,6 +10,1328 @@
     <logo>https://jiegiser.github.io/newBlog/images/avatar.png</logo>
     <icon>https://jiegiser.github.io/newBlog/favicon.ico</icon>
     <rights>All rights reserved 2019, jiegiser的博客</rights>
+    <entry>
+        <title type="html"><![CDATA[Vue笔记]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/vue-bi-ji</id>
+        <link href="https://jiegiser.github.io/newBlog/post/vue-bi-ji">
+        </link>
+        <updated>2019-12-06T01:57:39.000Z</updated>
+        <content type="html"><![CDATA[<h4 id="1-传统的-mvp-开发模式与-mvvm-开发模式对比">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</h4>
+<ol>
+<li>对于传统的<code>mvp</code>开发模式，<code>m</code>也就是<code>model</code>一般是通过发送<code>ajax</code>请求获取到的数据，<code>v</code>也就是视图，<code>p</code>就是<code>Presenter</code>相当于控制器，<br>
+<code>Presenter</code>作为View和<code>Model</code>之间的“中间人”，除了基本的业务逻辑外，还有大量代码需要对从<code>View</code>到<code>Model</code>和从<code>Model</code>到<code>View</code>的数据进行“手动同步”，这样<code>Presenter</code>显得很重，维护起来会比较困难。而且由于没有数据绑定，如果<code>Presenter</code>对视图渲染的需求增多，它不得不过多关注特定的视图，一旦视图需求发生改变，<code>Presenter</code>也需要改动,我们大部分的关注点是在视图与数据，以及通过控制器进行操作。</li>
+<li>对于<code>vue</code>的开发模式<code>mvvm</code>，他把<code>View</code>和<code>Model</code>的同步逻辑自动化了，与<code>MVP</code>不同，没有了<code>View</code>为<code>Presenter</code>提供的接口，之前由<code>Presenter</code>负责的<code>View</code>和<code>Model</code>之间的数据同步交给了<code>ViewModel</code>中的数据绑定进行处理，当<code>Model</code>发生变化，<code>ViewModel</code>就会自动更新；<code>ViewModel</code>变化，<code>Model</code>也会更新。我们的关注点主要是在<code>model</code>与<code>view</code>之间，而<code>model</code>发生变化，<code>view</code>进行同步更新，这些都交给了<code>viewmodel</code>，<code>mvp</code>的模式我们大部分的关注点是在操作了<code>dom</code>，提高了开发效率。</li>
+</ol>
+<h4 id="2-一些指令以及使用技巧">2. 一些指令以及使用技巧</h4>
+<h5 id="21-vue-中计算属性的使用技巧">2.1.  Vue 中计算属性的使用技巧</h5>
+<p><code>get、set</code>；如果是获取数值，通过<code>get</code>获取到值，也可以通过<code>set</code>函数设置值，注意如果你为一个计算属性使用了箭头函数，则 this 不会指向这个组件的实例，不过可以通过其实例作为函数的第一个参数来访问：</p>
+<pre><code class="language-js">computed: {
+  aDouble: vm =&gt; vm.a * 2
+}
+</code></pre>
+<p><code>get、set</code>用法：</p>
+<pre><code class="language-js">var vm = new Vue({
+  data: { a: 1 },
+  computed: {
+    // 仅读取
+    aDouble: function () {
+      return this.a * 2
+    },
+    // 读取和设置
+    aPlus: {
+      get: function () {
+        return this.a + 1
+      },
+      set: function (v) {
+        this.a = v - 1
+      }
+    }
+  }
+})
+vm.aPlus   // =&gt; 2
+vm.aPlus = 3
+vm.a       // =&gt; 2
+vm.aDouble // =&gt; 4
+</code></pre>
+<blockquote>
+<p>计算属性的结果会被缓存，除非依赖的变量变化才会重新计算。注意，如果某个依赖 (比如非响应式属性) 在该实例范畴之外，则计算属性是不会被更新的。 我们一般如果处理数据显示，如果声明函数、计算属性、侦听器这三者都可以实现的话，一般建议使用计算数据，因为存在缓存机制。</p>
+</blockquote>
+<p>计算属性设置值的时候直接使用<code>=</code>，如上面的<code>aPlus</code>数值，而不是与函数类似进行赋值。</p>
+<pre><code class="language-js">aPlus = 10
+</code></pre>
+<h5 id="22-v-bind-绑定-class-与-内联样式">2.2. v-bind 绑定 class 与 内联样式</h5>
+<h6 id="221-v-bind-绑定-class">2.2.1.  v-bind 绑定 class</h6>
+<p>在<code>v-bind</code>中，绑定<code>class</code>，使用:<code>class=&quot;{active:isActive}&quot;</code>，前面的active如果没有在data中定义是不会报错的，他是一个对象表达式，意思就是<code>active</code>这个类的显示与否都在于<code>isActive</code>这个变量，该变量为布尔类型，为<code>true</code>为显示，为<code>false</code>是不显示。</p>
+<pre><code class="language-html">&lt;div
+  class=&quot;static&quot;
+  v-bind:class=&quot;{ active: isActive, 'text-danger': hasError }&quot;
+&gt;&lt;/div&gt;
+</code></pre>
+<p><code>data</code>：</p>
+<pre><code class="language-js">data: {
+  isActive: true,
+  hasError: false
+}
+</code></pre>
+<p>渲染的结果：如果<code>hasError</code>的值为<code>true</code>，<code>class</code> 列表将变为<code>&quot;static active text-danger&quot;</code></p>
+<pre><code class="language-html">&lt;div class=&quot;static active&quot;&gt;&lt;/div&gt;
+</code></pre>
+<p>而如果使用:<code>class=&quot;[chextType, active ]&quot;</code>，这样<code>chextType</code>这个必须在<code>data</code>中定义。<code>div</code>显示的类名就是显示<code>chextType、active</code>变量中存储的类名。另外他也可以与普通的	<code>class</code>共存</p>
+<pre><code class="language-html">&lt;div v-bind:class=&quot;[activeClass, errorClass]&quot;&gt;&lt;/div&gt;
+</code></pre>
+<p><code>data</code>：</p>
+<pre><code class="language-js">data: {
+  activeClass: 'active',
+  errorClass: 'text-danger'
+}
+</code></pre>
+<p>渲染的结果：如果<code>hasError</code>的值为<code>true</code>，<code>class</code> 列表将变为<code>&quot;static active text-danger&quot;</code></p>
+<pre><code class="language-html">&lt;div class=&quot;active text-danger&quot;&gt;&lt;/div&gt;
+</code></pre>
+<p>这样写将始终添加<code>errorClass</code>，但是只有在<code>isActive</code> 是<code>true</code>时才添加 <code>activeClass</code>。不过，当有多个条件 <code>class</code> 时这样写有些繁琐。所以在数组语法中也可以使用对象语法：</p>
+<pre><code class="language-html">&lt;div v-bind:class=&quot;[{ active: isActive }, errorClass]&quot;&gt;&lt;/div&gt;
+</code></pre>
+<p>当在一个自定义组件上使用 <code>class</code>属性时，这些类将被添加到该组件的根元素上面。这个元素上已经存在的类不会被覆盖。<br>
+例如，如果你声明了这个组件：</p>
+<pre><code class="language-js">Vue.component('my-component', {
+  template: '&lt;p class=&quot;foo bar&quot;&gt;Hi&lt;/p&gt;'
+})
+</code></pre>
+<p>然后在使用它的时候添加一些 <code>class</code>：</p>
+<pre><code class="language-html">&lt;my-component class=&quot;baz boo&quot;&gt;&lt;/my-component&gt;
+</code></pre>
+<p><code>HTML</code> 将被渲染为:</p>
+<pre><code class="language-html">&lt;p class=&quot;foo bar baz boo&quot;&gt;Hi&lt;/p&gt;
+</code></pre>
+<p>对于带数据绑定的<code>class</code>跟前面是一样的。</p>
+<h6 id="222-绑定内联样式">2.2.2.  绑定内联样式</h6>
+<p>对象语法：<br>
+<code>v-bind:style</code> 的对象语法十分直观——看着非常像<code>CSS</code>，但其实是一个 <code>JavaScript</code> 对象。<code>CSS</code>属性名可以用驼峰式 或短横线分隔 (记得用引号括起来) 来命名：</p>
+<pre><code class="language-html">&lt;div v-bind:style=&quot;{ color: activeColor, fontSize: fontSize + 'px' }&quot;&gt;&lt;/div&gt;
+</code></pre>
+<pre><code class="language-js">data: {
+  activeColor: 'red',
+  fontSize: 30
+}
+</code></pre>
+<p>直接绑定到一个样式对象通常更好，这会让模板更清晰：同样的，对象语法常常结合返回对象的计算属性使用。</p>
+<pre><code class="language-html">&lt;div v-bind:style=&quot;styleObject&quot;&gt;&lt;/div&gt;
+</code></pre>
+<pre><code class="language-js">data: {
+  styleObject: {
+    color: 'red',
+    fontSize: '13px'
+  }
+}
+</code></pre>
+<p>数组语法:<br>
+<code>v-bind:style</code>的数组语法可以将多个样式对象应用到同一个元素上：</p>
+<pre><code class="language-html">&lt;div v-bind:style=&quot;[baseStyles, overridingStyles]&quot;&gt;&lt;/div&gt;
+</code></pre>
+<p>自动添加前缀：<br>
+当 <code>v-bind:style</code> 使用需要添加浏览器引擎前缀的 <code>CSS</code>属性时，如<code>transform</code>，<code>Vue.js</code> 会自动侦测并添加相应的前缀。</p>
+<h5 id="23-v-if-与-v-else-标签必须要连在一起使用不然会抛出错误">2.3. v-if 与 v-else 标签必须要连在一起使用，不然会抛出错误。</h5>
+<h5 id="24-key-值">2.4. key 值</h5>
+<p><code>Vue</code>在重新渲染页面的时候，会尝试复用页面里面的<code>dom</code>元素，如果页面有两个相同的标签可以添加一个<code>key</code>，这样，<code>vue</code>会区分，不会复用。</p>
+<h5 id="25-v-for-循环">2.5.  v-for 循环</h5>
+<p>一般在<code>v-for</code>循环的时候，一般建议加一个<code>:key</code>值，绑定一个唯一的标识，不建议直接绑定循环的<code>index</code>，会消耗性能，建议绑定后台传入的数据的主键。</p>
+<h5 id="26-vue-中操作数组">2.6. Vue 中操作数组</h5>
+<p><code>Vue</code>中，不能直接通过数组下标的方法，进行添加数据，这样页面不会渲染的，需要通过数据的操作函数进行增删改查：<code>push、pop、shift、unshift、splice、sort、reverse</code></p>
+<h5 id="27-template-模板占位符">2.7.  template 模板占位符</h5>
+<p><code>template</code>模板占位符，比如我们使用v-for要循环两个标签，可以在两个标签外层加一个<code>div</code>，但是这个<code>div</code>会在页面显示出来，我们可以把外层的<code>div</code>换成<code>template</code>，不会显示在页面。</p>
+<h5 id="28-vue-中遍历对象进行渲染以及对根级别响应式对象添加属性">2.8. Vue 中遍历对象进行渲染以及对根级别响应式对象添加属性</h5>
+<p>对象的循环：<code>key</code>是，键；<code>index</code>是位置信息，<code>item</code>是值；</p>
+<pre><code class="language-html">&lt;div v-for=&quot;(value, name, index) in object&quot;&gt;
+  {{ index }}. {{ name }}: {{ value }}
+&lt;/div&gt;
+</code></pre>
+<p>渲染结果：</p>
+<pre><code class="language-html">&lt;div id=&quot;v-for-object-value-name-index&quot; class=&quot;demo&quot;&gt;&lt;div&gt;
+    0. title: How to do lists in Vue
+  &lt;/div&gt;&lt;div&gt;
+    1. author: Jane Doe
+  &lt;/div&gt;&lt;div&gt;
+    2. publishedAt: 2016-04-10
+  &lt;/div&gt;&lt;/div&gt;
+</code></pre>
+<p>给对象直接修改属性是可以再次进行渲染。<br>
+给对象直接添加值，是不变的，可以直接改变引用，换成一个全新的对象，也可以使用<code>set</code>方法，<code>Vue.set(vm.userInfo,&quot;address&quot;,&quot;wuhan&quot;)</code>这样，<code>userInfo</code>对象会增加数据，页面也会变动，重新渲染。也可以使用实例的<code>$set方法</code>，<code>vm.$set(vm.userInfo,&quot;address&quot;,&quot;wuhan&quot;)</code><br>
+对于已经创建的实例，Vue 不允许动态添加根级别的响应式属性。但是，可以使用 <code>Vue.set(object, propertyName, value)</code>方法向嵌套对象添加响应式属性。</p>
+<h5 id="29-对于数组的-set-方法">2.9. 对于数组的 set 方法</h5>
+<p>对于数组的<code>set</code>方法。<code>Vue.set(vm.userInfo,4,5)</code>，将第四个位置的数据改成5，也可以用实例<code>vm.$set(vm.userInfo,4,5)</code>，所以改变数组的值有两种方法，第一个是使用js的数组操作函数，另一个是使用<code>vue</code>的<code>set</code>方法、</p>
+<h5 id="210-v-text-与-v-html">2.10 v-text 与 v-html</h5>
+<p>这两个指令旨在显示数值，跟我们直接在<code>html</code>中使用插值表达式类似：</p>
+<pre><code class="language-html">&lt;div&gt;{{message}}&lt;/div&gt;
+</code></pre>
+<p><code>v-text</code>显示的结果与插值表达式一致的，而<code>v-html</code>会展示为<code>html</code>，如果字符串是一个<code>html</code>的字符串，他会进行渲染显示。</p>
+<h4 id="3-组件的一些知识">3. 组件的一些知识</h4>
+<h5 id="31-is属性">3.1. is属性</h5>
+<p>有些 <code>HTML</code> 元素，诸如 <code>&lt;ul&gt;</code>、<code>&lt;ol&gt;</code>、<code>&lt;table&gt;</code> 和 <code>&lt;select&gt;</code>，对于哪些元素可以出现在其内部是有严格限制的。而有些元素，诸如 <code>&lt;li&gt;</code>、<code>&lt;tr&gt;</code> 和 <code>&lt;option&gt;</code>，只能出现在其它某些特定的元素内部。比如<code>tbody</code>里只能显示<code>tr</code>，我们希望在tr里放其他的内容，可以借助<code>is</code>属性：</p>
+<pre><code class="language-html">&lt;table&gt;
+  &lt;blog-post-row&gt;&lt;/blog-post-row&gt;
+&lt;/table&gt;
+</code></pre>
+<p>这个自定义组件<code>&lt;blog-post-row&gt;</code> 会被作为无效的内容提升到外部，并导致最终渲染结果出错。幸好这个特殊的 is 特性给了我们一个变通的办法：</p>
+<pre><code class="language-html">&lt;table&gt;
+  &lt;tr is=&quot;blog-post-row&quot;&gt;&lt;/tr&gt;
+&lt;/table&gt;
+</code></pre>
+<p>这句代码就是说，我们在<code>tbody</code>是显示<code>tr</code>，其实是<code>is</code>里面的组件；遇到组件上的小<code>bug</code>，可以使用<code>is</code>进行解决；比如<code>ol、select</code>等等。</p>
+<h5 id="32-子组件中-data">3.2 . 子组件中 data</h5>
+<p>子组件中<code>data</code>为函数；是为了保证每一个组件中的数据互不干扰；</p>
+<h5 id="33-组件中操作-dom">3.3. 组件中操作 DOM</h5>
+<p><code>ref</code>：引用 ，被用来给元素或子组件注册引用信息。引用信息将会注册在父组件的 <code>$refs</code>对象上。如果在普通的<code>DOM</code>元素上使用，引用指向的就是 <code>DOM</code> 元素；如果用在子组件上，引用就指向组件实例：</p>
+<pre><code class="language-html">&lt;!-- `vm.$refs.p` will be the DOM node --&gt;
+&lt;p ref=&quot;p&quot;&gt;hello&lt;/p&gt;
+
+&lt;!-- `vm.$refs.child` will be the child component instance --&gt;
+&lt;child-component ref=&quot;child&quot;&gt;&lt;/child-component&gt;
+</code></pre>
+<p>获取<code>dom</code>节点，通过<code>this.$refs.ref</code>的值这样获取<code>dom</code>节点；比如上面的结构，如果需要获取<code>this.$refs.child</code>就会获取到对应的<code>dom</code>信息。<br>
+当 v-for 用于元素或组件的时候，引用信息将是包含 DOM 节点或组件实例的数组。<br>
+关于 ref 注册时间的重要说明：因为 ref 本身是作为渲染结果被创建的，在初始渲染的时候你不能访问它们 - 它们还不存在！$refs 也不是响应式的，因此你不应该试图用它在模板中做数据绑定。</p>
+<h5 id="34-组件之间的通讯">3.4. 组件之间的通讯</h5>
+<h6 id="341-子组件向父组件派发事件">3.4.1 子组件向父组件派发事件</h6>
+<p>使用<code>this.$emit('change')</code>;在父组件触发change事件。<code>@change=&quot;handleChange&quot;;</code>父组件的<code>change</code>事件执行<code>handleChange</code>方法。</p>
+<h6 id="342-父组件向子组件传递">3.4.2 父组件向子组件传递</h6>
+<p>父组件向子组件传递是通过属性，用<code>v-bind</code>进行绑定，子组件尽量不要修改父组件传进来的参数，可以使用<code>data</code>复制一份传入的值；<br>
+对于组件参数的校验，直接在<code>props</code>，接收的时候，为一个对象，<code>type</code>为类型，<code>default</code>为默认值，<code>required</code>为设置参数是否必须，<code>validator(value){return (value.length&gt;5)}</code>传入的值必须大于五；</p>
+<pre><code class="language-js">Vue.component('my-component', {
+  props: {
+    // 基础的类型检查 (`null` 和 `undefined` 会通过任何类型验证)
+    propA: Number,
+    // 多个可能的类型
+    propB: [String, Number],
+    // 必填的字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 带有默认值的数字
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 带有默认值的对象
+    propE: {
+      type: Object,
+      // 对象或数组默认值必须从一个工厂函数获取
+      default: function () {
+        return { message: 'hello' }
+      }
+    },
+    // 自定义验证函数
+    propF: {
+      validator: function (value) {
+        // 这个值必须匹配下列字符串中的一个
+        return ['success', 'warning', 'danger'].indexOf(value) !== -1
+      }
+    }
+  }
+})
+</code></pre>
+<p>还是需要注意的是v-bind绑定的属性后面是一个对象，直接跟<code>class</code>一样绑定属性，为字符串；<code>props</code>传递的属性，在<code>dom</code>渲染出来的<code>HTML</code>上不会显示出来。</p>
+<h5 id="35-组件绑定原生事件">3.5 组件绑定原生事件</h5>
+<p>给父组件绑定事件，其实是一个自定义事件，想要给组件绑定事件，需要在<code>template</code>里面进行绑定。子组件想要触发自定义事件，需要使用<code>this.$emit('chandleClick')；</code>如果想在父组件添加事件，需要添加<code>native</code>事件修饰符:<code>@click.native=&quot;handleClick&quot;;</code></p>
+<blockquote>
+<p>这里在子组件向父组件传值定义事件名的时候需要注意，不同于组件和 <code>prop</code>，事件名不存在任何自动化的大小写转换。而是触发的事件名需要完全匹配监听这个事件所用的名称。所以如果我们定义了一个<code>this.$emit('myEvent')</code>，然后在父组件监听的时候：<code>&lt;my-component v-on:my-event=&quot;doSomething&quot;&gt;&lt;/my-component&gt;</code>使用短横行的方式去监听，是监听不到的，因为不同于组件和<code>prop</code>，事件名不会被用作一个 <code>JavaScript</code> 变量名或属性名，所以就没有理由使用 <code>camelCase</code> 或 <code>PascalCase</code> 了。并且<code>v-on</code>事件监听器在<code>DOM</code>模板中会被自动转换为全小写 (因为 <code>HTML</code>是大小写不敏感的)，所以<code>v-on:myEvent</code>将会变成 <code>v-on:myevent</code>——导致 <code>myEvent</code>不可能被监听到。<br>
+所以推荐我们一般使用短横线的方式去命名。</p>
+</blockquote>
+<h5 id="36-非父子组件传值-bus-总线发布订阅模式观察者模式">3.6. 非父子组件传值（ Bus 总线/发布订阅模式/观察者模式）</h5>
+<pre><code class="language-javascript">Vue.prototype.bus = new Vue();
+//子组件触发事件
+this.bus.$emit('change',this.value)//来触发事件；然后组件进行监听：
+//在父组件的mounted中去监听子组件触发的事件
+mounted(){
+  this.bus.$on('change',function(msg)
+    {
+      //...
+    }
+);
+</code></pre>
+<h5 id="37-插槽相关知识">3.7.  插槽相关知识</h5>
+<p>在<code>slot</code>插槽中，如果在父组件中不进行插入<code>dom</code>，在子组件的<code>&lt;slot&gt;</code>默认内容<code>&lt;/slot&gt;</code>,里面的字会显示出来，自定义的内容放在<code>&lt;slot&gt;中间</code>，如果父组件有数据，则不会显示；具名插槽也可以有默认内容。<br>
+具名插槽：<br>
+有时我们需要多个插槽。例如对于一个带有如下模板的 <base-layout> 组件：</p>
+<pre><code class="language-html">&lt;div class=&quot;container&quot;&gt;
+  &lt;header&gt;
+    &lt;!-- 我们希望把页头放这里 --&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;!-- 我们希望把主要内容放这里 --&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;
+    &lt;!-- 我们希望把页脚放这里 --&gt;
+  &lt;/footer&gt;
+&lt;/div&gt;
+</code></pre>
+<p>对于这样的情况，<code>&lt;slot&gt;</code>元素有一个特殊的特性：<code>name</code>。这个特性可以用来定义额外的插槽：</p>
+<pre><code class="language-html">&lt;div class=&quot;container&quot;&gt;
+  &lt;header&gt;
+    &lt;slot name=&quot;header&quot;&gt;&lt;/slot&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;slot&gt;&lt;/slot&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;
+    &lt;slot name=&quot;footer&quot;&gt;&lt;/slot&gt;
+  &lt;/footer&gt;
+&lt;/div&gt;
+</code></pre>
+<p>一个不带<code>name</code> 的 <code>&lt;slot&gt;</code>出口会带有隐含的名字<code>“default”</code>。<br>
+在向具名插槽提供内容的时候，我们可以在一个 <code>&lt;template&gt;</code>元素上使用<code>v-slot</code>指令，并以<code>v-slot</code>的参数的形式提供其名称：</p>
+<pre><code class="language-html">&lt;base-layout&gt;
+  &lt;template v-slot:header&gt;
+    &lt;h1&gt;Here might be a page title&lt;/h1&gt;
+  &lt;/template&gt;
+
+  &lt;p&gt;A paragraph for the main content.&lt;/p&gt;
+  &lt;p&gt;And another one.&lt;/p&gt;
+
+  &lt;template v-slot:footer&gt;
+    &lt;p&gt;Here's some contact info&lt;/p&gt;
+  &lt;/template&gt;
+&lt;/base-layout&gt;
+</code></pre>
+<p>现在 <code>&lt;template&gt;</code> 元素中的所有内容都将会被传入相应的插槽。任何没有被包裹在带有<code>v-slot</code>的<code>&lt;template&gt;</code>中的内容都会被视为默认插槽的内容。</p>
+<p>然而，如果你希望更明确一些，仍然可以在一个 <code>&lt;template&gt;</code>中包裹默认插槽的内容：</p>
+<pre><code class="language-html">&lt;base-layout&gt;
+  &lt;template v-slot:header&gt;
+    &lt;h1&gt;Here might be a page title&lt;/h1&gt;
+  &lt;/template&gt;
+
+  &lt;template v-slot:default&gt;
+    &lt;p&gt;A paragraph for the main content.&lt;/p&gt;
+    &lt;p&gt;And another one.&lt;/p&gt;
+  &lt;/template&gt;
+
+  &lt;template v-slot:footer&gt;
+    &lt;p&gt;Here's some contact info&lt;/p&gt;
+  &lt;/template&gt;
+&lt;/base-layout&gt;
+</code></pre>
+<p>最终上面的代码渲染的结果为：</p>
+<pre><code class="language-html">&lt;div class=&quot;container&quot;&gt;
+  &lt;header&gt;
+    &lt;h1&gt;Here might be a page title&lt;/h1&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;p&gt;A paragraph for the main content.&lt;/p&gt;
+    &lt;p&gt;And another one.&lt;/p&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;
+    &lt;p&gt;Here's some contact info&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/div&gt;
+</code></pre>
+<blockquote>
+<p>注意 v-slot 只能添加在一个<code>&lt;template&gt;</code>上</p>
+</blockquote>
+<p>作用域插槽：在父组件向子组件传入内容时候，需要使用<code>template</code>标签进行包裹，这里的<code>template</code>是必须的</p>
+<pre><code class="language-html">&lt;child&gt;
+  &lt;template slot-scope=&quot;props&quot;&gt;
+    &lt;h1&gt;{{props.item}}&lt;/h1&gt;
+  &lt;/template&gt;
+&lt;/child&gt;
+</code></pre>
+<p>在子组件中：</p>
+<pre><code class="language-html">&lt;div&gt;
+  &lt;ul&gt;
+    &lt;slot 
+       v-for=&quot;item of list&quot; 
+       :item=item
+       &gt;
+    &lt;/slot&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+<blockquote>
+<p>应用场景：子组件进行循环或者某一dom渲染的样式需要外部传入，进行不同的显示；作用域插槽也就相当于就是插槽之间的数据通讯。</p>
+</blockquote>
+<h5 id="38-动态组件">3.8.  动态组件</h5>
+<p>动态组件：<code>component</code>标签的<code>is</code>属性来自动加载组件:<code>&lt;component :is=&quot;com-a&quot;&gt;&lt;/component&gt;,</code>显示<code>com-a</code>组件；不像<code>v-if</code>，它是将组件进行缓存在内存里面的。</p>
+<h5 id="39-vue-中的动画">3.9. vue 中的动画</h5>
+<p><code>vue</code>中的动画，需要使用<code>transition</code>标签进行包裹需要动画显示的组件，他会给里面包裹的元素添加多个类名<code>fade-enter、fade-enter-active、fade-enter-to</code>等， 前缀为<code>fade</code>是因为我们添加的<code>name</code>为<code>fade，vue</code>默认为<code>v-enter、v-enter-active</code>等等。<code>div</code>标签外只要使用<code>transition</code>包裹，<code>div</code>不管使用<code>v-show</code>还是<code>v-if</code>过渡动画都是可以显示的。如果我们需要自定义类名，直接在<code>transform</code>标签上添加 <code>enter-active-class=&quot;active&quot; leave-active-class=&quot;leave&quot;</code>对应的<code>active</code>以及<code>leave</code>是自定义的类名；<br>
+<code>vue</code>中使用<code>animate.css</code>在<code>transition</code>标签上直接使用：<code>enter-active-class=&quot;animated swing&quot; leave-active-class=&quot;animated shake&quot;</code>；<br>
+为了让<code>div</code>能在初次进去页面的时候有动画，添加一个自定义属性<code>appear-active-class</code>,还需要加一个<code>appear</code>，意思就是让组件第一次显示的时候也有一个动画效果，就是<code>appear-active-class</code>；可以添加属性<code>type=&quot;&quot;</code>来指定动画播放时长；</p>
+<h5 id="311-非-props-特性">3.11. 非 Props 特性</h5>
+<p>一个非<code>prop</code>特性是指传向一个组件，但是该组件并没有相应 <code>prop</code>定义的特性。<br>
+因为显式定义的 <code>prop</code> 适用于向一个子组件传入信息，然而组件库的作者并不总能预见组件会被用于怎样的场景。这也是为什么组件可以接受任意的特性，而这些特性会被添加到这个组件的根元素上。<br>
+例如，想象一下你通过一个 <code>Bootstrap</code> 插件使用了一个第三方的 <code>&lt;bootstrap-date-input&gt;</code> 组件，这个插件需要在其 <code>&lt;input&gt;</code>上用到一个 <code>data-date-picker</code>特性。我们可以将这个特性添加到你的组件实例上：<br>
+然后这个<code>data-date-picker=&quot;activated&quot;</code>特性就会自动添加到<code>&lt;bootstrap-date-input&gt;</code> 的根元素上。</p>
+<h5 id="312-组件中替换合并已有的特性">3.12. 组件中替换/合并已有的特性</h5>
+<p>如果定义了一个组件 <bootstrap-date-input> 的模板是这样的：</p>
+<pre><code class="language-html">&lt;input type=&quot;date&quot; class=&quot;form-control&quot;&gt;
+</code></pre>
+<p>为了给我们的日期选择器插件定制一个主题，我们可能需要像这样添加一个特别的类名：</p>
+<pre><code class="language-html">&lt;bootstrap-date-input
+  data-date-picker=&quot;activated&quot;
+  class=&quot;date-picker-theme-dark&quot;
+&gt;&lt;/bootstrap-date-input&gt;
+</code></pre>
+<p>在这种情况下，我们定义了两个不同的<code>class</code> 的值:</p>
+<ul>
+<li><code>form-control</code>，这是在组件的模板内设置好的</li>
+<li><code>date-picker-theme-dark</code>，这是从组件的父级传入的</li>
+</ul>
+<p>对于绝大多数特性来说，从外部提供给组件的值会替换掉组件内部设置好的值。所以如果传入 <code>type=&quot;text&quot;</code>就会替换掉 <code>type=&quot;date&quot;</code> 并把它破坏！庆幸的是，<code>class</code>和<code>style</code> 特性会稍微智能一些，即两边的值会被合并起来，从而得到最终的值：<code>form-control date-picker-theme-dark</code>。</p>
+<h5 id="313-组件的禁用特性继承">3.13. 组件的禁用特性继承</h5>
+<p>如果你不希望组件的根元素继承特性，也就是说你不希望你的组件的根元素取绑定你没有接受的属性值，你可以在组件的选项中设置 inheritAttrs: false。例如：</p>
+<pre><code class="language-js">Vue.component('my-component', {
+  inheritAttrs: false,
+  // ...
+})
+</code></pre>
+<p>这尤其适合配合实例的 <code>$attrs</code> 属性使用，该属性包含了传递给一个组件的特性名和特性值，例如：</p>
+<pre><code class="language-js">{
+  required: true,
+  placeholder: 'Enter your username'
+}
+</code></pre>
+<p>有了 <code>inheritAttrs: false</code>和<code>$attrs</code>，你就可以手动决定这些特性会被赋予哪个元素。在撰写基础组件的时候是常会用到的：</p>
+<pre><code class="language-js">Vue.component('base-input', {
+  inheritAttrs: false,
+  props: ['label', 'value'],
+  template: `
+    &lt;label&gt;
+      {{ label }}
+      &lt;input
+        v-bind=&quot;$attrs&quot;
+        v-bind:value=&quot;value&quot;
+        v-on:input=&quot;$emit('input', $event.target.value)&quot;
+      &gt;
+    &lt;/label&gt;
+  `
+})
+</code></pre>
+<blockquote>
+<p>注意<code>inheritAttrs: false</code> 选项不会影响<code>style</code> 和 <code>class</code>的绑定。</p>
+</blockquote>
+<p>这个模式允许你在使用基础组件的时候更像是使用原始的 <code>HTML</code>元素，而不会担心哪个元素是真正的根元素：</p>
+<pre><code class="language-html">&lt;base-input
+  v-model=&quot;username&quot;
+  required
+  placeholder=&quot;Enter your username&quot;
+&gt;&lt;/base-input&gt;
+</code></pre>
+<p>可以看到我们的组件并没有接收<code>required</code>以及<code>placeholder</code>属性，因此，<code>$attrs</code>的值就是：</p>
+<pre><code class="language-js">{
+  required: true,
+  placeholder: 'Enter your username'
+}
+</code></pre>
+<p>然后我们在组件中直接将这些属性进行绑定了：<code>v-bind=&quot;$attrs&quot;</code>，也就是说<code>$attrs</code>存储非<code>prop</code>特性，<code>inheritAttrs</code>控制<code>vue</code>对非<code>prop</code>特性默认行为，在标签内添加<code>$attrs</code>可以渲染上未注册的属性<code>inheritAttrs:false</code>是允许组件绑定的未注册属性渲染到组件根节点上的。<code>$attrs</code>是一个对象。</p>
+<h4 id="4-vue-cli-以及-vue-router">4.  vue-cli 以及 vue-router</h4>
+<h5 id="41-javascript-中-promise-对象与-callbacks-的区别">4.1. Javascript 中 Promise 对象与 callbacks 的区别</h5>
+<p><code>Javascript</code>中<code>Promise</code>对象与<code>callbacks</code>的区别进行比较，显著的优点就是，<code>promise</code>对象减少了嵌套，有效的防止了进入回调地狱；并且可以一次触发多个<code>promise</code>对象：</p>
+<pre><code class="language-javascript">	const eatMeal=Promise.all([firstPromise,burgerPromise,drinkPromise]) 
+	.then([fries,burger,drinks]=&gt;{
+	console.log(`Chomp. Awesome ${burger}`);
+	console.log(`Chomp. Awesome ${fries}`);
+	console.log(`Chomp. Awesome ${drinks}`);
+	})；
+</code></pre>
+<p><code>reject</code>与<code>reslove</code>使用，在创建<code>promise</code>对象的时候进行判断，如果符合条件，就执行<code>resolve</code>，不符合就执行<code>reject</code>；<br>
+然后就是<code>.then</code>，不管是成功还是失败，都会执行，也就是执行<code>reject</code>的时候会执行<code>.catch</code>；<code>.catch</code>是执行失败的时候会调用。</p>
+<h5 id="42-vue-cli-知识">4.2. vue-cli 知识</h5>
+<p><code>.vue</code>文件是代表<code>vue</code>的一个组件，在<code>js</code>文件中我们创建一个组件，是通过<code>Vue.component('com-a',{})</code>这样，在<code>vue</code>工程化中，我们使用<code>.vue</code>的文件进行创建组件。<br>
+对于<code>vue-cli</code>脚手架的理解，首先我们在根目录的<code>main.js</code>文件中，可以看到：引用了<code>route</code>r以及<code>app</code>文件。</p>
+<pre><code class="language-javascript">import Vue from 'vue'
+import App from './App'
+import router from './router'
+
+Vue.config.productionTip = false
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  router,
+  // 局部组件
+  components: { App },
+  // 下面这句话意思是将app组件渲染在页面中，可以不在这里写，直接在index里面进行书写app标签。
+  template: '&lt;App/&gt;'
+})
+
+// 路由 &lt;route-view&gt;显示的是当前路由地址所对应的内容
+</code></pre>
+<p>在<code>App.vue</code>文件中，我们可以看到：<code>&lt;route-view&gt;</code>显示的是当前路由地址所对应的内容 ,</p>
+<pre><code class="language-javascript">&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    [外链图片转存失败(img-cbxcO81D-1562120294364)(https://mp.csdn.net/mdeditor/assets/logo.png)]
+    &lt;!-- &lt;route-view&gt;显示的是当前路由地址所对应的内容 --&gt;
+    &lt;router-view/&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: 'App'
+}
+&lt;/script&gt;
+</code></pre>
+<p>打开<code>Router</code>夹子中的<code>index.js</code>文件：它配置了当路由显示为<code>home</code>，也就是<code>http://localhost:8080/#/home</code>这样的时候，显示组件<code>HelloWorld</code>，这样控制到不同的路由显示不同的内容。</p>
+<pre><code class="language-javascript">import Vue from 'vue'
+import Router from 'vue-router'
+import HelloWorld from '@/components/HelloWorld'
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/home',
+      name: 'HelloWorld',
+      component: HelloWorld
+    }
+  ]
+})
+
+</code></pre>
+<p>下面的代码注释：</p>
+<pre><code class="language-javascript">import Vue from 'vue'
+import Router from 'vue-router'
+import Home from '@/pages/home/Home'
+import List from '@/pages/list/List'
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    // 当用户访问根目录的时候，&lt;router-view&gt;显示home组件
+    {
+      path: '/',
+      // 路由名字
+      name: 'home',
+      component: Home
+    }, {
+      // 当用户访问根目录的时候，&lt;router-view&gt;显示home组件
+      path: '/list',
+      name: 'List',
+      component: List
+    }
+  ]
+})
+</code></pre>
+<p>有关<code>.vue</code>中的页面跳转，以前我们使用<code>a</code>标签进行跳转的，在<code>.vue</code>中，我们使用<code>&lt;router-link&gt;</code>，进行跳转，如下面代码：</p>
+<pre><code class="language-javascript">&lt;template&gt;
+&lt;!-- 这里需要注意的是template只能包裹一个内容，如果有多个，需要在外层再加一个div --&gt;
+  &lt;div&gt;
+    &lt;div&gt;home&lt;/div&gt;
+    &lt;!-- 页面跳转 to里面是跳转到根路径下的list页面，就是路由里面配置--&gt;
+    &lt;router-link to=&quot;/list&quot;&gt;列表&lt;/router-link&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  // 组件的名字
+  name: 'Home'
+}
+&lt;/script&gt;
+
+&lt;style&gt;
+div {
+  font-size: 19px;
+}
+&lt;/style&gt;
+
+</code></pre>
+<p>当然我们可以使用<code>router</code>的函数式导航的方式进行跳转页面：可以看到跳转到了<code>backCar</code>页面，传入的参数为<code>id: carInfo.CARID</code>，在另一个组件接收传入的参数<code>this.$router.query.id</code> ， 对于页面传值的方式还有很多。</p>
+<pre><code class="language-js">this.$router.push({ path: '/backCar', query: {ID: carInfo.CARID} });
+</code></pre>
+<blockquote>
+<p><code>还有一个需要注意的是：&lt;template&gt;标签只能向外暴露一个根标签，如果有多个，需要再到外层加一个div</code>；<br>
+单页应用：通过js进行控制页面的显示。</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20190505172511257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
+<h5 id="43-项目中一些技巧">4.3. 项目中一些技巧</h5>
+<h6 id="431-import-引入-css">4.3.1. import 引入 css</h6>
+<p>通过import可以直接引用css，如下面代码，可以直接写在<code>main.js</code>中：</p>
+<pre><code class="language-javascript">	import './assets/style/reset.css'
+</code></pre>
+<h6 id="432-移动端-click-事件延迟执行">4.3.2. 移动端 Click 事件延迟执行</h6>
+<p>防止移动端中出现点击<code>click</code>事件，延迟300毫秒执行的插件，在工程中输入下面命令进行安装：</p>
+<pre><code class="language-javascript">	cnpm install fastclick --save
+</code></pre>
+<p>然后在<code>main.js</code>中进行设置：</p>
+<pre><code class="language-javascript">	// 使用attach方法，绑定到body中。
+	fastClick.attach(document.body)
+</code></pre>
+<h6 id="433-vue-cl项目中配置路径别名">4.3.3. vue-cl项目中配置路径别名</h6>
+<p>在<code>vue-cli</code>项目中配置路径引用的标记，我们经常在项目中看到@符号，代表就是<code>src</code>路径，<code>~@</code>代表的是<code>src</code>路径下的两层路径，有时候我们的层级特别多，不能使用@符号，我们可以进行配置我们的简写路径。打开配置文件，修改如下：<br>
+<code>styles</code>就是代表我们的<code>src/assets/style</code>这个路径。</p>
+<pre><code class="language-js">	  resolve: {
+	    extensions: ['.js', '.vue', '.json'],
+	    alias: {
+	      'vue$': 'vue/dist/vue.esm.js',
+	      '@': resolve('src'),
+	      'styles': resolve('src/assets/style'),
+	    }
+	  },
+</code></pre>
+<p>所以我们在引用该目录下的文件的直接就直接这样写：</p>
+<pre><code class="language-js">	import 'styles/border.css'
+	import 'styles/iconfont.css'
+</code></pre>
+<h6 id="434-vue-cl项目中使用-stylus">4.3.4. vue-cl项目中使用 stylus</h6>
+<p>引入<code>stylus</code>,他类似<code>sass</code>或者<code>less</code>这种，可以直接在css中进行定义变量；帮助我们工程化代码；输入下面的命令进行安装：</p>
+<pre><code class="language-js">	npm install stylus --save
+	npm install stylus-loader --save
+</code></pre>
+<pre><code>然后我们可以在我们的项目中使用，如下面的`&lt;style&gt;`标签内，需要添加一个`lang=&quot;stylus&quot;`属性，这样就直接可以使用`stylus`进行写css代码，
+</code></pre>
+<pre><code class="language-css">	&lt;style lang=&quot;stylus&quot; scoped&gt;
+	@import '~styles/varibles.styl'
+	  .header
+	    display: flex
+	    line-height: .86rem
+	    background: $bgColor
+	    color: #fff
+	    .header-left
+	      width: .64rem
+	      float: left
+	      .back-icon
+	        text-align: center
+	        font-size: .4rem
+	&lt;/style&gt;
+</code></pre>
+<p>这里还有需要注意的是，我们可以使用<code>stylus</code>，新建一个<code>varibles.styl</code>文件，来进行定义变量，比如我们主题的颜色，在很多css文件中都要使用，如果后期需要更换主题颜色，就很麻烦；这时候，我们可以通过新建一个<code>styl</code>后缀的文件，在里面进行定义我们的变量，这样后期维护就比较方便；<code>varibles.styl</code>文件内如下：</p>
+<pre><code class="language-css">	$bgColor = #00bcd4
+	$darkTextColor = #333
+	$headerHeight = .86rem
+	```
+	然后我们引入这个文件，直接可以使用在里面定义的变量，代码如下：
+	```css
+	@import '~styles/varibles.styl'
+	  .header
+	    display: flex
+	    line-height: .86rem
+	    background: $bgColor
+</code></pre>
+<h6 id="435-移动端像素问题">4.3.5. 移动端像素问题</h6>
+<p>首先需要明白<code>rem</code>与<code>px</code>像素单位之间的转化；<code>1rem = html font-size = 50px</code>；经常为了方便处理转换<code>rem</code>；我们会将<code>html</code>的<code>font-size</code>设置为<code>50px</code>，这样我们直接在页面中写<code>rem</code>的时候就方便计算了，直接是像素(<code>px</code>)/100这样计算就可以了。比如我们要设置<code>width=86px</code>，直接写成<code>width=.86rem</code>就可以了。</p>
+<blockquote>
+<p>需要注意的一个问题是，如果修改了<code>webpack</code>里面的配置项，需要重新启动服务才会有效。</p>
+</blockquote>
+<h4 id="5-项目开发中的一些知识">5. 项目开发中的一些知识</h4>
+<h5 id="51-开发流程">5.1. 开发流程</h5>
+<p>开发项目中的流程：大多数公司在进行开发一个项目的时候，都会首先建立一个主分支(<code>master</code>),然后将其他功能的编写，都放在其他分支上，最后将其他分支合并到主分支这样的开发流程。<br>
+在码云上新建分支，然后在项目文件夹下输入命名：<br>
+<code>git push</code> 他会提示提交到哪一个分支上，然后输入命令：<code>git checkout index-swiprer</code> 其中<code>index-swiprer</code>是我们新建的一个分支。<br>
+将分支内容提交到主分支，还是通过<code>git add . ; git commit -m '&quot; ; git push</code>提交之后，然后输入命令<code>git checkout master</code>切换到主分支，然后进行合并，输入命令:<code>git merge origin/index-swiper</code>其中<code>index-swiprer</code>是我们要合并的分支；最后再<code>git push</code></p>
+<h5 id="52-vue-第三方轮播图插件-vue-awesome-swiper">5.2. vue 第三方轮播图插件 vue-awesome-swiper</h5>
+<p><code>vue</code>第三方轮播图插件<code>vue-awesome-swiper</code>，安装如下：<br>
+输入命令<code>npm install vue-awesome-swiper@2.6.7 --save</code>然后根据官网的操作步骤，就可以使用了。官网地址：https://github.com/surmon-china/vue-awesome-swiper</p>
+<h5 id="53-浏览器的小技巧模拟网络">5.3. 浏览器的小技巧模拟网络</h5>
+<p>浏览器的小技巧：可以点击调试面试的<code>network</code>右侧有一个<code>offline</code>右侧的向下的箭头，可以模拟不同的网速，比如可以选择<code>slow 3G</code>模拟<code>3G</code>网络。</p>
+<h5 id="54-css-代码技巧">5.4.  css 代码技巧</h5>
+<h6 id="541-宽高保持一定的百分比">5.4.1. 宽高保持一定的百分比</h6>
+<p>高度根据宽度撑开百分比，设置宽高始终保持在<code>31.25%</code>如下面的代码：</p>
+<pre><code class="language-css">	  overflow: hidden
+	  width: 100%
+	  height: 0
+	  /*高度会根据宽度自动撑开31.25% */
+	  padding-bottom: 31.25%
+</code></pre>
+<p>或者直接写一个<code>height：31.25vm</code>，把<code>overflow</code>以及<code>padding-bottom</code>删除 ,也是可以的。</p>
+<h6 id="542-修改第三方插件样式">5.4.2. 修改第三方插件样式</h6>
+<p>查找<code>wrapper</code>下面的<code>swiper-pagination-bullet-active</code>类都加一个背景色。应用场景是，有时候引用了第三方的插件，需要改插件的颜色，直接通过加<code>! important</code>是不行的，可以通过下面的方法进行修改。</p>
+<pre><code class="language-css">.wrapper &gt;&gt;&gt; .swiper-pagination-bullet-active
+  background: #fff
+</code></pre>
+<p>另一个技巧：当页面显示的时候有可能显示的字体会很多，我们可以设置多余的显示为<code>...</code>，可以通过css类控制：</p>
+<pre><code class="language-css">  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+</code></pre>
+<p>我们可以借助<code>stylus</code>进行封装css函数，如下面代码：</p>
+<pre><code class="language-css">	ellipsis()
+	  overflow: hidden
+	  white-space: nowrap
+	  text-overflow: ellipsis
+</code></pre>
+<p>然后在css中进行引入：<code>mixins.styl</code>文件就是我们写的代码，直接加一个<code>ellipsis()</code>就可以了。</p>
+<pre><code class="language-css">	@import '~styles/mixins.styl'
+	  .icon-desc
+	    position: absolute
+	    left: 0
+	    right: 0
+	    bottom: 0
+	    height: .44rem
+	    line-height: .44rem
+	    text-align: center
+	    color: $darkTextColor
+	    ellipsis()
+</code></pre>
+<h6 id="543-div-元素垂直居中">5.4.3. div 元素垂直居中</h6>
+<p><code>CSS</code>技巧：让给<code>div</code>中的元素垂直居中：</p>
+<pre><code class="language-css">	  display: flex
+	  flex-direction: column
+	  justify-content: center
+</code></pre>
+<p>然后里面的可以设置<code>css</code>进行水平居中：</p>
+<pre><code class="language-css">	    line-height: .44rem
+	    text-align: center
+</code></pre>
+<h6 id="544-移动端获取元素离顶部元素真实高度">5.4.4. 移动端获取元素离顶部元素真实高度</h6>
+<p>对于页面中获取离上面元素高度：</p>
+<pre><code class="language-javascript">	        // 元素离顶部元素的高度
+	        const startY = this.$refs['A'][0].offsetTop
+	        // 获取到手离开屏幕的高度，他是获取到设备的最顶部到手指离开时的高度，这里高度需要减去顶部的header
+	        //touch事件会传入一个手势参数，第一个存储着变量，跟点击事件一样，存储事件属性。
+	        const touchY = e.touches[0].clientY - 79
+</code></pre>
+<h5 id="55-vue-cli-项目中的静态资源访问以及代码提交配置">5.5.  vue-cli 项目中的静态资源访问以及代码提交配置</h5>
+<p><code>vue-cli</code>项目中，我们一般是将就静态文件放在<code>static</code>文件夹中，因为整个项目，只能那个文件夹可以被外部访问到。访问其他文件夹中的内容会自动跳转到主页面。我们可以修改项目中的<code>.gitignore</code>文件，进行配置在git提交代码的时候，提交哪些文件。如下面代码。设置将<code>static</code>下面的<code>mock</code>文件夹内的东西不进行提交:</p>
+<pre><code class="language-javascript">	.DS_Store
+	node_modules/
+	/dist/
+	npm-debug.log*
+	yarn-debug.log*
+	yarn-error.log*
+	static/mock
+	
+	# Editor directories and files
+	.idea
+	.vscode
+	*.suo
+	*.ntvs*
+	*.njsproj
+	*.sln
+	
+</code></pre>
+<h5 id="56-项目接口的转接">5.6. 项目接口的转接</h5>
+<p>我们在写项目代码的时候，前端写的模拟数据，通过自己写的模拟接口，有可能是通过模拟的<code>json</code>数据，但是当项目 上线的时候需要进行替换真的<code>API</code>接口，如果在上线前进行替换，是有风险的，我们可以通过<code>webpack</code>提供的配置，在<code>config</code>文件夹下通过配置，将接口进行跳转，如下面的配置：</p>
+<pre><code class="language-javascript">	    proxyTable: {
+	      '/api': {
+	        target: 'http://localhost:8080',
+	        pathRewrite: {
+	          '^/api': 'static/mock'
+	        }
+	      }
+	    },
+</code></pre>
+<p>代码的意思是，将有<code>/api</code>请求的路径替换成<code>http://localhost:8080/static/mock</code>这样</p>
+<h5 id="57-math-对象的一些方法">5.7. Math 对象的一些方法</h5>
+<p><code>Math.round()，Math.ceil()，Math.floor()，Math.trunc</code>的区别：<code>Math.floor()</code>首先是向下取整，<code>Math.ceil()</code>是向上取整，<code>Math.round()</code>就类似我们的四舍五入,<code>Math.trunc()</code>方法会将数字的小数部分去掉，只保留整数部分。</p>
+<h5 id="58-css-的-rem-以及-vm">5.8. CSS 的 rem 以及 vm</h5>
+<p><code>rem</code> 是 <code>CSS3</code>新增的一个相对单位<code>（root em）</code>，即相对 <code>HTML</code> 根元素的字体大小的值。<br>
+<code>em</code> 也是一个相对单位，却是相对于当前对象内文本的字体大小。<br>
+一般建议在 <code>line-height</code>使用<code>em</code>。因为在需要调整字体大小的时候，只需修改<code>font-size</code> 的值，而<code>line-height</code>已经设置成了相对行高了。<br>
+首行缩进两个字符：<code>text-indent: 2em</code><br>
+视口单位 <code>vw | vh</code>:</p>
+<blockquote>
+<p>vw: 1vw = 视口宽度的 1%<br>
+vh: 1vh = 视口高度的 1%</p>
+</blockquote>
+<h5 id="59-better-scroll-插件">5.9. Better-scroll 插件</h5>
+<p><code>Better-scroll</code>插件的用法：<br>
+首先进行安装，输入命令：<code>cnpm install better-scroll --save</code><br>
+然后在页面就可以使用，如下面的代码：它主要的功能是做一个滚动，还有一个弹性的动画。</p>
+<pre><code class="language-javascript">	import Bscroll from 'better-scroll'
+	export default {
+	  name: 'CityList',
+	  mounted () {
+	    //   传入dom元素
+	    this.scroll = new Bscroll(this.$refs.wrapper)
+	  }
+	}
+</code></pre>
+<p>可以使用该插件自带的方法，进行滚动到对应的<code>DOM</code>元素，<code>element</code>是对应要滚动到的元素<code>DOM</code>节点，代码如下</p>
+<pre><code class="language-javascript">	this.scroll.scrollToElement(element)
+</code></pre>
+<p>在<code>vue</code>中，我们获取组件，通常是在组件添加一个<code>ref</code>属性，然后通过<code>this.$refs.wrapper</code>获取到对应的组件，其中<code>wrapper</code>是我们定义组件的<code>ref</code>属性名字。</p>
+<h5 id="510-防抖节流的例子">5.10. 防抖节流的例子</h5>
+<p>一个防抖节流的例子：这个是做了一个类似通讯录滑动右侧字母列表进行显示对应首字母的人员，我们会通过<code>touch</code>事件来完成。思路是这样的：首先获取到<code>A</code>到顶部的距离，然后获取到手指滑动结束后的位置，用手指滑动后的位置减去<code>A</code>的位置，就是之间的距离差，然后根据距离差除以每一个字母的高度，就可以获取到到第几个位置，然后显示对应的数据。<br>
+<img src="https://img-blog.csdnimg.cn/20190507212023344.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+但是当我们手指拖动的时候，会频繁的触发触摸事件，所以我们在这里就可以做一个节流的操作，定义一个计时器，每次移动完之后，首先清除上次的定时器，然后重新定义计时器，每隔16毫秒执行一次事件。这样避免了频繁调用事件，下面是实现的代码：</p>
+<pre><code class="language-javascript">	    handleTouchMove (e) {
+	      if (this.touchStatus) {
+	        if (this.timer) {
+	          clearTimeout(this.timer)
+	        }
+	        // 延迟16毫秒执行
+	        this.timer = setTimeout(() =&gt; {
+	          // 获取到手离开屏幕的高度，他是获取到设备的最顶部到手指离开时的高度，这里高度需要减去顶部的header
+	          const touchY = e.touches[0].clientY - 79
+	          const index = Math.floor((touchY - this.startY) / 20)
+	          if (index &gt;= 0 &amp;&amp; index &lt; this.letter.length) {
+	            this.$emit('change', this.letter[index - 1])
+	          }
+	        }, 16)
+	      }
+	    },
+</code></pre>
+<h5 id="511-touch-事件与-click-事件的冲突">5.11.  touch 事件与 click 事件的冲突</h5>
+<p>有时候我们做的拖动页面，比如通讯录的右侧拖动字母表，显示对应的人，但是发现拖动的时候整个页面也会动，这个时候就需要阻止<code>touchstart</code>事件的默认行为，需要在给组件绑定该事件的时候加一个事件修饰符，如下代码：</p>
+<pre><code class="language-javascript">          @click=&quot;handleLetterClick&quot;
+          @touchstart.prevent=&quot;handleTouchStart&quot;
+          @touchmove=&quot;handleTouchMove&quot;
+          @touchend=&quot;handleTouchEnd&quot;
+</code></pre>
+<h5 id="512-解决手机不支持-es6-新特性">5.12.  解决手机不支持 es6 新特性</h5>
+<p>有些手机会不支持<code>promise</code>对象，进行发送<code>ajax</code>请求，这时候我们需要使用一个插件来解决；在项目中安装插件，输入下面的命令：<br>
+这个插件，会检测浏览器是否支持<code>es6</code>的新特性，如果不支持，会进行修改。</p>
+<pre><code class="language-javascript">	  npm install babel-polyfill --save
+</code></pre>
+<p>然后在<code>main.js</code>文件中直接引入该插件就可以了<code>import 'babel-polyfill'</code></p>
+<h4 id="6-vuex-知识">6. vuex 知识</h4>
+<h5 id="61-vuex-的使用">6.1.  vuex 的使用</h5>
+<p>他是为了在多个组件共享数据的时候，方便我们管理共享状态；首先如果需要使用该插件，还是等进行安装。可以看下面的<code>vuex</code>实现步骤：<br>
+<img src="https://img-blog.csdnimg.cn/2019050812593849.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+每一个 <code>Vuex</code> 应用的核心就是 <code>store</code>（仓库）。<code>“store”</code>基本上就是一个容器，它包含着你的应用中大部分的状态 (<code>state</code>);所以在使用的使用进行实例化<code>Store</code>对象，如下面的代码：</p>
+<pre><code class="language-javascript">	import Vue from 'vue'
+	import Vuex from 'vuex'
+	
+	Vue.use(Vuex)
+	
+	export default new Vuex.Store({
+	  state: {
+	    city: '武汉'
+	  },
+	  //  组件可以直接调用commit进行修改数据，可以不进行事件的派发dispatch
+	  //   actions: {
+	  //     changeCity (ctx, city) {
+	  //       //  通过触发commit事件，来触发mutations来修改数据
+	  //       ctx.commit('changeCity', city)
+	  //     }
+	  //   },
+	  mutations: {
+	    changeCity (state, city) {
+	      state.city = city
+	    }
+	  }
+	})
+</code></pre>
+<p>从上面的示意图可以看到，如果需要改变状态里面的数据，首先得执行<code>Dispatch</code>进行分发一个事件，去执行一个<code>Actions</code>，然后通过<code>commit</code>去触发<code>Motations</code>里面的方法，去改变状态值；下面代码是<code>Dispatch</code>进行分发一个事件：</p>
+<pre><code class="language-javascript">	      // 触发changeCity这个Action
+       this.$store.dispatch('changeCity', city)
+</code></pre>
+<p>在<code>Store</code>对象的<code>Actions</code>里面我们这样写</p>
+<pre><code class="language-javascript">	import Vue from 'vue'
+	import Vuex from 'vuex'
+	Vue.use(Vuex)
+	export default new Vuex.Store({
+	  state: {
+	    city: '武汉'
+	  },
+	  //  组件可以直接调用commit进行修改数据，可以不进行事件的派发dispatch
+	   actions: {
+	       changeCity (ctx, city) {
+	         //  通过触发commit事件，来触发mutations来修改数据
+	       ctx.commit('changeCity', city)
+	       }
+	     },
+	  mutations: {
+	    changeCity (state, city) {
+	      state.city = city
+	    }
+	  }
+	})
+</code></pre>
+<p>组件可以直接通过commit调用执行mutation里面的方法就行修改数据，在页面直接这样写</p>
+<pre><code class="language-javascript">	  // 组件可以直接通过commit调用执行mutation里面的方法就行修改数据
+      this.$store.commit('changeCity', city)
+</code></pre>
+<p>然后在<code>Store</code>对象的<code>Mutations</code>直接写对应的处理函数<code>changeCity</code>,代码：</p>
+<pre><code class="language-javascript">	import Vue from 'vue'
+	import Vuex from 'vuex'
+	
+	Vue.use(Vuex)
+	
+	export default new Vuex.Store({
+	  state: {
+	    city: '武汉'
+	  },
+	  mutations: {
+	    changeCity (state, city) {
+	      state.city = city
+	    }
+	  }
+	})
+</code></pre>
+<p>在页面中，我们直接这样访问<code>store</code>对象里面的数值：</p>
+<pre><code class="language-html">	  &lt;div class=&quot;header-right&quot;&gt;
+          {{this.$store.state.city}}
+          &lt;span class=&quot;iconfont arrow-icon&quot;&gt;&amp;#xe64a;&lt;/span&gt;
+      &lt;/div&gt;
+</code></pre>
+<h5 id="62-页面之间跳转">6.2. 页面之间跳转</h5>
+<p>对于页面跳转的，不仅可以使用<code>&lt;router-link to=&quot;/&quot;&gt;&lt;/router-link&gt;</code>这种方法跳转，也可以使用编程式导航这种。进行push要跳转的地址就可以，代码如下：</p>
+<pre><code class="language-javascript">	  methods: {
+	    handleCityClick (city) {
+	      // 触发changeCity这个Action
+	      // this.$store.dispatch('changeCity', city)
+	      // 组件可以直接通过commit调用执行mutation里面的方法就行修改数据
+	      this.$store.commit('changeCity', city)
+	      // 不仅可以使用&lt;router-link&gt;&lt;/router-link&gt;这种方法跳转，也可以使用编程式导航这种。进行push要跳转的地址就可以
+	      this.$router.push('/')
+	    }
+	  },
+</code></pre>
+<h5 id="63-访问-vuex-数据技巧">6.3. 访问 vuex 数据技巧</h5>
+<h6 id="631-组件中访问state数据">6.3.1. 组件中访问state数据</h6>
+<p>由于 <code>Vuex</code>状态存储是响应式的，从<code>store</code>实例中读取状态最简单的方法就是在计算属性中返回某个状态：</p>
+<pre><code class="language-js">// 创建一个 Counter 组件
+const Counter = {
+  template: `&lt;div&gt;{{ count }}&lt;/div&gt;`,
+  computed: {
+    count () {
+      return store.state.count
+    }
+  }
+}
+</code></pre>
+<p>调用<code>Vue.use(Vuex)</code>状态从根组件“注入”到每一个子组件中：</p>
+<pre><code class="language-js">const app = new Vue({
+  el: '#app',
+  // 把 store 对象提供给 “store” 选项，这可以把 store 的实例注入所有的子组件
+  store,
+  components: { Counter },
+  template: `
+    &lt;div class=&quot;app&quot;&gt;
+      &lt;counter&gt;&lt;/counter&gt;
+    &lt;/div&gt;
+  `
+})
+</code></pre>
+<p>然后在组件中可以使用：</p>
+<pre><code class="language-js">const Counter = {
+  template: `&lt;div&gt;{{ count }}&lt;/div&gt;`,
+  computed: {
+    count () {
+      return this.$store.state.count
+    }
+  }
+}
+</code></pre>
+<h6 id="632-mapstate-辅助函数">6.3.2. mapState 辅助函数</h6>
+<p>访问<code>vuex</code>数据技巧：前面写了可以通过<code>this.$store.state.city</code>这样来获取到我们在<code>Store</code>对象中定义的<code>state</code>里面的数据，我们也可以这样写：需要注意的是，遍历命名只能使<code>mapState</code>这样，下面的代码就是将<code>store</code>里面的<code>city</code>映射到计算属性里面的<code>city</code></p>
+<pre><code class="language-javascript">	import { mapState } from 'vuex'
+	  computed: {
+	    // 展开运算符 把 store里面的city映射到计算属性里面的city
+	    ...mapState(['city'])
+	  }
+</code></pre>
+<p>其实<code>mapState</code>里面也可以包含一个对象，这样写，如下面的代码：代码意思是将<code>vuex</code>的<code>city</code>映射到计算属性的<code>currentCity</code></p>
+<pre><code class="language-javascript">	import { mapState } from 'vuex'
+		  computed: {
+	    // 将vuex的city映射到计算属性的currentCity
+	    ...mapState({
+	      currentCity: 'city'
+	    })
+	  },
+</code></pre>
+<p>同样对于通过<code>commit</code>调用<code>Mutations</code>中的方法，也可以进行改写，之前是这样的：</p>
+<pre><code class="language-javascript">	    handleCityClick (city) {
+	      // 触发changeCity这个Action
+	      // this.$store.dispatch('changeCity', city)
+	      // 组件可以直接通过commit调用执行mutation里面的方法就行修改数据
+	      this.$store.commit('changeCity', city)
+	      // 不仅可以使用&lt;router-link&gt;&lt;/router-link&gt;这种方法跳转，也可以使用编程式导航这种。进行push要跳转的地址就可以
+	      this.$router.push('/')
+	    },
+</code></pre>
+<p>可以借助 <code>vuex</code>的简单方法，进行改写如下：需要注意的是<code>changeCity</code>这个方法要对应你在<code>store</code>对象的<code>Mutations</code>中定义的一致。还有需要注意的是，需要进行引入<code>import { mapState, mapMutations } from 'vuex'</code></p>
+<pre><code class="language-javascript">	import { mapState, mapMutations } from 'vuex'
+	  methods: {
+	    handleCityClick (city) {
+	      // 触发changeCity这个Action
+	      // this.$store.dispatch('changeCity', city)
+	      // 组件可以直接通过commit调用执行mutation里面的方法就行修改数据
+	      // this.$store.commit('changeCity', city)
+	      // 可以用下面的方法这样写
+	      this.changeCity(city)
+	      // 不仅可以使用&lt;router-link&gt;&lt;/router-link&gt;这种方法跳转，也可以使用编程式导航这种。进行push要跳转的地址就可以
+	      this.$router.push('/')
+	    },
+	    ...mapMutations(['changeCity'])
+	  },
+</code></pre>
+<h6 id="633-使用常量替代-mutation-事件类型">6.3.3. 使用常量替代 Mutation 事件类型</h6>
+<p>使用常量替代 <code>mutation</code> 事件类型在各种 <code>Flux</code>实现中是很常见的模式。这样可以使<code>linter</code>之类的工具发挥作用，同时把这些常量放在单独的文件中可以让你的代码合作者对整个<code>app</code> 包含的<code>mutation</code>一目了然：</p>
+<pre><code class="language-js">// mutation-types.js
+export const SOME_MUTATION = 'SOME_MUTATION'
+</code></pre>
+<pre><code class="language-js">// store.js
+import Vuex from 'vuex'
+import { SOME_MUTATION } from './mutation-types'
+
+const store = new Vuex.Store({
+  state: { ... },
+  mutations: {
+    // 我们可以使用 ES2015 风格的计算属性命名功能来使用一个常量作为函数名
+    [SOME_MUTATION] (state) {
+      // mutate state
+    }
+  }
+})
+</code></pre>
+<h5 id="64-vuex-中的-getters-属性">6.4.  vuex 中的 getters 属性</h5>
+<p><code>vuex</code>中的<code>getters</code>属性：他类似<code>vue</code>的计算属性一样，可以根据<code>state</code>中的数据计算出其他数据，也就是从<code>state</code>中派生出一些状态;比如下面的代码。我需要获取到我的城市名，出现两次，代码如下:下面是<code>store</code>里面的代码</p>
+<pre><code class="language-javascript">	  getters: {
+	    doubleCity (state) {
+	      return state.city + ' ' + state.city
+	    }
+	  }
+</code></pre>
+<p>然后在页面中，我们同样首先引入<code>mapGetters</code>,代码如下：</p>
+<pre><code class="language-javascript">	import { mapGetters } from 'vuex'
+		  computed: {
+	    // 展开运算符 把 store里面的doubleCity映射到计算属性里面的doubleCity
+	    ...mapGetters(['doubleCity'])
+	  }
+</code></pre>
+<h5 id="65-使用-keep-alive-优化性能">6.5. 使用 keep-alive 优化性能</h5>
+<p>使用<code>keep-alive</code>优化性能：我们的页面每次切换之后，都会进行重新的<code>ajax</code>请求，这样会耗费性能，我们可以在<code>&lt;router-view/&gt;</code>外层包裹一个<code>&lt;keep-alive&gt;</code>，他是只要路由渲染过的页面，会存储在内存中，再一次加载的时候，不会进行重新渲染 相当于添加了一个缓存</p>
+<pre><code class="language-html">	    &lt;!-- keep-alive是只要路由渲染过的页面，会存储在内存中，再一次加载的时候，不会进行重新渲染 相当于添加了一个缓存--&gt;
+	    &lt;keep-alive&gt;
+	      &lt;router-view/&gt;
+	    &lt;/keep-alive&gt;
+</code></pre>
+<p>但是有的时候，我们需要重新渲染页面，而不是读取缓存的内容，在使用<code>keep-alive</code>会触发一个<code>activated</code>方法，只要缓存的页面，再次显示，都会执行这个方法。我们可以在这里进行判断某些值是否改变，用不用重新发送请求。</p>
+<pre><code class="language-javascript">	  activated () {
+	    // 如果添加了keep-alive会有这个事件
+	    if (this.lastCity !== this.city) {
+	      this.lastCity = this.city
+	      this.getHomeInfo()
+	    }
+	  },
+</code></pre>
+<h5 id="66-router-link-一些知识">6.6. router-link 一些知识</h5>
+<h6 id="661-tag-属性">6.6.1. tag 属性</h6>
+<p><code>router-link</code>一些知识：对于<code>router-link</code>，<code>vue</code>会渲染成一个<code>a</code>标签，当我们点击跳转到其他页面之后，会变颜色，当然我们可以通过<code>css</code>进行控制跳转后链接的颜色，我们还可以直接将其他元素改为 <code>router-link</code>然后添加一个<code>tag</code>属性，等于替换的标签，如下面的代码：下面的代码。本身是一个<code>li</code>标签，用<code>router-link</code>替换之后，添加一个<code>tag=&quot;li&quot;</code>属性</p>
+<pre><code class="language-html">	            &lt;router-link tag=&quot;li&quot; class=&quot;item border-bottom&quot; v-for=&quot;item of list&quot; :key=&quot;item.id&quot; to=&quot;/detail&quot;&gt;
+	                ![在这里插入图片描述]()
+	                &lt;div class=&quot;item-info&quot;&gt;
+	                    &lt;p class=&quot;item-title&quot;&gt;{{item.title}}&lt;/p&gt;
+	                    &lt;p class=&quot;item-desc&quot;&gt;{{item.desc}}&lt;/p&gt;
+	                    &lt;button class=&quot;item-button&quot;&gt;查看详情&lt;/button&gt;
+	                &lt;/div&gt;
+	            &lt;/router-link&gt;
+</code></pre>
+<h6 id="662-返回到前一页">6.6.2. 返回到前一页</h6>
+<p><code>router-link</code>中：如果想要返回到前一个页面，属性<code>to='/'</code>这样就可以了,代码如下</p>
+<pre><code class="language-html">	        &lt;router-link tag=&quot;div&quot; to=&quot;/&quot; class=&quot;header-abs&quot;&gt;
+	            &lt;div class=&quot;iconfont header-abs-back&quot;&gt;&amp;#xe624;&lt;/div&gt;
+	        &lt;/router-link&gt;
+</code></pre>
+<h5 id="67-keep-alive-一些知识点">6.7.   &lt;keep-alive&gt;  一些知识点</h5>
+<p><code>&lt;keep-alive&gt;</code>一些知识点：对全局事件解析解绑；当我们在全局使用它进行包裹我们的组件的时候，前面也说了，会将我们的组件进行缓存，但是，他会因此产生两个生命周期函数，上面介绍了一个每次进入缓存页面的时候，执行的<code>activated</code>钩子函数，还有一个与之对应的钩子函数就是<code>deactivated</code>函数，就是离开这个页面的时候执行的方法。比如现在我们有一个页面，需要在<code>windoes</code>对象绑定<code>scroll</code>事件，但是如果在这个页面进行绑定了该事件之后，在其他的页面，还是会执行这个方法，所以我们需要对全局事件进行解绑。代码如下：<code>activated</code>钩子函数是当进入到使用<code>&lt;keep-alive&gt;</code>缓存的页面的时候执行的方法，我们在整理进行绑定了滚动事件,<code>deactivated</code>是当要离开缓存的这个页面的时候，执行的钩子函数，我们在这里进行移除绑定的滚动事件。</p>
+<pre><code class="language-javascript">	  activated () {
+	    window.addEventListener('scroll', this.handleScroll)
+	  },
+	  deactivated () {
+	    window.removeEventListener('scroll', this.handleScroll)
+	  }
+</code></pre>
+<h5 id="68-vuex-中的插件">6.8.  vuex 中的插件</h5>
+<p><code>Vuex</code> 的 <code>store</code> 接受 <code>plugins</code> 选项，这个选项暴露出每次<code>mutation</code>的钩子。<code>Vuex</code>插件就是一个函数，它接收<code>store</code> 作为唯一参数：</p>
+<pre><code class="language-js">const myPlugin = store =&gt; {
+  // 当 store 初始化后调用
+  store.subscribe((mutation, state) =&gt; {
+    // 每次 mutation 之后调用
+    // mutation 的格式为 { type, payload }
+  })
+}
+
+</code></pre>
+<p>使用：</p>
+<pre><code class="language-js">const store = new Vuex.Store({
+  // ...
+  plugins: [myPlugin]
+})
+</code></pre>
+<h5 id="68-严格模式">6.8.  严格模式</h5>
+<p>开启严格模式，仅需在创建<code>store</code> 的时候传入<code>strict: true</code>：</p>
+<pre><code class="language-js">const store = new Vuex.Store({
+  // ...
+  strict: true
+})
+</code></pre>
+<h4 id="7-vue-router-知识点">7. vue-router 知识点</h4>
+<h5 id="71-路由中参数的传递">7.1. 路由中参数的传递</h5>
+<p>如果需要在路由带参数，直接在路由后面写上<code>:id</code>这样，<code>id</code>是参数名；如下面的代码：</p>
+<pre><code class="language-javascript">    {
+      // 动态路由 id为参数
+      path: '/detail/:id',
+      name: 'Detail',
+      component: Detail
+    }
+</code></pre>
+<p>如果需要在页面中需要获取路由中的参数，如下面的代码：使用<code>this.$route.params.id</code>来进行获取该页面中的参数</p>
+<pre><code class="language-javascript">	    getDetailInfo () {
+	      axios.get('/api/detail.json?id=', {
+	        params: {
+	          id: this.$route.params.id
+	        }
+	      }).then(this.handleGetDataSucc)
+	    }
+</code></pre>
+<blockquote>
+<p>一般我们发送<code>ajax</code>请求的时候，一般是在页面挂载之后执行，也就是<code>mounted</code>钩子函数里面去执行发送请求。</p>
+</blockquote>
+<p>还有一种传递参数的方式：</p>
+<pre><code class="language-html">          &lt;router-link :to=&quot;{path:'/mailDetail',query:{id: item.id, type: 'rec'}}&quot; :key=&quot;item.id&quot;&gt;
+            &lt;InfoList :info=&quot;item&quot;&gt;&lt;/InfoList&gt;
+          &lt;/router-link&gt;
+</code></pre>
+<p>在组件中接收参数：</p>
+<pre><code class="language-js">  data () {
+    return {
+      form: {},
+      fjhref:'',
+      activeName: '1',
+      id: this.$route.query.id,
+      type: this.$route.query.type,
+    }
+  },
+</code></pre>
+<h5 id="72-组件中-name-的用法总结">7.2 组件中 name 的用法总结</h5>
+<p>组件中<code>name</code>的用法：组件的递归、去除缓存 、清除页面滚动。</p>
+<h6 id="721-去除缓存">7.2.1. 去除缓存</h6>
+<p>在指定页面去除缓存：在<code>keep-alive</code>组件中添加一个属性<code>exclude</code>,属性内容就是要去除缓存的页面的<code>name</code>值，如下面的代码：<br>
+这里我的组件名叫<code>Detail</code>，前面我们是通过缓存的两个钩子函数<code>activated</code>和<code>deactivated</code>配合清除缓存的，下面是另一种方法。<br>
+代码意思就是除了<code>Detail</code>这个页面不被缓存，其他页面都是被缓存的。</p>
+<pre><code class="language-html">    &lt;keep-alive exclude=&quot;Detail&quot;&gt;
+      &lt;router-view/&gt;
+    &lt;/keep-alive&gt;
+</code></pre>
+<h6 id="722-清除页面滚动">7.2.2. 清除页面滚动</h6>
+<p>清除页面滚动行为：我们在前面时候写到一个请求滚动的也是通过缓存的两个钩子函数<code>activated</code>和<code>deactivated</code>配合清除滚动的，其实在<code>vue-router</code>中，有一个配置项，是清除页面滚动行为的，使用前端路由，当切换到新路由时，想要页面滚到顶部，或者是保持原先的滚动位置，就像重新加载页面那样。 <code>vue-router</code>能做到，而且更好，它让你可以自定义路由切换时页面如何滚动，在<code>router</code>添加下面的代码，如下：<code>scrollBehavior</code>选项意思就是每次进行路由切换，始终回到最顶部。</p>
+<pre><code class="language-javascript">	export default new Router({
+		routes: [
+			// 当用户访问根目录的时候，&lt;router-view&gt;显示home组件
+			{
+				path: '/',
+				// 路由名字
+				name: 'home',
+				component: Home
+			}, {
+				// 动态路由 id为参数
+				path: '/detail/:id',
+				name: 'Detail',
+				component: Detail
+			}
+		],
+		scrollBehavior (to, from, savedPosition) {
+			return { x: 0, y: 0 }
+		}
+	})
+</code></pre>
+<h6 id="723-组件的递归">7.2.3. 组件的递归</h6>
+<p>递归组件：有时候我们在页面中，会有类似折叠菜单的这种，样式是一样的，使用同一个组件，这就需要使用递归组件，如下面数据：</p>
+<pre><code class="language-javascript">     categoryList&quot;: [{
+        &quot;title&quot;: &quot;成人票&quot;,
+        &quot;children&quot;: [{
+          &quot;title&quot;: &quot;成人三馆联票&quot;,
+          &quot;children&quot;: [{
+            &quot;title&quot;: &quot;成人三馆联票 - 某一连锁店销售&quot;
+          }]
+        },{
+          &quot;title&quot;: &quot;成人五馆联票&quot;
+     }]
+</code></pre>
+<p>递归组件就是在组件中调用他本身，上面的数据，只要有<code>children</code>我们就进行调用它本身，代码如下：</p>
+<pre><code class="language-html">        &lt;div class=&quot;item&quot; v-for=&quot;(item,index) of list&quot; :key=&quot;index&quot;&gt;
+            &lt;div class=&quot;item-title border-bottom&quot;&gt;
+                &lt;span class=&quot;item-title-icon&quot;&gt;&lt;/span&gt;
+                {{item.title}}
+            &lt;/div&gt;
+            &lt;div class=&quot;item-chilren&quot; v-if=&quot;item.children&quot;&gt;
+                &lt;detail-list :list=&quot;item.children&quot;&gt;&lt;/detail-list&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+</code></pre>
+<blockquote>
+<p>需要注意的是<code>detail-list</code>这个是改组件的<code>name</code>值，这就是组件<code>name</code>的其他用法</p>
+</blockquote>
+<h5 id="73-响应路由参数的变化">7.3. 响应路由参数的变化</h5>
+<p>当使用路由参数时，例如从 <code>/user/foo</code>导航到<code>/user/bar</code>，原来的组件实例会被复用。因为两个路由都渲染同个组件，比起销毁再创建，复用则显得更加高效。不过，这也意味着组件的生命周期钩子不会再被调用。</p>
+<p>复用组件时，想对路由参数的变化作出响应的话，你可以简单地 <code>watch</code>(监测变化) <code>$route</code>对象：</p>
+<pre><code class="language-js">const User = {
+  template: '...',
+  watch: {
+    '$route' (to, from) {
+      // 对路由变化作出响应...-----可以再次请求数据
+    }
+  }
+}
+</code></pre>
+<p>或者使用 2.2 中引入的<code>beforeRouteUpdate</code>导航守卫：</p>
+<pre><code class="language-js">const User = {
+  template: '...',
+  beforeRouteUpdate (to, from, next) {
+    // react to route changes...
+    // don't forget to call next()
+  }
+}
+</code></pre>
+<h5 id="74-路由中传递参数">7.4. 路由中传递参数</h5>
+<p>函数式编程导航：</p>
+<pre><code class="language-js">// 字符串
+router.push('home')
+
+// 对象
+router.push({ path: 'home' })
+
+// 命名的路由
+router.push({ name: 'user', params: { userId: '123' }})
+
+// 带查询参数，变成 /register?plan=private
+router.push({ path: 'register', query: { plan: 'private' }})
+</code></pre>
+<p>这里需要注意：如果提供了<code>path</code>，<code>params</code>会被忽略，上述例子中的 <code>query</code>并不属于这种情况。取而代之的是下面例子的做法，你需要提供路由的<code>name</code>或手写完整的带有参数的<code>path</code>：</p>
+<pre><code class="language-js">const userId = '123'
+router.push({ name: 'user', params: { userId }}) // -&gt; /user/123
+router.push({ path: `/user/${userId}` }) // -&gt; /user/123
+// 这里的 params 不生效
+router.push({ path: '/user', params: { userId }}) // -&gt; /user
+</code></pre>
+<h5 id="75-命名路由">7.5. 命名路由</h5>
+<p>我们在写路由对象的时候可以给路由对象加一个<code>name</code>属性，通过一个名称来表示一个路由会显得更方便一些：</p>
+<pre><code class="language-js">const router = new VueRouter({
+  routes: [
+    {
+      path: '/user/:userId',
+      name: 'user',
+      component: User
+    }
+  ]
+})
+</code></pre>
+<p>要链接到一个命名路由，可以给 router-link 的 to 属性传一个对象：</p>
+<pre><code class="language-js">&lt;router-link :to=&quot;{ name: 'user', params: { userId: 123 }}&quot;&gt;User&lt;/router-link&gt;
+</code></pre>
+<p>或者使用编程式导航的方式：</p>
+<pre><code class="language-js">router.push({ name: 'user', params: { userId: 123 }})
+</code></pre>
+<p>两种方式导航的地址：<code>/user/123</code></p>
+<h5 id="76-命名视图">7.6. 命名视图</h5>
+<p>如果我们的一个页面需要展示多个视图，就可以使用命名视图，如果 <code>router-view</code>没有设置名字，那么默认为 <code>default</code>。</p>
+<pre><code class="language-html">&lt;router-view class=&quot;view one&quot;&gt;&lt;/router-view&gt;
+&lt;router-view class=&quot;view two&quot; name=&quot;a&quot;&gt;&lt;/router-view&gt;
+&lt;router-view class=&quot;view three&quot; name=&quot;b&quot;&gt;&lt;/router-view&gt;
+</code></pre>
+<p>一个视图使用一个组件渲染，因此对于同个路由，多个视图就需要多个组件。确保正确使用 <code>components</code>配置 (带上 <code>s</code>)：</p>
+<pre><code class="language-js">const router = new VueRouter({
+  routes: [
+    {
+      path: '/',
+      components: {
+        default: Foo,
+        a: Bar,
+        b: Baz
+      }
+    }
+  ]
+})
+</code></pre>
+<h5 id="77-组建内的守卫">7.7. 组建内的守卫</h5>
+<p>组建内的守卫有三种：</p>
+<ul>
+<li><code>beforeRouteEnter</code></li>
+<li><code>beforeRouteUpdate</code></li>
+<li><code>beforeRouteLeave</code></li>
+</ul>
+<pre><code class="language-js">const Foo = {
+  template: `...`,
+  beforeRouteEnter (to, from, next) {
+    // 在渲染该组件的对应路由被 confirm 前调用
+    // 不！能！获取组件实例 `this`
+    // 因为当守卫执行前，组件实例还没被创建
+  },
+  beforeRouteUpdate (to, from, next) {
+    // 在当前路由改变，但是该组件被复用时调用
+    // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
+    // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
+    // 可以访问组件实例 `this`
+  },
+  beforeRouteLeave (to, from, next) {
+    // 导航离开该组件的对应路由时调用
+    // 可以访问组件实例 `this`
+  }
+}
+</code></pre>
+<p>这个离开守卫通常用来禁止用户在还未保存修改前突然离开。该导航可以通过 <code>next(false)</code>来取消。</p>
+<pre><code class="language-js">beforeRouteLeave (to, from , next) {
+  const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
+  if (answer) {
+    next()
+  } else {
+    next(false)
+  }
+}
+</code></pre>
+<h5 id="78完整的导航解析流程">7.8.完整的导航解析流程</h5>
+<ol>
+<li>导航被触发。</li>
+<li>在失活的组件里调用离开守卫。</li>
+<li>调用全局的 beforeEach 守卫。</li>
+<li>在重用的组件里调用 beforeRouteUpdate 守卫 (2.2+)。</li>
+<li>在路由配置里调用 beforeEnter。</li>
+<li>解析异步路由组件。</li>
+<li>在被激活的组件里调用 beforeRouteEnter。</li>
+<li>调用全局的 beforeResolve 守卫 (2.5+)。</li>
+<li>导航被确认。</li>
+<li>调用全局的 afterEach 钩子。</li>
+<li>触发 DOM 更新。</li>
+<li>用创建好的实例调用 beforeRouteEnter 守卫中传给 next 的回调函数。</li>
+</ol>
+<h4 id="8-项目上线准备">8. 项目上线准备</h4>
+<h5 id="81-api-接口的替换">8.1. API 接口的替换</h5>
+<p>在项目上线的时候，需要前后台的联调，需要使用真实的<code>api</code>接口进行测试，这时候，我们需要在<code>config</code>文件夹下的<code>index</code>进行配置后台的接口，地址，配置如下面的代码:这里，我的后台的对应的地址是<code>http://localhost:80</code></p>
+<pre><code class="language-javascript">    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
+    proxyTable: {
+      '/api': {
+        target: 'http://localhost:80',
+        pathRewrite: {
+          '^/api': 'static/mock'
+        }
+      }
+</code></pre>
+<p>如果后台跟前台写的<code>api</code>地址是一样的，可以不进行配置<code>pathRewrite</code>选项，如下：</p>
+<pre><code class="language-javascript">    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
+    proxyTable: {
+      '/api': {
+        target: 'http://localhost:80'
+      }
+</code></pre>
+<h5 id="82-移动端项目真机调试">8.2. 移动端项目真机调试</h5>
+<p>在<code>vue</code>项目中，<code>webpack</code>服务器默认是不能通过<code>ip</code>地址进行访问我们的项目，比如运行<code>cmd</code>输入<code>ipconfig</code>查看我们的<code>ip</code>地址，输入到网页，是看不到我们的项目，输入端口80是可以看到的，我们可以通过修改配置，只需要修改项目中的<code>package.json</code>文件的配置项，代码如下：</p>
+<pre><code class="language-javascript">		&quot;scripts&quot;: {
+			&quot;dev&quot;: &quot;webpack-dev-server --host 0.0.0.0 --inline --progress --config build/webpack.dev.conf.js&quot;,
+			&quot;start&quot;: &quot;npm run dev&quot;,
+			&quot;lint&quot;: &quot;eslint --ext .js,.vue src&quot;,
+			&quot;build&quot;: &quot;node build/build.js&quot;
+		},
+</code></pre>
+<h5 id="83-项目打包">8.3. 项目打包</h5>
+<p><code>vue</code>项目打包上线：输入命令<code>npm run build</code>将我们的代码进行打包编译，然后我们的项目会多出来一个<code>dist</code>的文件夹。里面就是我们打包项目的代码。直接将<code>dist</code>文件夹放在后台的站点就可以运行了，但是有时候我们的站点需要放在后台服务器的一个文件夹里面，比如说，我们需要将前台的代码放在一个<code>project</code>的文件夹中，如果直接放进去，运行项目，你会发现报错，这个时候，我们需要修改<code>config</code>文件夹中的<code>inedx.js</code>里面的打包项：主要是<code>assetsPublicPath: '/project',</code>这个</p>
+<pre><code class="language-javascript">	    build: {
+				index: path.resolve(__dirname, '../dist/index.html'),
+
+				// Paths
+				assetsRoot: path.resolve(__dirname, '../dist'),
+				assetsSubDirectory: 'static',
+				assetsPublicPath: '/project',
+			}
+</code></pre>
+<h4 id="9-vue-学习路线">9. vue 学习路线</h4>
+<p><code>vue</code>学习思路：边缘知识点进行查看，查看生态系统<code>v-router</code>中的路由别名等等，查看<code>vuex</code>中的一些核心概念，然后查看服务器端渲染，然后学习<code>vue</code>的插件，查看官网的<code>vue</code>资源。最后研究<code>vue</code>源码，查看<code>commit</code>，了解每次提交的的添加的功能的思路。</p>
+<h4 id="10-其他">10. 其他</h4>
+<ol>
+<li>使用<code>JSX</code>，需要注意的是：如果使用<code>JSX</code>，需要在<code>webpack</code>中进行配置<code>babel-plugin-transform-vue-jsx</code>，</li>
+<li>看了一篇文章，有关个人技术突破的，首先要了解技术门槛，认清自己当下局势。然后进行习惯养成与指定目标计划，<br>
+比如读源码，或者整理原理图，当完成目标可以给自己奖励，也可以不断测试自己的底线，调整目标。然后就是训练自己的<br>
+思维，善于对问题进行提问：问题是什么，当前真相是什么，为什么会发生。最后，，就是不怕吃亏。。</li>
+<li>Vue中的插件开发：使用一个公开的方法<code>install</code>；<code>v-router</code>（实现原理跟使用is用来设置显示组件一样）、<code>v-vuex</code>（非父子组件之间通讯的原理）等插件。</li>
+<li>浏览器的基本工作原理从输入url到使用各种线程渲染页面。</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[webpack4.X 基础知识笔记]]></title>
         <id>https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji</id>
@@ -7061,79 +8383,6 @@ export default {
 </code></pre>
 <p>实现效果如下：<br>
 <img src="https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[WebGIS实战系列 一、环境准备]]></title>
-        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-yi-huan-jing-zhun-bei</id>
-        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-yi-huan-jing-zhun-bei">
-        </link>
-        <updated>2019-12-04T11:59:22.000Z</updated>
-        <content type="html"><![CDATA[<!-- more -->
-<h4 id="前言">前言</h4>
-<p>近期会在博客发布一系列有关<code>WebGIS</code>的实战课程，技术栈：<code>vue</code>全家桶+<code>arcgis Server</code>+<code>arcgis API 3.x</code>+<code>asp.net</code>实现一个简单的城市供水管网系统。<br>
-前置知识准备：</p>
-<ul>
-<li><code>es6</code>语法</li>
-<li><code>node</code>的简单安装包</li>
-<li><code>vue</code>、<code>vue-cli 3.0</code>、<code>vuex</code>，<code>vue-router</code>，以及<code>elementUI</code>框架</li>
-<li><code>axios</code></li>
-<li><code>asp net mvc</code>框架（后台可能会使用<code>koa2</code>）</li>
-<li><code>arcgis SOE</code>开发扩展<code>arcgis server</code>功能</li>
-<li><code>arcgis</code>的简单操作：发布地图服务，矢量化地图等等。</li>
-<li><code>arcgis sde for postgresql</code>安装</li>
-<li><code>ThreeJS</code>实现三维管道展示</li>
-</ul>
-<blockquote>
-<p>我的环境是 <code>arcgis 10.2</code>版本的，大家也可以进行安装。</p>
-</blockquote>
-<p>可以补充一下这些知识，我也会在博客里面写有关代码的说明。</p>
-<h4 id="1-加载地图">1. 加载地图</h4>
-<p>首先使用<code>vue-cli</code>创建一个项目，我是使用<code>element UI</code>进行搭建项目的整体框架，界面如下，代码我会上传到我的<code>github</code>上面<br>
-<img src="https://img-blog.csdnimg.cn/20190628130217229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-<code>esri</code>推出了一个非<code>dojo</code>框架加载地图的一个包<code>esri-loader</code>，我们可以查看 https://github.com/Esri/esri-loader ，按照提示的步骤进行操作，首先输入命令：<code>npm install --save esri-loader</code>进行安装，然后在<code>main.js</code>入口引用<code>esri-loader</code>：</p>
-<pre><code class="language-js">import { loadScript } from 'esri-loader'
-const options = {
-  url: 'https://js.arcgis.com/3.23/',
-}
-//加载脚本
-loadScript(options)
-</code></pre>
-<p>然后在我们加载地图的组件中进行加载地图操作：</p>
-<pre><code class="language-js">import { loadModules } from 'esri-loader';
-export default {
-  mounted () {
-    this.initMap()
-  },
-  methods: {
-    initMap () {
-      loadModules(['esri/map', 'esri/dijit/HomeButton', 'esri/layers/ArcGISTiledMapServiceLayer'])
-        .then(([Map, HomeButton, ArcGISTiledMapServiceLayer]) =&gt; {
-          // 创建地图以及配置参数
-          const map = new Map(this.$refs.map, {
-            center: [114.3, 30.51667],
-            zoom: 12,
-          })
-          // 实例化home按钮
-          const button = new HomeButton({
-            map
-          }, this.$refs.button)
-          // 启用按钮
-          button.startup()
-          let basemapurl=&quot;http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineStreetWarm/MapServer&quot;;
-          let graybasemap = new ArcGISTiledMapServiceLayer(basemapurl);
-          // 加载地图
-          map.addLayer(graybasemap);
-        })
-        .catch(err =&gt; {
-          console.log(err)
-        })
-    }
-  }
-}
-</code></pre>
-<p>实现效果：<br>
-<img src="https://img-blog.csdnimg.cn/20190628152905746.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 ]]></content>
     </entry>
 </feed>
