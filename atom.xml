@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2019-12-06T01:30:04.987Z</updated>
+    <updated>2019-12-06T01:34:07.310Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -10,6 +10,828 @@
     <logo>https://jiegiser.github.io/newBlog/images/avatar.png</logo>
     <icon>https://jiegiser.github.io/newBlog/favicon.ico</icon>
     <rights>All rights reserved 2019, jiegiser的博客</rights>
+    <entry>
+        <title type="html"><![CDATA[Webpack底层原理及脚手架工具分析]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi</id>
+        <link href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
+        </link>
+        <updated>2019-12-06T01:33:10.000Z</updated>
+        <content type="html"><![CDATA[<h4 id="1-如何编写一个loader">1. 如何编写一个Loader</h4>
+<h5 id="11-实现一个简单的loader">1.1 实现一个简单的Loader</h5>
+<p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。<br>
+然后新建<code>webpack</code>的配置文件<code>webpack.config.js</code>，内容如下：在<code>module</code>使用我们的<code>loader</code></p>
+<pre><code class="language-js">const path = require('path')
+module.exports = {
+    mode: 'development',
+    entry: {
+        main: './src/index.js'
+    },
+    // 使用我们的loader
+    module: {
+        rules: [{
+            test: /\.js/,
+            use: [path.resolve(__dirname, './loaders/replace.Loader.js')]
+        }]
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js' 
+    }
+}
+</code></pre>
+<p>然后<code>replace.loaders.js</code>文件内容：</p>
+<pre><code class="language-js">module.exports = function(source) {
+    //source就是我们调用loader传进来的源码。
+    console.log(source)
+    return source.replace('jie', 'world');
+}
+</code></pre>
+<blockquote>
+<ul>
+<li>这里不能使用箭头函数，是因为在该函数中，要使用this的指向，<code>webpack</code>在调用<code>loader</code>的时候会进行this指向的变更。如果在定义的时候绑定<code>this</code>，会出现问题</li>
+</ul>
+</blockquote>
+<p><code>index.js</code>中的内容很简单：</p>
+<pre><code class="language-js">console.log('hello jie');
+</code></pre>
+<p>就这样，一个简单的<code>loader</code>就制作好了。在<code>package.json</code>里面配置一个命令<code>&quot;build&quot;: &quot;webpack&quot;</code>进行打包；</p>
+<h5 id="12-loader-中的参数传递">1.2  Loader 中的参数传递</h5>
+<p>有时候我们需要给我们的<code>loader</code>进行传递参数，可以修改 配置文件<code>webpack.config.js</code>：这里配置<code>loader</code>的<code>use</code>属性也是一个对象，<code>loader</code>就是我们配置的地址，<code>opotion</code>就是我们需要传递的参数。</p>
+<pre><code class="language-js">const path = require('path')
+module.exports = {
+    mode: 'development',
+    entry: {
+        main: './src/index.js'
+    },
+    // 使用我们的loader
+    module: {
+        rules: [{
+            test: /\.js/,
+            use: [{
+                loader: path.resolve(__dirname, './loaders/replace.Loader.js'),
+                options: {
+                    name: 'giser'
+                }
+            }]
+        }]
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js' 
+    }
+}
+</code></pre>
+<p>然后在<code>loader</code>中，接收传进来的参数：</p>
+<pre><code class="language-js">module.exports = function(source) {
+    //source就是我们调用loader传进来的源码。
+    console.log(source)
+    //接收传进来的参数
+    console.log(this.query);
+    return source.replace('jie', 'world');
+}
+</code></pre>
+<p>可以在官网查看很多<code>API</code>的用法：https://webpack.js.org/api/loaders/ ，在获取传进来的参数的时候，我们可以使用官方推荐的一个<code>loader-utils</code>的模块进行获取参数，输入命令<code>npm install loader-utils --save-dev</code>，然后在我们的<code>loader</code>中进行获取参数：使用<code>getOptions(this)</code>进行获取所有的参数。</p>
+<pre><code class="language-js">const loaderUtils = require('loader-utils')
+
+//这里不能使用箭头函数，是因为在该函数中，要使用this的指向，webpack在调用loader的时候会进行this指向的变更。如果在定义的时候绑定this，会出现问题
+module.exports = function(source) {
+    //source就是我们调用loader传进来的源码。
+    console.log(source)
+    //接收传进来的参数
+    // console.log(this.query);
+
+    const options = loaderUtils.getOptions(this)
+    console.log(options.name)
+    return source.replace('jie', this.query.name);
+}
+</code></pre>
+<h5 id="13-loader-中多个参数的返回">1.3 Loader 中多个参数的返回</h5>
+<p>有时候我们想在我们的<code>loader</code>中，返回很多参数，而现在的只是返回了我们处理后的源代码，<code>this.callback</code>这个函数，可以帮助我们返回更多参数：</p>
+<pre><code class="language-js">this.callback(
+  err: Error | null,
+  content: string | Buffer,
+  sourceMap?: SourceMap,
+  meta?: any
+);
+</code></pre>
+<p>我们在我们的<code>loader</code>中修改如下：</p>
+<pre><code class="language-js">const loaderUtils = require('loader-utils')
+
+//这里不能使用箭头函数，是因为在该函数中，要使用this的指向，webpack在调用loader的时候会进行this指向的变更。如果在定义的时候绑定this，会出现问题
+module.exports = function(source) {
+    //source就是我们调用loader传进来的源码。
+    console.log(source)
+    //接收传进来的参数
+    // console.log(this.query);
+
+    const options = loaderUtils.getOptions(this)
+    console.log(options.name)
+    // return source.replace('jie', this.query.name);
+    const result = source.replace('jie', this.query.name);
+    // 第一个参数为错误信息，第二个参数为要返回的内容，第三个参数为sourceMap，第四个参数为返回的其他信息
+    this.callback(null, result, source, meta)
+}
+</code></pre>
+<p>而我们现在的代码中没有<code>sourcemap</code>我们可以修改为：</p>
+<pre><code class="language-js">const loaderUtils = require('loader-utils')
+
+//这里不能使用箭头函数，是因为在该函数中，要使用this的指向，webpack在调用loader的时候会进行this指向的变更。如果在定义的时候绑定this，会出现问题
+module.exports = function(source) {
+    //source就是我们调用loader传进来的源码。
+    console.log(source)
+    //接收传进来的参数
+    // console.log(this.query);
+
+    const options = loaderUtils.getOptions(this)
+    console.log(options.name)
+    // return source.replace('jie', this.query.name);
+    const result = source.replace('jie', this.query.name);
+    // 第一个参数为错误信息，第二个参数为要返回的内容，第三个参数为sourceMap，第四个参数为返回的其他信息
+    this.callback(null, result)
+}
+</code></pre>
+<h5 id="14-loader-中处理异步请求">1.4 Loader 中处理异步请求</h5>
+<p>有时候我们需要在<code>loader</code>中处理一些异步请求数据，下面我们用<code>setTimeout</code>来模拟异步数据会获取：</p>
+<pre><code class="language-js">const loaderUtils = require('loader-utils')
+
+module.exports = function(source) {
+    console.log(source)
+    const options = loaderUtils.getOptions(this)
+    const callback = this.async();
+    setTimeout(() =&gt; {
+        const result = source.replace('jie', this.query.name);
+        callback(null, result)
+    }, 1000);
+}
+</code></pre>
+<p>首先我们声明一个异步操作的函数<code>const callback = this.async();</code>，然后在里面使用该函数，这里需要注意的是<code>this.async</code>异步函数返回的结果也是调用了<code>this.callback</code>这个函数，所以我们第一个参数如果没有错误信息就传递一个<code>null</code>，该参数是必须要传递的。这样就实现了在<code>loader</code>中处理异步请求。</p>
+<blockquote>
+<ul>
+<li>this.async<br>
+Tells the loader-runner that the loader intends to call back asynchronously. Returns this.callback.</li>
+</ul>
+</blockquote>
+<h5 id="15-多个-loader-的使用">1.5 多个 Loader 的使用</h5>
+<p>如果我们有多个<code>loader</code>进行使用，跟之前的一样，直接在<code>use</code>选项里加上我们需要使用的<code>loader</code>：</p>
+<pre><code class="language-js">    // 使用我们的loader
+    module: {
+        rules: [{
+            test: /\.js/,
+            use: [
+                {
+                loader: path.resolve(__dirname, './loaders/replace.Loader.js'),
+                options: {
+                    name: 'giser'
+                }
+            }, {
+                loader: path.resolve(__dirname, './loaders/replaceLoaderAsync.js'),
+                options: {
+                    name: 'giser'
+                }
+            }
+        ]
+        }]
+    },
+</code></pre>
+<p>我们会发现，如果每次都要加一个<code>loader</code>进行使用的话，都需要写一次<code>path.resolve(__dirname, './loaders/replaceLoaderAsync.js'),</code>这种东西，我们希望的是我们加载自己的<code>loader</code>是跟安装其他第三方包一样，只写<code>loader</code>名称就可以，如下：</p>
+<pre><code class="language-js">    // 使用我们的loader
+    module: {
+        rules: [{
+            test: /\.js/,
+            use: [
+                {
+                loader: 'replace.Loader',
+                options: {
+                    name: 'giser'
+                }
+            }, {
+                loader: 'replaceLoaderAsync',
+                options: {
+                    name: 'giser'
+                }
+            }
+        ]
+        }]
+    },
+</code></pre>
+<p>如果这样，我们可以使用一个<code>reaolveLoader</code>：<code>resolveLoader</code>代码意思是，如果我们引用一个<code>loader</code>，他会先去<code>node_modules</code>中去找如果没有，就去<code>loaders</code>的文件夹中去找。</p>
+<pre><code class="language-js">const path = require('path')
+module.exports = {
+    mode: 'development',
+    entry: {
+        main: './src/index.js'
+    },
+    resolveLoader: {
+        modules: ['node_modules', './loaders']
+    },
+    // 使用我们的loader
+    module: {
+        rules: [{
+            test: /\.js/,
+            use: [
+                {
+                loader: 'replace.Loader',
+                options: {
+                    name: 'giser'
+                }
+            }, {
+                loader: 'replaceLoaderAsync',
+                options: {
+                    name: 'giser'
+                }
+            }
+        ]
+        }]
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js' 
+    }
+}
+</code></pre>
+<p>我们可以使用<code>loader</code>做很多，比如我们一般在代码中加上<code>try{}c atch{}</code>进行捕获异常，但是直接在业务代码中加上这些，会显得代码很乱，而且自己也要加很多这样的语句，很是麻烦，我们可以通过写一个<code>loader</code>，进行帮我们做这些事，在这个<code>loader</code>中，我们进行检测源码，如果有<code>function</code>字符串，就对这个函数添加<code>try{}c atch{}</code>进行捕获异常：</p>
+<pre><code class="language-js">try {function () {
+}catch(e)}
+</code></pre>
+<p>还有比如我们有一个网站，会打包输出一个中文版跟英文版本的，我们如果每一个都去修改代码里面标题这些，会很繁琐，我们前面说了，可以在<code>loader</code>中进行传递参数，这样就会获取到全局变量，然后根据这个全局变量进行打包我们的代码，是中文还是英文版本的，我们在元源码中使用一个占位符，进行根据全局变量，来替换这个占位符，从而达到打包输出中文以及英文版本的：<br>
+我们的源码：<code>{{title}}</code><br>
+然后在<code>loader</code>中：</p>
+<pre><code class="language-js">if(Node全局变量 === '中文') {
+  source.replace('{{title}}', '中文标题')
+} else {
+  source.replace('{{title}}', '英文标题')
+}
+</code></pre>
+<p>使用<code>loader</code>可以进行对我们的源代码进行包装。方便我们进行处理一些多而繁琐的操作。</p>
+<h4 id="2-如何编写一个-plugin">2. 如何编写一个 Plugin</h4>
+<p>首先要知道<code>loader</code>与<code>plugin</code>之间的关系：<code>loader</code>是当我们进行打包我们的文件时，处理不同类型的文件，处理模块。<code>plugiin</code>是在打包的时候具体时刻，进行处理事件，比如我们在每次打包之前清除<code>dist</code>目录下的文件，就会使用<code>clean-webpack-plugin</code>插件进行处理。对于<code>webpack</code>的插件的核心机制或者说设计模式就是事件驱动以及发布模式；他是通过事件来驱动的。首先我们新建一个工程，类似上面的搭建<code>loader</code>的工程，然后新建一个文件夹<code>plugins</code>，里面新建一个<code>copyright-webpack-plugins.js</code>我们的插件，一般来说，插件的命名都是<code>*-webpack-plugin.js</code>这样子的，我们这个插件实现的一个功能就是，给我们每一个页面或者是脚本中添加一个版权的标识，<code>copyright-webpack-plugins.js</code>内容如下：注意这里的插件声明方式，是通过<code>class</code>声明的；</p>
+<pre><code class="language-js">// 定义一个插件
+class CopyrightWebpackPlugin {
+    constructor () {
+
+    }
+    apply (compiler) {
+
+    }
+}
+module.exports = CopyrightWebpackPlugin;
+</code></pre>
+<p>然后在<code>webpack.config.js</code>中使用我们的插件：也正是因为我们前面插件声明是通过<code>class</code>,所以这里需要使用<code>new</code>关键字来进行实例化我们的插件。</p>
+<pre><code class="language-js">const path = require('path');
+
+//引入我们的插件
+const CopyRightWebpackPlugin = require('./plugins/copyright-webpack-plugin');
+module.exports = {
+    mode: 'development',
+    entry: {
+        main: './src/index.js'
+    },
+    // 使用我们的插件
+    plugins: [
+        new CopyRightWebpackPlugin()
+    ],
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js'
+    }
+}
+</code></pre>
+<h5 id="21-插件中接收参数">2.1 插件中接收参数</h5>
+<p>我们在实例化插件的时候，可以传入参数：</p>
+<pre><code class="language-js">    // 使用我们的插件
+    plugins: [
+        new CopyRightWebpackPlugin({
+            name: 'jie'
+        })
+    ],
+</code></pre>
+<p>插件的构造函数中会接收我们的插件：这里的<code>options</code>就是我们传递的参数；</p>
+<pre><code class="language-js">// 定义一个插件
+class CopyrightWebpackPlugin {
+    constructor (options) {
+        console.log(options)
+    }
+    apply (compiler) {
+
+    }
+}
+module.exports = CopyrightWebpackPlugin;
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20190620080557680.png" alt="在这里插入图片描述"><br>
+我们现在想做一个就是在打包完成之后要放到<code>dist</code>文件夹的时候，往<code>dist</code>文件夹中增加一个<code>copyright.txt</code>的文件：这里就需要使用<code>apply</code>方法，这里的参数<code>compiler</code>是一个<code>webpack</code>实例，包含<code>webapck</code>打包过程以及配置文件等等，这里有一个<code>compiler.hooks</code>类似于<code>vue</code>中的一些钩子函数，里面有很多时刻，可以查看官方文档：<code>https://webpack.js.org/api/compiler-hooks/#afteremit</code>里面有很多,我们要实现的方法就是在<code>emit</code>时刻执行，<code>emit</code>时刻也就是在打包完成之后要放到<code>dist</code>文件夹的时候。具体实现代码：</p>
+<pre><code class="language-js">// 定义一个插件
+class CopyrightWebpackPlugin {
+    // constructor (options) {
+    //     console.log(options)
+    // }
+    apply (compiler) {
+        compiler.hooks.emit.tapAsync('CopyrightWebpackPlugin', (complication, cb) =&gt; {  
+            //complication存放这次打包的所有的配置内容，compiler是存放所有的配置内容，
+            // 打包内容中有哪些文件是放在complication.assets中的，所以我们只需要在complication.assets中
+            // 添加一个对象，塞入我们需要添加的文件。
+            complication.assets['copyright.txt'] = {
+                // 里面的内容
+                source: function() {
+                    return 'copyright by jie'
+                },
+                // 文件大小，字符长度
+                size: function() {
+                    return 16;
+                }
+            }
+            console.log('1111')
+            cb();
+        })
+    }
+}
+module.exports = CopyrightWebpackPlugin;
+</code></pre>
+<p>前面的时刻都是一步的时刻，也就是他返回的是一个<code>AsyncSeriesHook</code>，同步的时刻跟异步时刻实现的方法是不一样的，比如<code>compole</code>时候，代码如下：</p>
+<pre><code class="language-js">        compiler.hooks.compile.tap('CopyrightWebpackPlugin', (complication) =&gt; {
+            console.log('111')
+        })
+</code></pre>
+<p>我们有时候想知道<code>complication</code>这个对象里面包含的一些属性，直接通过<code>console.log()</code>的方式在控制台中输出时不太直观的，我们可以配置一个命令<code>&quot;debug&quot;: &quot;node node_modules/webpack/bin/webpack.js&quot;</code>通过<code>node</code>的调试工具来进行查看。其实这个命令跟上面我们配置的直接执行<code>webpack</code>效果是一样的，不过这个通过这种我们可以传递一些<code>node</code>的参数，第一个参数<code>inspect</code>是开启<code>node</code>的调试工具，第二个参数<code>inspect-brk</code> 在运行<code>webpack</code>做调试的时候，在第一行代码就打一个断点，运行命令之后，我们就在网页<code>f12</code>会看到下面的东西：随便一个网页，<br>
+<img src="https://img-blog.csdnimg.cn/20190620084549211.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+点击这个<code>node</code>的图标按钮之后，会跳转到代码的调试，可以看到有断点:<br>
+<img src="https://img-blog.csdnimg.cn/20190620085454571.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+或者是我们在代码中在需要调试的位置添加<code>debugger</code>然后进行调试：</p>
+<pre><code class="language-js">// 定义一个插件
+class CopyrightWebpackPlugin {
+    // constructor (options) {
+    //     console.log(options)
+    // }
+    apply (compiler) {
+        compiler.hooks.compile.tap('CopyrightWebpackPlugin', (complication) =&gt; {
+            console.log('111')
+        })
+        compiler.hooks.emit.tapAsync('CopyrightWebpackPlugin', (complication, cb) =&gt; {  
+            //complication存放这次打包的所有的配置内容，compiler是存放所有的配置内容，
+            // 打包内容中有哪些文件是放在complication.assets中的，所以我们只需要在complication.assets中
+            // 添加一个对象，塞入我们需要添加的文件。
+            debugger;
+            complication.assets['copyright.txt'] = {
+                // 里面的内容
+                source: function() {
+                    return 'copyright by jie'
+                },
+                // 文件大小，字符长度
+                size: function() {
+                    return 16;
+                }
+            }
+            console.log('1111')
+            cb();
+        })
+    }
+}
+module.exports = CopyrightWebpackPlugin;
+</code></pre>
+<p>以及我们可以在调试工具的<code>Watch</code>里监听我们需要的监听的对象：<br>
+<img src="https://img-blog.csdnimg.cn/2019062008594825.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="3-bundler-源码编写-模块分析">3.  Bundler 源码编写 （模块分析）</h4>
+<p>我们实现一个类似于<code>webpack</code>这样的打包工具，来逐渐分析<code>webpack</code>实现打包的原理。首先新建一个<code>bundle</code>文件夹，里面跟上面一样先初始化项目，然后新建<code>dist</code>目录，目录结构如下：<br>
+<img src="https://img-blog.csdnimg.cn/20190621075825727.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+对应的几个<code>js</code>文件内容也特别简单：<br>
+<code>index.js</code>:</p>
+<pre><code class="language-js">import message from './message.js';
+console.log(message);
+</code></pre>
+<p><code>message.js</code>:</p>
+<pre><code class="language-js">// 后缀.js要写，我们的工具不支持后缀的缩写
+import { word } from './word.js';
+const message = `say ${word}`;
+
+export default message;
+</code></pre>
+<p><code>word.js</code>:</p>
+<pre><code class="language-js">export const word = 'hello';
+</code></pre>
+<p>就这样，可以看到我们的项目中，有<code>es6</code>中的<code>import</code>这些语法，直接运行在浏览器，肯定是不可以的，所以我们现在做的就是，写一个类似一些打包工具，进行将我们的代码处理成可以被浏览器识别的代码。在根目录新建一个<code>bundler.js</code>：我们要做的是首先读取入口文件，然后分析入口文件的代码，</p>
+<pre><code class="language-js">// nodeJS中的模块，用于获取文件信息
+const fs = require('fs')
+
+// 引入babel/parser用来分析我们的源代码
+const parser = require('@babel/parser')
+
+//filename为要分析的入口文件
+const moduleAnalyser = (filename) =&gt; {
+    // 读取文件中的内容，第一个参数为文件地址，第二个参数为文件编码方式
+    const content = fs.readFileSync(filename, 'utf-8')
+    console.log(parser.parse(content, {
+        // 如果要对于es6语法的代码进行分析，需要传入一个sourceType选项，sourceType: 'module'
+        sourceType: 'module'
+    }));
+    console.log(content)
+}
+
+moduleAnalyser('./src/index.js')
+
+</code></pre>
+<blockquote>
+<p>可以安装一个工具<code>npm install cli-highlight -g</code> 用于控制台输出代码高亮。运行时输入命令<code>node bundler.js | highlight</code></p>
+</blockquote>
+<p>安装一个插件<code>npm install @babel/parser --save</code>用来帮助我们分析读取到的源代码。可以打开官网，查看具体的例子：<code>https://babeljs.io/docs/en/babel-parser</code>,我们查看上面代码打印的内容，输入<code>node bundler.js | highlight</code>，打印结果如下：<br>
+<img src="https://img-blog.csdnimg.cn/20190621082531621.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+其实这是一个抽象语法树的表述方式，我们可以打印一下该对象的<code>program.body</code>，如下：</p>
+<pre><code class="language-js">[ Node {
+//第一个节点是import语法声明
+    type: 'ImportDeclaration',
+    start: 0,
+    end: 35,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    specifiers: [ [Node] ],
+    source:
+     Node {
+       type: 'StringLiteral',
+       start: 20,
+       end: 34,
+       loc: [SourceLocation],
+       extra: [Object],
+       value: './message.js' } },
+  Node {
+  //一个表达式的语句，
+    type: 'ExpressionStatement',
+    start: 37,
+    end: 58,
+    loc: SourceLocation { start: [Position], end: [Position] },
+    expression:
+     Node {
+       type: 'CallExpression',
+       start: 37,
+       end: 57,
+       loc: [SourceLocation],
+       callee: [Node],
+       arguments: [Array] } } ]
+</code></pre>
+<p>可以看到分析的抽象语法树，很好的将我们的<code>js</code>代码转换成了<code>js</code>对象。我们现在需要的是拿到我们代码中所有的依赖关系，也就是读取到<code>import</code>的节点，然后去分析里面的内容，可以去循环这个对象的<code>program.body</code>然后找到<code>type = 'ImportDeclaration'</code>,但是是有点麻烦，我们可以借助一个工具，输入命令安装：<code>npm install --save @babel/traverse</code>，然后我们使用，代码如下：</p>
+<pre><code class="language-js">// nodeJS中的模块，用于获取文件信息
+const fs = require('fs');
+
+// 引入babel/parser用来分析我们的源代码
+const parser = require('@babel/parser');
+
+// 引入babel/traverse来帮助我们分析抽象语法树中 type = 'ImportDeclaration' 的节点,default是我们使用export default导出的内容，因为默认导出是export module
+const traverse =  require('@babel/traverse').default; 
+
+
+//filename为要分析的入口文件
+const moduleAnalyser = (filename) =&gt; {
+    // 读取文件中的内容，第一个参数为文件地址，第二个参数为文件编码方式
+    const content = fs.readFileSync(filename, 'utf-8')
+    const ast = parser.parse(content, {
+        // 如果要对于es6语法的代码进行分析，需要传入一个sourceType选项，sourceType: 'module'
+        sourceType: 'module'
+    });
+    // 存放依赖的文件
+    const dependencies = []
+
+    // 第一个参数为抽象语法树类型的参数，第二个参数为需要查找的内容,
+    // 这里我们查找ImportDeclaration节点的内容，只要包含他，就会走这个函数，
+    traverse(ast, {
+        // 获取到该节点的node节点
+        ImportDeclaration({ node }) {
+            console.log(node)
+        }
+    })
+}
+
+moduleAnalyser('./src/index.js')
+</code></pre>
+<p>存放依赖的文件,查看打印的内容，我们可以看到<code>source</code>中的<code>value</code>存放着依赖的文件的地址<br>
+<img src="https://img-blog.csdnimg.cn/20190621085109520.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+然后我们将节点中的<code>node.source.value</code>值存放到依赖的文件，也就是<code>dependencies</code>变量中：我们可以看到我们获取的地址是一个相对路径，相对于<code>src</code>目录的，真正做打包的时候，我们希望我们获取的地址是一个相对路径，或者是相对于根目录的路径，我们可以利用<code>nodeJS</code>中的<code>path</code>模块，来解决这个问题，</p>
+<pre><code class="language-js">// nodeJS中的模块，用于获取文件信息
+const fs = require('fs');
+
+// 引入babel/parser用来分析我们的源代码
+const parser = require('@babel/parser');
+
+// 引入babel/traverse来帮助我们分析抽象语法树中 type = 'ImportDeclaration' 的节点,default是我们使用export default导出的内容
+const traverse =  require('@babel/traverse').default; 
+
+// 引入nodeJS的核心模块 path
+const path = require('path');
+
+//filename为要分析的入口文件
+const moduleAnalyser = (filename) =&gt; {
+    // 读取文件中的内容，第一个参数为文件地址，第二个参数为文件编码方式
+    const content = fs.readFileSync(filename, 'utf-8')
+    const ast = parser.parse(content, {
+        // 如果要对于es6语法的代码进行分析，需要传入一个sourceType选项，sourceType: 'module'
+        sourceType: 'module'
+    });
+    // 存放依赖的文件- 相对路径与绝对路径
+    const dependencies = {}
+
+    // 第一个参数为抽象语法树类型的参数，第二个参数为需要查找的内容,
+    // 这里我们查找ImportDeclaration节点的内容，只要包含他，就会走这个函数，
+    traverse(ast, {
+        // 获取到该节点的node节点
+        ImportDeclaration({ node }) {
+            // 获取到filename的路径 也就是主入口文件的路径 ./src
+            const dirname = path.dirname(filename);
+            // 将相对路径转换为绝对路径 ./src/message.js
+            const newFile = './'+path.join(dirname, node.source.value);
+            // 存储相对路径与绝对路径
+            dependencies[node.source.value] = newFile;
+            // dependencies.push(newFile);
+        }
+    })
+    return {
+        filename,
+        dependencies
+    }
+}
+
+moduleAnalyser('./src/index.js')
+
+</code></pre>
+<p>我们这个时候只是分析了代码中的<code>import</code>的引入方式，我们要做的是把原始的代码打包编译之后能在浏览器上运行，所以我们需要借助一个工具：<code>npm install @babel/core --save</code>对代码进行转换，他是<code>babel</code>的一个核心模块，可以利用<code>babel.transformFromAst</code>函数将抽象语法树转换为可以运行的代码，我们还利用<code>babel/preset-env</code>来将<code>es6</code>语法转换为<code>es5</code>的语法：<code>npm install @babel/preset-env --save</code>进行安装，实现代码如下：</p>
+<pre><code class="language-js">// nodeJS中的模块，用于获取文件信息
+const fs = require('fs');
+
+// 引入babel/parser用来分析我们的源代码
+const parser = require('@babel/parser');
+
+// 引入babel/traverse来帮助我们分析抽象语法树中 type = 'ImportDeclaration' 的节点,default是我们使用export default导出的内容
+const traverse =  require('@babel/traverse').default; 
+
+// 引入nodeJS的核心模块 path
+const path = require('path');
+
+// 引入babel/core来准换我们的代码
+const babel = require('@babel/core');
+
+//filename为要分析的入口文件
+const moduleAnalyser = (filename) =&gt; {
+    // 读取文件中的内容，第一个参数为文件地址，第二个参数为文件编码方式
+    const content = fs.readFileSync(filename, 'utf-8')
+    const ast = parser.parse(content, {
+        // 如果要对于es6语法的代码进行分析，需要传入一个sourceType选项，sourceType: 'module'
+        sourceType: 'module'
+    });
+    // 存放依赖的文件- 相对路径与绝对路径
+    const dependencies = {}
+
+    // 第一个参数为抽象语法树类型的参数，第二个参数为需要查找的内容,
+    // 这里我们查找ImportDeclaration节点的内容，只要包含他，就会走这个函数，
+    traverse(ast, {
+        // 获取到该节点的node节点
+        ImportDeclaration({ node }) {
+            // 获取到filename的路径 也就是主入口文件的路径 ./src
+            const dirname = path.dirname(filename);
+            // 将相对路径转换为绝对路径 ./src/message.js
+            const newFile = './'+path.join(dirname, node.source.value);
+            // 存储相对路径与绝对路径
+            dependencies[node.source.value] = newFile;
+            // dependencies.push(newFile);
+        }
+    });
+    // 借助babel的transformFromAst方法将抽象语法树转换为可以运行的代码。
+    // 第一个参数是一个抽象语法树，第二个参数是sourceCode，第三个参数是一些转换的Options
+    // 这里解析后的code 就是可以在浏览器运行的代码
+    const { code } = babel.transformFromAst(ast, null, {
+        // 插件的集合-将es6语法转换为es5
+        presets: [&quot;@babel/preset-env&quot;]
+    });
+    return {
+        filename,
+        dependencies,
+        code
+    }
+}
+
+const moduleInfo = moduleAnalyser('./src/index.js');
+console.log(moduleInfo)
+
+</code></pre>
+<p>上面的代码是将我们的入口文件进行了分析，并转换成了可以在浏览器上运行的代码，接下来我们要实现将入口文件依赖的文件也进行分析，并转换为在浏览器上可以运行的代码，代码如下：</p>
+<pre><code class="language-js">// nodeJS中的模块，用于获取文件信息
+const fs = require('fs');
+
+// 引入babel/parser用来分析我们的源代码
+const parser = require('@babel/parser');
+
+// 引入babel/traverse来帮助我们分析抽象语法树中 type = 'ImportDeclaration' 的节点,default是我们使用export default导出的内容
+const traverse =  require('@babel/traverse').default; 
+
+// 引入nodeJS的核心模块 path
+const path = require('path');
+
+// 引入babel/core来准换我们的代码
+const babel = require('@babel/core');
+
+//filename为要分析的入口文件
+const moduleAnalyser = (filename) =&gt; {
+    // 读取文件中的内容，第一个参数为文件地址，第二个参数为文件编码方式
+    const content = fs.readFileSync(filename, 'utf-8')
+    const ast = parser.parse(content, {
+        // 如果要对于es6语法的代码进行分析，需要传入一个sourceType选项，sourceType: 'module'
+        sourceType: 'module'
+    });
+    // 存放依赖的文件- 相对路径与绝对路径
+    const dependencies = {}
+
+    // 第一个参数为抽象语法树类型的参数，第二个参数为需要查找的内容,
+    // 这里我们查找ImportDeclaration节点的内容，只要包含他，就会走这个函数，
+    traverse(ast, {
+        // 获取到该节点的node节点
+        ImportDeclaration({ node }) {
+            // 获取到filename的路径 也就是主入口文件的路径 ./src
+            const dirname = path.dirname(filename);
+            // 将相对路径转换为绝对路径 ./src/message.js
+            const newFile = './'+ path.join(dirname, node.source.value).replace('\\', '/');
+            // 存储相对路径与绝对路径
+            dependencies[node.source.value] = newFile;
+            // dependencies.push(newFile);
+        }
+    });
+    // 借助babel的transformFromAst方法将抽象语法树转换为可以运行的代码。
+    // 第一个参数是一个抽象语法树，第二个参数是sourceCode，第三个参数是一些转换的Options
+    // 这里解析后的code 就是可以在浏览器运行的代码
+    const { code } = babel.transformFromAst(ast, null, {
+        // 插件的集合-将es6语法转换为es5
+        presets: [&quot;@babel/preset-env&quot;]
+    });
+    return {
+        filename,
+        dependencies,
+        code
+    }
+}
+// 依赖图谱，存储所有模块的依赖信息,entry是入口文件，我们要分析整个项目所有的文件；
+const makeDependenciesGraph = (entry) =&gt; {
+    const entryModule = moduleAnalyser(entry);
+    // 利用队列的方法，循环递归获取模块中的依赖文件进行分析
+    const graphArry = [entryModule];
+    for(let i = 0; i &lt; graphArry.length; i++) {
+        const item = graphArry[i];
+        const { dependencies } = item;
+        if (dependencies) {
+            // for in 循环对象
+            for(let j in dependencies) {
+                graphArry.push(
+                    moduleAnalyser(dependencies[j])
+                );
+            }
+        }
+    }
+    // 将数组进行转换为对象
+    const graph = {};
+    graphArry.forEach(item =&gt; {
+        graph[item.filename] = {
+            dependencies: item.dependencies,
+            code: item.code
+        }
+    })
+    return graph;
+}
+const graphInfo = makeDependenciesGraph('./src/index.js');
+console.log(graphInfo);
+</code></pre>
+<p>上面的代码是获取到了整个项目中代码的依赖以及依赖的分析结果，接下来，我们要实现的是将这些分析结果变成真正能够在浏览器上运行的代码：</p>
+<pre><code class="language-js">// nodeJS中的模块，用于获取文件信息
+const fs = require('fs');
+
+// 引入babel/parser用来分析我们的源代码
+const parser = require('@babel/parser');
+
+// 引入babel/traverse来帮助我们分析抽象语法树中 type = 'ImportDeclaration' 的节点,default是我们使用export default导出的内容
+const traverse =  require('@babel/traverse').default; 
+
+// 引入nodeJS的核心模块 path
+const path = require('path');
+
+// 引入babel/core来准换我们的代码
+const babel = require('@babel/core');
+
+//filename为要分析的入口文件
+const moduleAnalyser = (filename) =&gt; {
+    // 读取文件中的内容，第一个参数为文件地址，第二个参数为文件编码方式
+    const content = fs.readFileSync(filename, 'utf-8')
+    const ast = parser.parse(content, {
+        // 如果要对于es6语法的代码进行分析，需要传入一个sourceType选项，sourceType: 'module'
+        sourceType: 'module'
+    });
+    // 存放依赖的文件- 相对路径与绝对路径
+    const dependencies = {}
+
+    // 第一个参数为抽象语法树类型的参数，第二个参数为需要查找的内容,
+    // 这里我们查找ImportDeclaration节点的内容，只要包含他，就会走这个函数，
+    traverse(ast, {
+        // 获取到该节点的node节点
+        ImportDeclaration({ node }) {
+            // 获取到filename的路径 也就是主入口文件的路径 ./src
+            const dirname = path.dirname(filename);
+            // 将相对路径转换为绝对路径 ./src/message.js
+            const newFile = './'+ path.join(dirname, node.source.value).replace('\\', '/');
+            // 存储相对路径与绝对路径
+            dependencies[node.source.value] = newFile;
+            // dependencies.push(newFile);
+        }
+    });
+    // 借助babel的transformFromAst方法将抽象语法树转换为可以运行的代码。
+    // 第一个参数是一个抽象语法树，第二个参数是sourceCode，第三个参数是一些转换的Options
+    // 这里解析后的code 就是可以在浏览器运行的代码
+    const { code } = babel.transformFromAst(ast, null, {
+        // 插件的集合-将es6语法转换为es5
+        presets: [&quot;@babel/preset-env&quot;]
+    });
+    return {
+        filename,
+        dependencies,
+        code
+    }
+}
+// 依赖图谱，存储所有模块的依赖信息,entry是入口文件，我们要分析整个项目所有的文件；
+const makeDependenciesGraph = (entry) =&gt; {
+    const entryModule = moduleAnalyser(entry);
+    // 利用队列的方法，循环递归获取模块中的依赖文件进行分析
+    const graphArry = [entryModule];
+    for(let i = 0; i &lt; graphArry.length; i++) {
+        const item = graphArry[i];
+        const { dependencies } = item;
+        if (dependencies) {
+            // for in 循环对象
+            for(let j in dependencies) {
+                graphArry.push(
+                    moduleAnalyser(dependencies[j])
+                );
+            }
+        }
+    }
+    // 将数组进行转换为对象
+    const graph = {};
+    graphArry.forEach(item =&gt; {
+        graph[item.filename] = {
+            dependencies: item.dependencies,
+            code: item.code
+        }
+    })
+    return graph;
+}
+
+const generateCode = (entry) =&gt; {
+    //const graph = makeDependenciesGraph(entry);
+    const graph = JSON.stringify(makeDependenciesGraph(entry));
+    // 这里使用闭包的形式，是为了防止执我们的代码污染到全局。
+    return `
+      (function(graph){
+          //构造require以及exports函数
+          function require(module) {
+              function localRequire(relativePath) {
+                  return require(graph[module].dependencies[relativePath])
+              }
+              var exports = {};
+              (function(require, exports, code){
+                //执行代码  
+                eval(code)
+              })(localRequire, exports, graph[module].code)
+              return exports;
+          };
+          require('${entry}')
+      })(${graph});
+    `;
+}
+const code = generateCode('./src/index.js');
+console.log(code)
+
+</code></pre>
+<h4 id="4-通过-createreactapp-深入学习-webpack-配置">4. 通过 CreateReactApp 深入学习 Webpack 配置</h4>
+<p>使用命令<code>npx create-react-app my-app</code> 创建一个<code>react</code>项目，我们可以运行命令<code>npm run eject</code>暴露项目配置，就可以看到有关<code>webpack</code>的配置信息，有可能你会出现下面的错误：</p>
+<pre><code class="language-js">Remove untracked files, stash or commit any changes, and try again.
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! my-app@0.1.0 eject: `react-scripts eject`
+npm ERR! Exit status 1
+npm ERR!
+npm ERR! Failed at the my-app@0.1.0 eject script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     C:\Users\Dell\AppData\Roaming\npm-cache\_logs\2019-06-22T06_24_24_879Z-debug.log
+</code></pre>
+<p>这个是<code>git</code>配置的问题，是因为我们使用脚手架创建一个项目的时候，自动给我们增加了一个<code>.gitignore</code>文件，而我们本地却没有文件仓库，我们只需要将我们的项目添加到我们本地的仓库，输入下面命令：</p>
+<pre><code class="language-js">git add .
+git commit -m &quot;create app&quot;
+npm run eject
+</code></pre>
+<p>就可以了。我们可以看到项目中会多出现几个文件夹，查看<code>Script</code> 中的<code>build.js</code>文件，里面就是打包流程的逻辑代码，主要的配置文件是在<code>config</code>文件夹中的<code>webpack.config.js</code>中。<code>path.js</code>中主要是存储整个项目的一些路径信息，<code>env.js</code>初始化项目运行环境的文件。<code>webpackDevServer.config.js</code>文件。具体查看配置源码，进行深入。</p>
+<h4 id="5-vue-cli-30">5. Vue cli 3.0</h4>
+<p><code>vue</code>的脚手架工具，并没有像<code>react</code>的一样可以通过命令暴露项目配置，他也是有一套默认的配置，如果想要修改默认配置，需要添加一个<code>vue.config.js</code>的配置文件，然后安装官网给出的配置参数进行配置，那些配置参数都是<code>vue-cli</code>通过封装了的参数。查看一些配置参数：https://cli.vuejs.org/zh/config/#css-loaderoptions，我们可能会想，<code>vue</code>是如何将自己的配置转换成了<code>webpack</code>的配置文件，可以在<code>node_module</code>中找到<code>@vue</code>中的<code>vli-service</code>中<code>lib</code>的<code>service.js</code>文件，这个文件就是打包的时候进行转换的。</p>
+<p>对于<code>webpack</code>配置的学习可以查看官网，一般基础的配置可以查看<code>guides</code>中的内容，如果要查看深入的配置可以看看<code>configuration</code>里面的内容，如果想要写一些<code>loader</code>或者是<code>plugin</code>可以查看<code>api</code>相关的内容。</p>
+<p>在<code>vue-cli</code>中，访问项目中的静态资源文件，必须要通过<code>require()</code>函数进行加载，我们可以修改<code>webpack</code>配置，增加如下配置：这样<code>static</code>目录中的文件在外部也可以进行访问了，告诉服务器从哪里提供内容。只有在您想要提供静态文件时才需要这样做。</p>
+<pre><code class="language-js">const path = require('path');
+
+module.exports = {
+	devServer: {
+		contentBase: [path.resolve(__dirname, 'static')],
+	}
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[算法]]></title>
         <id>https://jiegiser.github.io/newBlog/post/suan-fa</id>
