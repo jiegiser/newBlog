@@ -1,0 +1,976 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ES6笔记 | jiegiser的博客</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575596242928">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jiegiser.github.io/newBlog">
+  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575596242928" alt="">
+  </a>
+  <h1 class="site-title">
+    jiegiser的博客
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              ES6笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-06
+              </span>
+              <span>
+                25 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/es6-bi-ji.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h4 id="1-变量">1. 变量</h4>
+<ul>
+<li><code>var</code>声明的变量是<code>function scope</code>也就是在函数中可以访问到，并不是在大括号里面声明的，外层就访问不到。<code>let const</code>声明的变量都是<code>block scope</code>块级作用域，也就是在大括号里面可以访问到。</li>
+<li><code>let</code>和 <code>const</code> 都不允许重复声明。他们两个都不可以在同一个作用域中进行重复声明，比如，在函数中声明的变量跟在函数外声明的同名的变量是不同的。<code>let</code> 定义的变量可以重新赋值，<code>const</code>是不可以的。</li>
+<li><code>const</code> 声明的对象，对象是一个引用类型的值，可以进行修改对象的属性。如果想要定义的对象的属性是不可以改变可以使用<code>es5</code>中的<code>Object.freeze()</code>这个方法：<code>const jelly = Object.freeze(person)</code></li>
+<li><code>let</code> 跟<code>const</code>都是存在暂时性死区的，也就是说；我们在声明前使用调用变量，会报<code>RefrenceError</code>的错误；而<code>var</code>声明的变量是没有的；这样，我们也可以养成习惯，在使用变量之前，进行声明。</li>
+</ul>
+<h4 id="2-箭头函数">2. 箭头函数</h4>
+<h5 id="21-优点">2.1 优点：</h5>
+<ul>
+<li>简明语法</li>
+<li>可以隐式返回：也就是可以不使用<code>return</code>关键字进行返回；删除<code>{}</code>大括号。</li>
+<li>不绑定<code>this</code>：箭头函数没有自己的<code>this</code>值，他的<code>this</code>值是继承他的父级作用域的，<code>this</code>值是定义的时候就绑定了。</li>
+<li>箭头函数也是匿名函数，我们可以通过定义变量，等于箭头函数，当进行调用：</li>
+</ul>
+<pre><code class="language-js">const gree = name =&gt; { alert (`hello ${name}`)}
+</code></pre>
+<p>一个函数在他独立运行的时候，也就是说他没有作为对象的方法去调用，也没用<code>call</code>、<code>apply</code>等方法进行绑定；这里的数组里面<code>map</code>的回调函数就是一个独立运行的，所以他的<code>this</code>值是在运行的时候动态绑定的，绑定到了<code>window</code>对象上，所以不会获取到<code>name</code>值。</p>
+<pre><code class="language-js">const jelly = {
+  name: 'jiegiser',
+  bobbies: ['sleeping', 'coding', 'reading'],
+  print: function () {
+    this.hobbies.map(function (hobby) {
+      console.log(`${this.name} loves ${hobby}`)
+    })
+  }
+
+}
+</code></pre>
+<h5 id="22-箭头函数的局限性">2.2 箭头函数的局限性：</h5>
+<ul>
+<li>作为构造函数，一个方法需要绑定到对象：下面的代码。<code>Person</code>对象中使用箭头函数，并没有将<code>this</code>绑定到它本身。所以，这里需要使用原始的函数。下面的给原型绑定方法，同样也是，<code>this</code>指向的是父级的<code>this</code>所以指向<code>window</code>对象；</li>
+</ul>
+<pre><code class="language-js">const Person = (name, points) =&gt; {
+  this.name = name;
+  this.points = points;
+}
+const jelly = new Person ('Jelly', 5);
+Person.prototype.updatePoints = () =&gt; {
+  this.points ++;
+  console.count(this.points)
+}
+</code></pre>
+<ul>
+<li>当你真的需要this的时候：下面代码的<code>this</code>指向的是调用<code>addEventListener</code>方法的对象；箭头函数的<code>this</code>是不会绑定的，所以这里的也还是<code>window</code>对象。<code>setTimeout</code>里面应该是使用箭头函数，来邦定<code>this</code>值在该作用域。</li>
+</ul>
+<pre><code class="language-js">const button = document.querySelector('.zoom');
+button.addEventListener('click', () =&gt; {
+  this.classList.add('in');
+  setTimeout(() =&gt; {
+    this.classList.remove('in')
+  }, 2000);
+})
+</code></pre>
+<ul>
+<li>需要使用arguments对象：箭头函数中是没有<code>arguments</code>对象的。</li>
+</ul>
+<pre><code class="language-js">const sum = () =&gt; {
+  return Array.from(arguments).reduce((prevSum, value) =&gt; prevSum + value,0)
+}
+</code></pre>
+<h4 id="3-es6-参数默认值">3. ES6 参数默认值</h4>
+<p>我们在函数中可以通过下面的方法进行设置默认参数值：</p>
+<pre><code class="language-js">function add (a = 1, b = 5) {
+  return a + b;
+}
+</code></pre>
+<p>当我们需要第一个参数使用默认值的时候，这样<code>add(undeffined, 2)</code>这样，如果<code>add(1)</code>这样调用的话，第二个参数使用默认值。</p>
+<h4 id="4-模板字符串">4. 模板字符串</h4>
+<p><code>es6</code>中的模板字符串是可以嵌套的，以及在<code>${}</code>中可以直接调用方法。<br>
+还有一个标签模板字符串：</p>
+<pre><code class="language-js">function highLight(string, user, topic) {
+  return 'templa'
+}
+const user = 'jie';
+const topic = 'learn es6';
+const sentence = highLight`${user} has commented on your topic ${topic}`
+</code></pre>
+<p>然后我们查看<code>sentence</code>，他就会返回标签模板字符串中返回的东西；<br>
+<img src="https://img-blog.csdnimg.cn/20190602110837804.png" alt="在这里插入图片描述"><br>
+对应标签模板字符串是有是三个参数的，<code>string, user, topic</code>第一个参数是返回模板字符串中默认内容；返回值是一个数组，如果不是以模板字符串传入的变量开头的，那数组的第一个不死空字符串；如上面代码中，返回的是[&quot; &quot;,<code>has commented on your topic</code>,&quot; &quot;]，然后后面的参数就是模板字符串中传入的变量。我们这里传入的是<code>${user}</code>跟<code>${topic}</code>，但是如果我们传入了很多的参数，这个时候我们可以使用<code>es6</code>的剩余参数：<code>...values</code>他是参数的数组，这样我们就获取到所有的参数。我们可以使用标签模板字符串，来返回我们想要的值。</p>
+<pre><code class="language-js">function highLight(string, ...values) {
+  debugger;
+  return 'templa'
+}
+</code></pre>
+<p>我们可以使用标签模板字符串，去处理我们输入的参数，比如在留言板等功能中，为了防止<code>xss</code>攻击，我们可以通过模板字符串进行过滤用户输入的内容。可以使用第三方的包：<code>DOMPurify</code>进行过滤。</p>
+<h4 id="5-对象解构">5. 对象解构</h4>
+<p>我们有一个对象如下：</p>
+<pre><code class="language-js">const Tom = {
+  name: 'tom',
+  age: 18,
+  family: {
+    mother: 'tom mother',
+    father: 'tom father'
+  }
+}
+</code></pre>
+<p>我们每次访问的时候，需要进行<code>Tom.name</code>这样进行访问，如果属性有很多的话，就比较麻烦，我们可以这样写：这样去访问他的属性</p>
+<pre><code class="language-js">
+const Tom = {
+  name: 'tom',
+  age: 18,
+  family: {
+    mother: 'tom mother',
+    father: 'tom father'
+  }
+}
+
+const { name, age } =Tom
+console.log(name)
+console.log(age)
+</code></pre>
+<p>如果我们想要先声明变量，然后进行结构对象，可以如下面这样写：</p>
+<pre><code class="language-js">let name = '';
+({ name, age } = Tom);
+</code></pre>
+<p>对象解构也可以进行嵌套，如上面的代码，我们想要访问<code>family</code>属性，我们可以这样写：</p>
+<pre><code class="language-js">const Tom = {
+  name: 'tom',
+  age: 18,
+  family: {
+    mother: 'tom mother',
+    father: 'tom father'
+  }
+}
+
+const { father, mother } =Tom.family
+console.log(mother)
+console.log(father)
+</code></pre>
+<p>我们在解构的时候也可以进行重新命名，类似<code>sql</code>中的<code>as</code>；可以这样写：<code>father: f</code>这样，将<code>father</code>属性赋值给<code>f</code>变量。</p>
+<pre><code class="language-js">const Tom = {
+  name: 'tom',
+  age: 18,
+  family: {
+    mother: 'tom mother',
+    father: 'tom father'
+  }
+}
+
+const { father: f, mother } =Tom.family
+console.log(mother)
+console.log(father)
+</code></pre>
+<p>我们在对象解构的时候，也可以给解构后的变量赋予默认值，如果被解构的对象没有该属性为<code>undefined</code>，就使用我们的默认值，如下代码：<code>sister = 'haove no sister'</code>这样。</p>
+<pre><code class="language-js">const Tom = {
+  name: 'tom',
+  age: 18,
+  family: {
+    mother: 'tom mother',
+    father: 'tom father'
+  }
+}
+
+const { father: f, mother, sister = 'haove no sister' } =Tom.family
+console.log(mother)
+console.log(father)
+</code></pre>
+<p>如下面代码，经常会在封装一些插件中，会使用默认值：<br>
+<img src="https://img-blog.csdnimg.cn/20190602141028611.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="6-数组解构">6. 数组解构</h4>
+<p>数组的解构基本跟对象的解构类似：下面代码是解构了数组的第一项，跟第二项</p>
+<pre><code class="language-js">const number = ['one', 'two', 'three', 'four'];
+const [one, two] = number;
+console.log(one, two)
+</code></pre>
+<p>如果我们想回去第一个跟第三个：需要添加一个逗号进行分隔，流出第二个位置。</p>
+<pre><code class="language-js">const number = ['one', 'two', 'three', 'four'];
+const [one, , two] = number;
+console.log(one, two)
+</code></pre>
+<p>如果想要获取到第一个值，跟后面所有的值，我们可以使用扩展运算符，将剩余项组成一个数组：</p>
+<pre><code class="language-js">const number = ['one', 'two', 'three', 'four'];
+const [one, ...other] = number;
+console.log(one, other)
+</code></pre>
+<p><code>rest</code>参数只能使最后一个，也就是说解析后面所有的，不能解析某一部分：<code>const [one, ...other, four] = number;</code>这样就会报错。</p>
+<p>数组的结构也可以进行赋予默认值：同样相应的值为<code>undefined</code>的时候，才会使用默认的值。</p>
+<pre><code class="language-js">const number = ['one', 'two', 'three'];
+const [one, two, three = 'three'] = number;
+</code></pre>
+<p>数组的解构的使用技巧可以用在交换两个变量的值：</p>
+<pre><code class="language-js">let a = 10;
+let b = 20;
+[a,b] = [b,a];
+</code></pre>
+<h4 id="7-for-of-用法">7. for of 用法</h4>
+<p><code>forEach</code>循环不能终止循环，<code>for in</code>循环，循环的是<code>index</code>值，遍历的是变量的可枚举属性。即使是原型的属性也会进行循环出来。使用<code>for of</code>是循环的属性值：在循环中，也可以使用<code>break</code>进行中断循环。</p>
+<pre><code class="language-js">const number = ['one', 'two', 'three', 'four'];
+
+for (item of number) {
+  console.log(item)
+}
+</code></pre>
+<p><code>for of</code>循环还可以用于遍历数组的遍历器属性：</p>
+<pre><code class="language-js">const number = ['one', 'two', 'three', 'four'];
+
+for ( let [index, fruit] of number.entries()){
+  console.log(index, number)
+}
+</code></pre>
+<p><code>for of</code>不支持对象的循环。可以应用于字符串：</p>
+<pre><code class="language-js">const number = 'sddsdsd;
+
+for ( let code of number){
+  console.log(code)
+}
+</code></pre>
+<p><code>for of</code>循环还可以用于<code>nodeList</code>进行循环：</p>
+<pre><code class="language-js">const lis = document.querySelectorAll('li')
+for ( let li of lis) {
+  li.addEventListener('click', function () {
+    //执行方法
+  })
+}
+</code></pre>
+<h4 id="8-arrayfrom-arrayof">8. Array.from()  Array.of()</h4>
+<h5 id="81-arrayfrom">8.1 Array.from()</h5>
+<p>这两个方法并不是数组原型的方法，我们需要通过<code>Array.from() Array.of()</code>这种去调用，而不是声明一个数组点上这个方法。<code>Array.from()</code>方法是将一个类素组对象转换为数组对象。类素组对象也就是拥有<code>length</code>属性的对象，<code>modeList</code>就是一个类数组对象。</p>
+<pre><code class="language-js">const lis = document.querySelectorAll('li')
+const lisArr = Array.form(lis)
+const names = lisArray.map(li =&gt; li.textContent)
+</code></pre>
+<p><code>Array.from()</code>方法有两个参数，第一个参数是需要准换的类数组，第二个参数类似数组的<code>map</code>方法，会给转化后的数组中的每一项执行该方法，于是，上面的代码可以简写为下面：</p>
+<pre><code class="language-js">const lis = document.querySelectorAll('li')
+const names = Array.form(lis， li =&gt; li.textContent)
+</code></pre>
+<p>也可以利用<code>Array.from()</code>方法进行转换函数中的<code>arguments</code>属性进行转化。<br>
+我们也可以利用<code>Array.from()</code>方法将字符串也能转换为一个数组。</p>
+<pre><code class="language-js">const number = 'sddsdsd;
+console.log(Array.from(number))
+</code></pre>
+<h5 id="82-arrayof">8.2 Array.of()</h5>
+<p><code>Array.of()</code>方法就是根据传入的参数，返回一个由传入的参数组成的数组；</p>
+<h4 id="9-数组的其他方法">9. 数组的其他方法</h4>
+<h5 id="91-find">9.1 .find()</h5>
+<p>查找是否有<code>bananas</code>这个选项；返回的是找到的该选项，以对象返回；</p>
+<pre><code class="language-js">const inventory = [
+  {name: 'apples', quantity: 2},
+  {name: 'bananas', quantity: 0},
+  {name: 'cherries', quantity: 5},
+]
+const bananas = inventory.find(fruit =&gt; {
+  if (fruit.name === 'bananas') {
+    return true
+  }
+  return false
+})
+</code></pre>
+<h5 id="92-findindex">9.2 .findIndex()</h5>
+<p><code>findIndex()</code>返回的是要查找的选项的索引值：</p>
+<pre><code class="language-js">const inventory = [
+  {name: 'apples', quantity: 2},
+  {name: 'bananas', quantity: 0},
+  {name: 'cherries', quantity: 5},
+]
+const bananas = inventory.findIndex(fruit =&gt; fruit.name === 'bananas');//返回的是索引值1
+</code></pre>
+<h5 id="93-some">9.3 .some()</h5>
+<p>返回的布尔值；如果有一部分满足测试函数，就返回<code>true</code></p>
+<pre><code class="language-js">const isEnough= inventory.some(fruit =&gt; fruit.quantity &gt; 0);//返回true
+</code></pre>
+<h5 id="94-every">9.4 .every()</h5>
+<p>返回的布尔值；如果所有的都满足测试函数，就返回<code>true</code></p>
+<pre><code class="language-js">const isAllenough= inventory.every(fruit =&gt; fruit.quantity &gt; 0);//返回false
+</code></pre>
+<h4 id="10-剩余参数">10. 剩余参数</h4>
+<pre><code class="language-js">function sum (...numbers) {
+  console.log(numbers)//一个数组[1, 2, 3, 4]
+}
+sum (1, 2, 3, 4)
+</code></pre>
+<h4 id="11-扩展运算符">11. 扩展运算符</h4>
+<p>我们如果想要两个数组，合并为一个数组，并且，在中间插入一个值，如下我们以前写的代码：</p>
+<pre><code class="language-js">const youngers = ['george' , 'john', 'Thomas'];
+const olders = ['James', 'Adrew', 'Martin'];
+
+let members = [];
+members = members.concat(youngers);
+members.push('Mary');
+members = members.concat(olders);
+</code></pre>
+<p>使用<code>es6</code>可以这样写：</p>
+<pre><code class="language-js">const youngers = ['george' , 'john', 'Thomas'];
+const olders = ['James', 'Adrew', 'Martin'];
+
+let members = [...youngers, 'Mary', ...olders];
+</code></pre>
+<p>可以通过扩展运算符将一个字符串变为以每一个字符变为数组中的一项：</p>
+<pre><code class="language-js">[...'jiegiser']
+//[&quot;j&quot;, &quot;i&quot;, &quot;e&quot;, &quot;g&quot;, &quot;i&quot;, &quot;s&quot;, &quot;e&quot;, &quot;r&quot;]
+</code></pre>
+<p>可以借助扩展运算符，放置我们将数组赋值给另一个数组，修改另一个数组中的数据，会将源数组的值进行改变：</p>
+<pre><code class="language-js">const currentMembers = [...numbers];
+</code></pre>
+<p>我们可以使用扩展运算符将可遍历对象扩展到一个新的数组中：</p>
+<pre><code class="language-js">const todos = [...document.querySelectorAll('li')]
+</code></pre>
+<p>比如我们需要删除一个数组中，对象属性<code>id</code>为2的一项；代码如下：</p>
+<pre><code class="language-js">const todos = [
+  {id: 1, name: 'Go to store', completed: false},
+  {id: 2, name: 'Wacth TV', completed: true},
+  {id: 3, name: 'Go Shopping', completed: false},
+]
+// 要删除的项的id为2
+const id = 2;
+const todoIndex = todos.findIndex(todo =&gt; todo.id === id)
+
+const newTodos = [...todos.slice(0, todoIndex), ...todos.slice(todoIndex + 1)];
+</code></pre>
+<p>我们还可以将一个数组通过扩展运算符，追加到另一个数组后：</p>
+<pre><code class="language-js">const fruit = ['apple', 'bananas', 'pear'];
+const newFruit = ['orange', 'mongo'];
+fruit.push(...newFruit)
+</code></pre>
+<p>还可以利用扩展运算符，将数组扩展为函数的参数：</p>
+<pre><code class="language-js">const dateField = [2019, 6, 2];
+const data = new Date(...dateField)
+console.log(data);
+</code></pre>
+<h4 id="12-对象的计算属性">12. 对象的计算属性</h4>
+<p>假如我们需要定义一个对象：我们希望我们的<code>'user -1': 1</code>这个数组是每次加一，然后进行定义变量。</p>
+<pre><code class="language-js">const userIds = {
+  'user -1': 1
+  'user-2': 2
+}
+</code></pre>
+<p>我们可以这样写：</p>
+<pre><code class="language-js">let id = 0
+const userIds = {
+  [`user-${++id}`]: id,
+  [`user-${++id}`]: id,
+  [`user-${++id}`]: id,
+}
+</code></pre>
+<p>如果我们想要定义一个对象，对象的键是一个数组，对应的每一个值是一个数组，我们可以这样写：</p>
+<pre><code class="language-js">const keys = ['name', 'age', 'birthday'];
+const values = ['jiegiser', 18, '0501'];
+const jiegiser = {
+  [keys.shift()]: values.shift(),
+  [keys.shift()]: values.shift(),
+  [keys.shift()]: values.shift(),
+}
+</code></pre>
+<h4 id="13-es6-的promise对象">13. ES6  的Promise对象</h4>
+<p>如下代码，<code>then</code>里面是执行<code>ajax</code>执行成功之后的回调函数，<code>catch</code>是如果请求出现异常，执行的方法。这里是返回一个<code>promise</code>对象，所以可以继续在外层使用<code>.then()</code>方法。<code>return axios.get(</code>https://api.github.com/users/${username}/repos<code>);</code></p>
+<pre><code class="language-js">let username;
+const usersPromise = axios.get('https://api.github.com/users');
+
+usersPromise
+  .then(response =&gt; {
+    username = response.data[0].login;
+    return axios.get(`https://api.github.com/users/${username}/repos`);
+  })
+  .then(response =&gt; {
+    console.log(response.data)
+  })
+  .catch(err =&gt; {
+    console.log(err)
+  })
+</code></pre>
+<p>一个<code>promise</code>对象的实例：</p>
+<pre><code class="language-js">const p = new Promise((resolve, reject) =&gt; {
+  //请求成功执行
+  resolve('success');
+  // 请求失败的执行
+  reject(Error('error'))
+})
+//请求成功执行的回调
+p.then(data =&gt; {
+  console.log(data)
+})
+// 请求失败的执行的回调
+  .catch(err =&gt; {console.log(err)})
+</code></pre>
+<p>如果我们的页面中有多个<code>Promise</code>对象，这些对象之间执行的顺序时不相关的，互不影响的，我们可以使用下面的方法，处理这些<code>Promise</code>对象返回的结果：这里需要注意的是，<code>.all()</code>方法返回的结果是对应的执行<code>Promise</code>对象的结果，返回的是一个数组，我们可以使用对象解构，去得到不同的请求返回的结果。只有当<code>.all()</code>方法里面的<code>Promise</code>对象全部返回的是<code>resolve</code>的时候，才会执行<code>.then()</code>方法。否则执行<code>.catch()</code></p>
+<pre><code class="language-js">Promise
+  .all([userPromise, movePromise])
+  .then(response =&gt; {
+    const [users, movice] = response;
+    console.log(users);
+    console.log(movice);
+  })
+  .catch(err =&gt; {
+    console.log(err)
+  })
+</code></pre>
+<p>与<code>.all()</code>方法相对的是一个·<code>Promise.race()</code>方法，他同样也是处理多个<code>Promise</code>实例，但是，他是处理的<code>Promise</code>实例中，只要第一个<code>Promise</code>实例是执行<code>resolve</code>也就是回调成功，就会去执行<code>.then()</code>方法。否则执行<code>.catch()</code></p>
+<h4 id="14-symbol">14. Symbol</h4>
+<p><code>symbol</code>是生成一个唯一的标识符，如下代码：</p>
+<pre><code class="language-js">const one = Symbol('one')
+const two = Symbol('two')
+
+console.log(one === two)//false
+</code></pre>
+<p>我们可以使用<code>symbol</code>来给 对象定义一个相同属性名，但是值不同：</p>
+<pre><code class="language-js">const classRoom = {
+  [Symbol('lily')]: {grade: 60, gender: 'female'},
+  [Symbol('nina')]: {grade: 80, gender: 'female'},
+  [Symbol('nina')]: {grade: 90, gender: 'female'},
+}
+</code></pre>
+<blockquote>
+<p><code>symbol</code>类型的值是不能遍历的，如上面的属性，是不能通过<code>for in</code>等进行遍历的。可以使用<code>Object.getOwnPropertySymbols(classRoom)</code>进行遍历,获取到属性名。获取属性值：classrom[Symbol(lily)]这样进行获取，不能通过.的方法进行获取。前面定义<code>symbol</code>属性的时候，是需要使用计算属性的方式进行定义。</p>
+</blockquote>
+<pre><code class="language-js">const classRoom = {
+  [Symbol('lily')]: {grade: 60, gender: 'female'},
+  [Symbol('nina')]: {grade: 80, gender: 'female'},
+  [Symbol('nina')]: {grade: 90, gender: 'female'},
+}
+Object.getOwnPropertySymbols(classRoom)
+</code></pre>
+<h4 id="15-eslint">15. ESLint</h4>
+<p>输入命令：<code>npm install eslint -D</code>进行本地安装，然后输入命令进行初始化<code>eslint</code>的配置：<code>eslint --init</code>然后根据自己的需要进行配置，<br>
+<img src="https://img-blog.csdnimg.cn/20190604202606357.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+输入<code>eslint init.js</code>进行检测我们的文件的书写规范。<br>
+<img src="https://img-blog.csdnimg.cn/20190604202851194.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+可以输入后面的报错信息到<code>https://eslint.cn/docs/rules/</code>这里进行查看。<br>
+我们可以查看前面生成的<code>eslint</code>的规则配置：可以看到我们的规则是继承了<code>&quot;extends&quot;: &quot;eslint:recommended&quot;,</code>也就是<code>https://eslint.cn/docs/rules/</code>这里面标绿色箭头的选项，我们可以在我们的<code>rules</code>里面进行配置我们自己的规则。</p>
+<pre><code class="language-js">module.exports = {
+    &quot;env&quot;: {
+        &quot;browser&quot;: true,
+        &quot;commonjs&quot;: true,
+        &quot;es6&quot;: true
+    },
+    &quot;extends&quot;: &quot;eslint:recommended&quot;,
+    &quot;parserOptions&quot;: {
+        &quot;ecmaVersion&quot;: 2015,
+        &quot;sourceType&quot;: &quot;module&quot;
+    },
+    &quot;rules&quot;: {
+        &quot;indent&quot;: [
+            &quot;error&quot;,
+            4
+        ],
+        &quot;linebreak-style&quot;: [
+            &quot;error&quot;,
+            &quot;windows&quot;
+        ],
+        &quot;quotes&quot;: [
+            &quot;error&quot;,
+            &quot;single&quot;
+        ],
+        &quot;semi&quot;: [
+            &quot;error&quot;,
+            &quot;always&quot;
+        ]
+    }
+};
+</code></pre>
+<p>禁用<code>eslint</code>，比如说我们写<code>vue</code>的时候，是引入了<code>vue</code>，这个时候<code>eslint</code>会提示，，没有定义<code>vue</code>，我们可以在代码顶部加一个:</p>
+<pre><code class="language-js">/*global Vue*/   //把某一个变量当做全局对象使用
+</code></pre>
+<p>如果想要禁用一个规则，如下：</p>
+<pre><code class="language-js"> /*eslint-disable no-new*/   //禁用 no-new 规则
+</code></pre>
+<p>我们也可以在某一行，重新打开我们禁用的规则：</p>
+<pre><code class="language-js"> /*eslint-enable no-new*/   //打开 no-new 规则，关闭禁用no-new
+</code></pre>
+<p>还有检查<code>html</code>中的<code>js</code>书写，安装<code>eslint-plugin-html</code>插件</p>
+<h4 id="16-import-export">16. import  export</h4>
+<p>默认导出：一个模块只能有一个默认导出；</p>
+<pre><code class="language-js"> const apikey = 'abc123';
+
+ export default apikey;
+</code></pre>
+<p>默认导出的引入方式：</p>
+<pre><code class="language-js">import api from './config.js'
+console.log(api)
+</code></pre>
+<p>命名导出：这里的<code>apikey</code>就是导出的名字，</p>
+<pre><code class="language-js">export const apikey = 'abc123';
+</code></pre>
+<p>引入的时候，必须使用同样的名字，而且，需要使用<code>{}</code>来包裹起来：</p>
+<pre><code class="language-js">import { apikey } from './config'
+</code></pre>
+<p>可以引入多个：</p>
+<pre><code class="language-js">import { apikey,a } from './config'
+</code></pre>
+<p>可以用下面的方式导出多个：</p>
+<pre><code class="language-js">export { apikey, age, greet }
+</code></pre>
+<p>也可以在导出的时候，进行重命名：然后引入的时候，必须使用<code>as</code>命名后的名字；</p>
+<pre><code class="language-js">export { apikey as apk, age, greet }
+</code></pre>
+<p>当然，也可以在引入的时候重新命名：在模块使用的时候，就必须使用重命名的名字；</p>
+<pre><code class="language-js">import { apikey as apk, a } from './config'
+</code></pre>
+<blockquote>
+<p>默认导出的，吗唉导入的时候，可以使用任意的命名，而命名导出，需要使用我们导出的名字，在导入的时候，进行导入。<br>
+一个第三方包：<code>slug</code>,过滤用户名。还有<code>md5</code>包。</p>
+</blockquote>
+<p>引入命名导出以及默认导出的变量：<code>User</code>默认导出的内容。</p>
+<pre><code class="language-js">import User, { apikey as apk, a } from './config'
+</code></pre>
+<h4 id="17-使用-systemjs-进行打包">17. 使用 SystemJS 进行打包</h4>
+<p>一个非常简单的打包工具，不用进行类似<code>webpack</code>繁琐的配置。我们可以使用<code>jspm.io</code>进行加载<code>npm</code> 或者<code>github</code>上面的包。在标签中引入<code>systemJS</code>，然后进行配置：</p>
+<pre><code class="language-js">&lt;script&gt;
+System.config({transpiler: 'babel'})
+
+System.import('./main.js')
+&lt;/script&gt;
+</code></pre>
+<p>在<code>js</code>中引入第三方模块的方式也是不一样的，如下：意思就是在<code>npm</code>里面查找我们引入的包，进行引入。</p>
+<pre><code class="language-js">import { sum } from 'npm:lodash';
+</code></pre>
+<p>引入本地模块跟前面是一样的。</p>
+<h4 id="18-class">18. Class</h4>
+<h5 id="181-class基本用法">18.1 Class基本用法</h5>
+<p>是特殊的函数，定义方式：</p>
+<pre><code class="language-js">//第一种
+class User {
+
+}
+//第二种
+const User = class {
+
+}
+</code></pre>
+<p><code>typeof User</code>打印出的结果是<code>function</code>，函数是有函数提升的，而类是没有的。在声明之前使用，会报错。</p>
+<blockquote>
+<p>这里需要注意的是，类里面定义函数，之间是不需要使用逗号隔开的，加了逗号会报错；</p>
+</blockquote>
+<pre><code class="language-js">class User {
+    constructor (name, email) {
+        this.name = name;
+        this.email = email;
+    }
+    info () {
+        console.log(`I'm ${this.name}`)
+    }
+}
+
+const jiegiser = new User('jiegiser', 'jiegiser@163.com')
+
+console.log(jiegiser)
+</code></pre>
+<p>静态方法的定义：静态方法--不能实例化调用，只能在原型对象调用，一般将原型对象里面的方法定义为静态方法</p>
+<pre><code class="language-js">class User {
+    constructor (name, email) {
+        this.name = name;
+        this.email = email;
+    }
+    info () {
+        console.log(`I'm ${this.name}`)
+    }
+    //静态方法--不能实例化调用，只能在原型对象调用，一般将原型对象里面的方法定义为静态方法
+    static descript () {
+        console.log(`hi jj`)
+    }
+}
+
+const jiegiser = new User('jiegiser', 'jiegiser@163.com')
+
+console.log(jiegiser)
+</code></pre>
+<p>定义<code>get set</code>方法：</p>
+<pre><code class="language-js">class User {
+    constructor (name, email) {
+        this.name = name;
+        this.email = email;
+    }
+    info () {
+        console.log(`I'm ${this.name}`);
+    }
+    //静态方法--不能实例化调用，只能在原型对象调用，一般将原型对象里面的方法定义为静态方法
+    static descript () {
+        console.log(`hi jj`);
+    }
+
+    set github (value) {
+        this.githubName = value;
+    }
+    get github () {
+        return `http://github.com/${this.githubName}`;
+    }
+}
+
+const jiegiser = new User('jiegiser', 'jiegiser@163.com')
+
+console.log(jiegiser)
+</code></pre>
+<h5 id="182-class的扩展">18.2 Class的扩展</h5>
+<p>在类的定义中，定义方法的时候，也可以使用计算属性的方式进行定义：</p>
+<pre><code class="language-js">let methodName = 'info';
+class User {
+    constructor (name, email) {
+        this.name = name;
+        this.email = email;
+    }
+    [methodName] () {
+        console.log(`I'm ${this.name}`);
+    }
+    //静态方法--不能实例化调用，只能在原型对象调用，一般将原型对象里面的方法定义为静态方法
+    static descript () {
+        console.log(`hi jj`);
+    }
+
+    set github (value) {
+        this.githubName = value;
+    }
+    get github () {
+        return `http://github.com/${this.githubName}`;
+    }
+}
+</code></pre>
+<p>类必须要使用<code>new</code>关键字进行调用。下面是类的继承：注意<code>super(name);</code>进行调用父类构造函数。</p>
+<pre><code class="language-js">class Animal {
+    constructor (name) {
+        this.name  = name;
+        this.belly = [];
+    }
+    eat (food) {
+        this.belly.push(food)
+    } 
+}
+class Dog extends Animal {
+    constructor (name, age) {
+        //在子类中调用父类构造函数
+        super(name);
+        this.name = name;
+        this.age = age;
+    }
+    bark () {
+        console.log(`Barl bark!`);
+        
+    }
+}
+const lucky = new Dog('lucky', 2);
+</code></pre>
+<h5 id="183-class-进行扩展内建对象">18.3 Class 进行扩展内建对象</h5>
+<p>我们可以通过<code>class</code>扩展<code>javascript</code>中的内建对象，比如扩展<code>Array</code>对象：</p>
+<pre><code class="language-js">class MyArray extends Array {
+    constructor () {
+        super();
+    }
+}
+
+const colors = new MyArray();
+colors[0] = 'red';
+console.log(colors.length);
+colors.length = 0;
+console.log(colors[0])
+</code></pre>
+<p>在子类中其实可以通过<code>this</code>来访问父级<code>Array</code>的一些属性跟方法的。这里就是调用了<code>Array</code>的<code>push</code>方法。</p>
+<pre><code class="language-js">class movieCollaction {
+    constructor (name, ...items) {
+        super(...items)
+        this.name = name;
+    }
+    add (item) {
+        this.push(item)
+    }
+    toRated (limit = 10) {
+        return this.sort((a, b) =&gt; (a.scores &gt; b.scores) ? -1 : 1).slice(0, limit);
+    }
+}
+const movies = new movieCollaction('favorite movies',
+  { name: 'the croods', scored: 8.7},
+  { name: 'the days', scored: 9.6},
+  { name: 'the shawshank', scored: 9.4},
+  { name: 'the summer', scored: 8.0},
+);
+</code></pre>
+<h4 id="19-proxy">19. Proxy</h4>
+<p>帮助我们重写对象上的默认方法。比如下面的的方法：</p>
+<pre><code class="language-js">const personn = { name: 'jiegiser', age: 200};
+// 第一个参数为要代理的对象，第二个参数就是一个对象，包含重写的方法。也就类似vue计算属性
+const personProxy = new Proxy(personn, {
+    get(target, key) {
+        return target[key].toUpperCase();
+    },
+    set (target, key, value) {
+        if(typeof value === 'string'){
+            target[key] = value.trim();
+        }
+    }
+})
+personProxy.name = 'jie';
+</code></pre>
+<p><code>Proxy</code>的一个例子：对电话号码进行格式化输出</p>
+<pre><code class="language-js">const phonerHandle = {
+    set(target, key, value) {
+        target[key] = value.match(/[0-9]/g).join('');
+    }
+    get(target, key) {
+        return target[key].replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+    }
+}
+const pgoneNumber = new Proxy({}, phonerHandle)
+</code></pre>
+<h4 id="20-set">20. Set</h4>
+<p>一种唯一的数组，也就是数组中的数据是唯一的，不会重复，不能通过索引进行获取。使用<code>add</code>添加值，<code>delete</code>删除某个值。检验某个值是否存在<code>has</code>，移除所有的元素<code>.clear()</code>。<code>.values</code>是一个<code>set</code>的一个遍历器。可以使用<code>for of</code>进行循环遍历。</p>
+<pre><code class="language-js">const colors = new Set();
+colors.add('red')
+colors.add('green')
+colors.add('blue')
+</code></pre>
+<p>可以使用下面的的方法，进行遍历：</p>
+<pre><code class="language-js">const colors = new Set();
+colors.add('red')
+colors.add('green')
+colors.add('blue')
+const iterator = colors.values();
+iterator.next();
+</code></pre>
+<p>使用<code>for of</code></p>
+<pre><code class="language-js">for (let color of colors) {
+    console.log(color)
+}
+</code></pre>
+<p>使用<code>forEach</code>进行遍历;</p>
+<pre><code class="language-js">colors.forEach((item, key, ownSet) =&gt; {
+    console.log(item,key,ownSet)
+})
+</code></pre>
+<p><code>set</code>接收的是一个可遍历对象，我们也可以传入一个数组，进行初始化：</p>
+<pre><code class="language-js">const fruits = new Set(['apple', 'banana', 'mongo'])
+</code></pre>
+<p><code>weakSet</code>跟<code>set</code>非常相似，只不过，他存储的项只能是对象，不能存储字符串，而且不能通过<code>for of</code>进行循环，他没有迭代器，也不能使用<code>forEach</code>进行循环。他没有<code>clear()</code>清除全部，他可以自己进行检测进行注销对应的数据。</p>
+<h4 id="21-map">21. Map</h4>
+<p><code>map</code>跟<code>set</code>非常相似，不同的是，<code>map</code>通过<code>.set('key',value)</code>这种方法进行添加元素，他也相当于一个数组，数组中是一个个对象。对象的键可以是任意数据类型;</p>
+<pre><code class="language-js">const people = new Map();
+people.set('jelly', 23);
+people.set('{}',3)
+</code></pre>
+<p><img src="https://img-blog.csdnimg.cn/20190608133541629.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+获取对应的值：</p>
+<pre><code class="language-js">people.get('jellu')//传入键
+</code></pre>
+<p>获取里面j键值对的数量：</p>
+<pre><code class="language-js">people.size()
+</code></pre>
+<p>删除某个项：</p>
+<pre><code class="language-js">people.delete('jelly')
+</code></pre>
+<p>删除所有元素：</p>
+<pre><code class="language-js">people.clear()
+</code></pre>
+<p>循环遍历元素：<br>
+<code>forEach</code>进行循环；</p>
+<pre><code class="language-js">people.forEach(function(value, key, map) =&gt; {
+  console.log(value, key, map)
+})
+</code></pre>
+<p>使用<code>for of</code>进行循环：</p>
+<pre><code class="language-js">for ( let [key,value] of people) {
+  console.log(key, value)
+}
+</code></pre>
+<p>初始化参数：</p>
+<pre><code class="language-js">const fruits= new Map([['apple',6], ['banans', 5]])
+</code></pre>
+<p><code>wekMap</code>没有<code>size</code>属性，不能循环；他的<code>key</code>必须是对象；垃圾回收机制，会自动回收。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-%E5%8F%98%E9%87%8F">1. 变量</a></li>
+<li><a href="#2-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0">2. 箭头函数</a>
+<ul>
+<li><a href="#21-%E4%BC%98%E7%82%B9">2.1 优点：</a></li>
+<li><a href="#22-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7">2.2 箭头函数的局限性：</a></li>
+</ul>
+</li>
+<li><a href="#3-es6-%E5%8F%82%E6%95%B0%E9%BB%98%E8%AE%A4%E5%80%BC">3. ES6 参数默认值</a></li>
+<li><a href="#4-%E6%A8%A1%E6%9D%BF%E5%AD%97%E7%AC%A6%E4%B8%B2">4. 模板字符串</a></li>
+<li><a href="#5-%E5%AF%B9%E8%B1%A1%E8%A7%A3%E6%9E%84">5. 对象解构</a></li>
+<li><a href="#6-%E6%95%B0%E7%BB%84%E8%A7%A3%E6%9E%84">6. 数组解构</a></li>
+<li><a href="#7-for-of-%E7%94%A8%E6%B3%95">7. for of 用法</a></li>
+<li><a href="#8-arrayfrom-arrayof">8. Array.from()  Array.of()</a>
+<ul>
+<li><a href="#81-arrayfrom">8.1 Array.from()</a></li>
+<li><a href="#82-arrayof">8.2 Array.of()</a></li>
+</ul>
+</li>
+<li><a href="#9-%E6%95%B0%E7%BB%84%E7%9A%84%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95">9. 数组的其他方法</a>
+<ul>
+<li><a href="#91-find">9.1 .find()</a></li>
+<li><a href="#92-findindex">9.2 .findIndex()</a></li>
+<li><a href="#93-some">9.3 .some()</a></li>
+<li><a href="#94-every">9.4 .every()</a></li>
+</ul>
+</li>
+<li><a href="#10-%E5%89%A9%E4%BD%99%E5%8F%82%E6%95%B0">10. 剩余参数</a></li>
+<li><a href="#11-%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6">11. 扩展运算符</a></li>
+<li><a href="#12-%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7">12. 对象的计算属性</a></li>
+<li><a href="#13-es6-%E7%9A%84promise%E5%AF%B9%E8%B1%A1">13. ES6  的Promise对象</a></li>
+<li><a href="#14-symbol">14. Symbol</a></li>
+<li><a href="#15-eslint">15. ESLint</a></li>
+<li><a href="#16-import-export">16. import  export</a></li>
+<li><a href="#17-%E4%BD%BF%E7%94%A8-systemjs-%E8%BF%9B%E8%A1%8C%E6%89%93%E5%8C%85">17. 使用 SystemJS 进行打包</a></li>
+<li><a href="#18-class">18. Class</a>
+<ul>
+<li><a href="#181-class%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95">18.1 Class基本用法</a></li>
+<li><a href="#182-class%E7%9A%84%E6%89%A9%E5%B1%95">18.2 Class的扩展</a></li>
+<li><a href="#183-class-%E8%BF%9B%E8%A1%8C%E6%89%A9%E5%B1%95%E5%86%85%E5%BB%BA%E5%AF%B9%E8%B1%A1">18.3 Class 进行扩展内建对象</a></li>
+</ul>
+</li>
+<li><a href="#19-proxy">19. Proxy</a></li>
+<li><a href="#20-set">20. Set</a></li>
+<li><a href="#21-map">21. Map</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
+              <h3 class="post-title">
+                Webpack底层原理及脚手架工具分析
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
+  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
