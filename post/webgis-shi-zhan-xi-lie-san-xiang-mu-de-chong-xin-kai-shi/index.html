@@ -1,105 +1,107 @@
-<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" >
-
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>WebGIS实战系列 三 项目的重新开始 | jiegiser的博客</title>
-<meta name="description" content="温故而知新">
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598983050">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575598776606">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
   </head>
   <body>
-    <div id="app" class="main">
-
-      <div class="sidebar" :class="{ 'full-height': menuVisible }">
-  <div class="top-container" data-aos="fade-right">
-    <div class="top-header-container">
-      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
-        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598776606" class="site-logo">
-        <h1 class="site-title">jiegiser的博客</h1>
-      </a>
-      <div class="menu-btn" @click="menuVisible = !menuVisible">
-        <div class="line"></div>
-      </div>
-    </div>
-    <div>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jiegiser.github.io/newBlog">
+  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575598983050" alt="">
+  </a>
+  <h1 class="site-title">
+    jiegiser的博客
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
       
-        
-          <a href="/" class="site-nav">
-            首页
-          </a>
-        
+        <a href="/" class="menu">
+          首页
+        </a>
       
-        
-          <a href="/archives" class="site-nav">
-            归档
-          </a>
-        
+    
       
-        
-          <a href="/tags" class="site-nav">
-            标签
-          </a>
-        
+        <a href="/archives" class="menu">
+          归档
+        </a>
       
-        
-          <a href="/post/about" class="site-nav">
-            关于
-          </a>
-        
+    
       
-    </div>
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
   </div>
-  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
-    <div class="social-container">
+  <div class="social-container">
+    
       
-        
+        <a href="https://github.com/jiegiser" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
       
-        
+    
       
-        
+    
       
-        
+    
       
-        
+    
       
-    </div>
-    <div class="site-description">
-      温故而知新
-    </div>
-    <div class="site-footer">
-      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
-    </div>
+    
   </div>
 </div>
 
-
-      <div class="main-container">
-        <div class="content-container" data-aos="fade-up">
-          <div class="post-detail">
-            <h2 class="post-title">WebGIS实战系列 三 项目的重新开始</h2>
-            <div class="post-date">2019-12-04</div>
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              WebGIS实战系列 三 项目的重新开始
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-04
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://jiegiser.github.io/newBlog/tag/To24QfiOA" class="post-tag">
+                  # webgis
+                </a>
+              
+                <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
+                  # 前端
+                </a>
+              
+            </div>
             
-              <div class="feature-container" style="background-image: url('https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
-              </div>
+              <img class="post-feature-image" src="https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="">
             
-            <div class="post-content">
-              <h4 id="说明">说明</h4>
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h4 id="说明">说明</h4>
 <p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
 <h2 id="-more-"><!-- more --></h2>
 <p>上面的项目截图：</p>
@@ -153,58 +155,107 @@ this.getMap.getView().fit(this.resultVterSource.getExtent(), {
 });
 </code></pre>
 
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E8%AF%B4%E6%98%8E">说明</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#-more-"><!-- more --></a><br>
+*
+<ul>
+<li><a href="#1-%E5%9C%B0%E5%9B%BE%E6%8E%A7%E4%BB%B6">1. 地图控件</a></li>
+<li><a href="#2-%E5%B1%9E%E6%80%A7%E6%9F%A5%E8%AF%A2">2. 属性查询</a></li>
+<li><a href="#3-%E7%A9%BA%E9%97%B4%E6%9F%A5%E8%AF%A2">3. 空间查询</a></li>
+<li><a href="#4-%E5%9C%A8%E7%BA%BF%E7%BC%96%E8%BE%91">4. 在线编辑</a></li>
+<li><a href="#5-%E6%B5%8B%E9%87%8F">5. 测量</a></li>
+<li><a href="#6-%E5%8A%A0%E8%BD%BD%E5%A4%A9%E5%9C%B0%E5%9B%BE">6. 加载天地图</a></li>
+<li><a href="#7-%E5%8A%A0%E8%BD%BD%E5%A4%A9%E5%9C%B0%E5%9B%BE%E6%8A%95%E5%BD%B1%E8%BD%AC%E6%8D%A2">7. 加载天地图投影转换</a></li>
+<li><a href="#8-%E7%BC%93%E5%86%B2%E5%8C%BA%E7%BB%98%E5%88%B6turf">8. 缓冲区绘制（turf）</a></li>
+<li><a href="#9-%E6%8B%89%E6%A1%86%E6%94%BE%E5%A4%A7%E7%BC%A9%E5%B0%8F">9. 拉框放大缩小</a></li>
+<li><a href="#10-%E7%82%B9%E7%94%9F%E6%88%90%E7%BC%93%E5%86%B2%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2">10. 点生成缓冲范围查询（√）</a></li>
+<li><a href="#11-%E8%BD%A8%E8%BF%B9%E5%9B%9E%E6%94%BE">11. 轨迹回放（√）</a></li>
+<li><a href="#12-%E4%BD%8D%E7%BD%AE%E7%9B%91%E6%8E%A7">12. 位置监控（√）</a></li>
+<li><a href="#13-%E9%9D%A2%E6%B7%BB%E5%8A%A0%E6%A0%87%E6%B3%A8">13. 面添加标注（√）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
             </div>
-            
-              <div class="tag-container">
-                
-                  <a href="https://jiegiser.github.io/newBlog/tag/To24QfiOA" class="tag">
-                    webgis
-                  </a>
-                
-                  <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="tag">
-                    前端
-                  </a>
-                
-              </div>
-            
-            
-              <div class="next-post">
-                <div class="next">下一篇</div>
-                <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
-                  <h3 class="post-title">
-                    WebGIS实战系列 二、 加载geoserver发布的WMS服务
-                  </h3>
-                </a>
-              </div>
-            
-
-            
-
-          </div>
-
+          </article>
         </div>
-      </div>
-    </div>
 
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
+              <h3 class="post-title">
+                WebGIS实战系列 二、 加载geoserver发布的WMS服务
+              </h3>
+            </a>
+          </div>
+        
 
-<script type="application/javascript">
+        
 
-AOS.init();
+        <div class="site-footer">
+  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
+  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+</div>
 
-hljs.initHighlightingOnLoad()
+<script>
+  hljs.initHighlightingOnLoad()
 
-var app = new Vue({
-  el: '#app',
-  data: {
-    menuVisible: false,
-  },
-})
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
 
 </script>
 
-
-
-
+      </div>
+    </div>
   </body>
 </html>
