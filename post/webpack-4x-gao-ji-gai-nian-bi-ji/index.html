@@ -1,0 +1,1466 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>WebPack 4.X 高级概念笔记 | jiegiser的博客</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575597010074">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jiegiser.github.io/newBlog">
+  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575597010074" alt="">
+  </a>
+  <h1 class="site-title">
+    jiegiser的博客
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              WebPack 4.X 高级概念笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-06
+              </span>
+              <span>
+                43 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/webpack-4x-gao-ji-gai-nian-bi-ji.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h4 id="1-tree-shaking-概念详解">1. Tree Shaking 概念详解</h4>
+<h5 id="11-babelpolyfill与babelpreset-env之间的引用小冲突">1.1 babel/polyfill与babel/preset-env之间的引用小冲突</h5>
+<p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：<br>
+<img src="https://img-blog.csdnimg.cn/20190523200107374.png" alt="在这里插入图片描述"><br>
+提示的意思是，如果我们在<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，可以不再业务代码里面，再次引入<code>impport @babel/polyfill</code>，<code>@babel/preset-env</code>插件会自动进行查看代码中<code>es6</code>语法进行添加对应的实现函数。</p>
+<h5 id="12-tree-shaking-概念">1.2 Tree Shaking 概念</h5>
+<p>我们在打包文件的时候，比如下面代码，有一个<code>math.js</code>文件，然后在<code>index.js</code>进行引入，代码如下：<br>
+<code>math.js</code>文件</p>
+<pre><code class="language-js">export const add = (a, b) =&gt;{
+  console.log(a + b)
+}
+export const minus = (a, b) =&gt;{
+  console.log(a - b)
+}
+</code></pre>
+<p>·<code>index.js</code>里面内容</p>
+<pre><code class="language-js">import { add } from './math.js';
+add(1, 2);
+</code></pre>
+<p>这样，我们只是引入了<code>add</code>方法，但是我们查看打包的内容，会发现，他会将<code>math.js</code>文件所有的文件，都会打包到打包输出文件中，我们并不想让没有引入的方法等打包输出：</p>
+<pre><code class="language-js">/*! exports provided: add, minus */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+&quot;use strict&quot;;
+eval(&quot;__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \&quot;add\&quot;, function() { return add; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \&quot;minus\&quot;, function() { return minus; });\nconst add = (a, b) =&gt; {\n  console.log(a + b);\n};\nconst minus = (a, b) =&gt; {\n  console.log(a - b);\n};//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvbWF0aC5qcy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3NyYy9tYXRoLmpzPzVhMDMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNvbnN0IGFkZCA9IChhLCBiKSA9PntcclxuICBjb25zb2xlLmxvZyhhICsgYilcclxufVxyXG5leHBvcnQgY29uc3QgbWludXMgPSAoYSwgYikgPT57XHJcbiAgY29uc29sZS5sb2coYSAtIGIpXHJcbn0iXSwibWFwcGluZ3MiOiJBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/math.js\n&quot;);
+
+</code></pre>
+<p>这个时候，我们需要使用<code>Tree Shaking</code>功能来实现，不过需要注意的是<code>Tree Shaking</code>只支持<code>ES Module</code>，也就是只支持<code>import</code>这种方式的引入，不支持<code>require</code>这种<code>CommonJS</code>的引入方式，是因为<code>ES Module</code>这种底层是静态引入的方式，而<code>import</code>这种方式底层是动态的引入方式，<code>Tree Shaking</code>只支持静态引入的这种方法。我们在<code>webpack.config.js</code>中进行下面的配置：这里需要注意的是，我们下面的配置在开发模式下的配置<code>mode</code>为<code>development</code>；</p>
+<pre><code class="language-js">   ....
+module.exports = {
+    // 配置打包模式
+    mode: 'development',
+   ....
+    optimization: {
+      usedExports: true
+    },
+   ....
+}
+</code></pre>
+<p><code>usedExprots: true</code>意思就是我们去查看哪些导出的模块被使用，然后再进行打包；然后我们在<code>package.json</code>中进行下面的配置：添加<code>&quot;sideEffects&quot;: false,</code>意思就是，对所有的模块都进行<code>Tree Shaking</code>也就是将没有引入的方法等不进行打包到打包输出文件中。</p>
+<pre><code class="language-js">{
+  &quot;name&quot;: &quot;webpack&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;sideEffects&quot;: false,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;bundle&quot;: &quot;webpack&quot;,
+    &quot;watch&quot;: &quot;webpack --watch&quot;,
+    &quot;start&quot;: &quot;webpack-dev-server&quot;,
+    &quot;server&quot;: &quot;node server.js&quot;
+  },
+</code></pre>
+<blockquote>
+<p>这里的<code>&quot;sideEffects</code>有很大的用途，比如我们在使用<code>@babel/polyfill</code>的时候，他的内部并没有使用<code>export</code>导出任何模块，他只是通过类似<code>windows.Promise</code>这样给全局T添加一些函数，但是我们使用<code>Tree Shaking</code>这种去打包的时候，他会发现这个模块我们并没有通过<code>import</code>引入任何模块，他会以为，我们并没有使用这个模块，不会对他进行打包，这时候，我们需要这样配置：添加<code>&quot;sideEffects&quot;: [&quot;@babel/polyfill&quot;]</code>这样，我们在打包的时候不会对这个模块进行<code>Tree Shaking</code>检查。</p>
+</blockquote>
+<p>一般我们在配置<code>sideEffects</code>选项的时候会配置成下面的：意思就是除了我们通过这种<code>import &quot;./strle.css&quot;</code>也不进行<code>Tree Shaking</code>检查，其他的对进行<code>Tree Shaking</code>检查，因为如果进行检查，会忽略我们的样式。</p>
+<pre><code class="language-js">  &quot;sideEffects&quot;: [
+   &quot;*.css&quot;
+]
+</code></pre>
+<p>然后我们对上面的<code>inedx.js</code>进行重新打包，查看打包内容：<code>exports used: add</code>意思只有<code>add</code>方法被使用了。<code>Tree Shaking</code>并没有生效，因为开发环境下<code>Tree Shaking</code>会保留我们没用引入的代码，因为我们在查看报错的时候，如果去除了没有引入的代码，显示的行数会跟源代码不一致。如果我们的<code>mode</code>为<code>production</code>的时候，<code>Tree Shaking</code>就会生效了，其实在<code>mode</code>为<code>production</code>的时候，<code>optimization: { usedExports: true}</code>已经是配置好的，我们没必要再次进行配置，但是<code>package.json</code>中的<code>sideEffects</code>配置，还是需要的；同时将<code>devtool</code>改成：<code>devtool: 'cheap-module-source-map',</code></p>
+<pre><code class="language-js。">/*! exports provided: add, minus */
+/*! exports used: add */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+&quot;use strict&quot;;
+eval(&quot;/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \&quot;a\&quot;, function() { return add; });\n/* unused harmony export minus */\nconst add = (a, b) =&gt; {\n  console.log(a + b);\n};\nconst minus = (a, b) =&gt; {\n  console.log(a - b);\n};//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvbWF0aC5qcy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3NyYy9tYXRoLmpzPzVhMDMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNvbnN0IGFkZCA9IChhLCBiKSA9PntcclxuICBjb25zb2xlLmxvZyhhICsgYilcclxufVxyXG5leHBvcnQgY29uc3QgbWludXMgPSAoYSwgYikgPT57XHJcbiAgY29uc29sZS5sb2coYSAtIGIpXHJcbn0iXSwibWFwcGluZ3MiOiJBQUFBO0FBQUE7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///./src/math.js\n&quot;);
+
+</code></pre>
+<h4 id="2-develoment-和-production-模式的区分打包">2. Develoment 和 Production 模式的区分打包</h4>
+<p>我们一般写项目的时候，会对<code>webpack</code>进行两个配置，一个是生成版本的配置，一个是开发版本的配置；这里我的<code>Develoment</code>模式的配置文件在<code>webpack.dev.js</code>，我的<code>Production</code>模式的配置文件在<code>webapck.prod.js</code>中，然后我们在<code>package.json</code>进行配置我们允许的命令：</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;webpack-dev-server --config webpack.dev.js&quot;,
+    &quot;build&quot;: &quot;webpack --config webpack.prod.js&quot;,
+  },
+</code></pre>
+<p>这样，方面我们进行开发；<code>webpack.dev.js</code>配置如下：主要不同的是配置了打包的模式，开发环境的<code>devtool</code>配置为<code>cheap-module-eval-source-map</code>，生产环境的配置为：<code>cheap-module-source-map</code>,；我们在开发环境中使用下面的配置，每次修改js文件，需要进行手动刷新一次页面，我们去掉<code>hotOnly: true</code>，这样如果改变了<code>js</code>文件，就会自动刷新。</p>
+<pre><code class="language-js">// 引入node核心模块path
+const path = require('path')
+// 将我们写的html文件，进行打包；
+const HtmlWebpakcPlugin = require('html-webpack-plugin')
+// 清除上次打包生成的js文件
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack = require('webpack');
+
+module.exports = {
+    // 配置打包模式
+    mode: 'development',
+    devtool: 'cheap-module-eval-source-map',
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+    },
+    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/api': 'http://localhost:3000'
+      },
+      hot: true,
+      hotOnly: true
+    },
+    module: {
+        rules: [{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: &quot;babel-loader&quot;
+        },
+            {
+            test: /\.(png|jpe?g|gif)$/,
+            use: {
+                loader: 'url-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'images/',
+                    limit: 204800
+                }
+            }
+        }, {
+            test: /\.vue$/,
+            use: {
+                loader: 'vue-loader'
+            }
+        }, {
+            test: /\.scss$/,
+            use: [
+                'style-loader',
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 2
+                  }
+                },
+                'sass-loader',
+                'postcss-loader'
+            ]
+        }, {
+            test: /\.(eot|ttf|svg|woff)$/,
+            use: {
+                loader: 'file-loader'
+            }
+        }, {
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader',
+                'postcss-loader'
+            ]
+        }]
+    },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+        new HtmlWebpakcPlugin({
+            template: './src/index.html'
+        }),
+        
+    ],
+    optimization: {
+      usedExports: true
+    },
+    // 打包出的文件配置
+    output: {
+        // 文件引入的cnd地址
+        // publicPath: 'http://cdn.com.cn',
+        publicPath: './',
+        // 文件名
+        filename: '[name].js',
+        //  打包后的文件放在哪个文件夹，是一个绝对路径 
+        //  __dirname就是webpack.config.js所在的当前目录的路径,当前模块的目录名,改成bundle就是说，打包后的文件放在dist文件夹中
+        path: path.resolve(__dirname, 'dist')
+    }
+}
+</code></pre>
+<p><code>webpack.prod.js</code>配置如下：</p>
+<pre><code class="language-js">// 引入node核心模块path
+const path = require('path')
+// 将我们写的html文件，进行打包；
+const HtmlWebpakcPlugin = require('html-webpack-plugin')
+// 清除上次打包生成的js文件
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack = require('webpack');
+
+module.exports = {
+    // 配置打包模式
+    mode: 'production',
+    devtool: 'cheap-module-source-map',
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+    },
+    module: {
+        rules: [{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: &quot;babel-loader&quot;
+        },
+            {
+            test: /\.(png|jpe?g|gif)$/,
+            use: {
+                loader: 'url-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'images/',
+                    limit: 204800
+                }
+            }
+        }, {
+            test: /\.vue$/,
+            use: {
+                loader: 'vue-loader'
+            }
+        }, {
+            test: /\.scss$/,
+            use: [
+                'style-loader',
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 2
+                  }
+                },
+                'sass-loader',
+                'postcss-loader'
+            ]
+        }, {
+            test: /\.(eot|ttf|svg|woff)$/,
+            use: {
+                loader: 'file-loader'
+            }
+        }, {
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader',
+                'postcss-loader'
+            ]
+        }]
+    },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpakcPlugin({
+          template: './src/index.html'
+        })
+    ],
+    // 打包出的文件配置
+    output: {
+        // 文件引入的cnd地址
+        // publicPath: 'http://cdn.com.cn',
+        publicPath: './',
+        // 文件名
+        filename: '[name].js',
+        //  打包后的文件放在哪个文件夹，是一个绝对路径 
+        //  __dirname就是webpack.config.js所在的当前目录的路径,当前模块的目录名,改成bundle就是说，打包后的文件放在dist文件夹中
+        path: path.resolve(__dirname, 'dist')
+    }
+}
+</code></pre>
+<p>我们查看我们的生产环境的配置以及开发环境的配置，会发现，有很多相同的配置，比如打包的规则，入口出口的配置等等，我们可以新建一个<code>webpack.common.js</code>文件，来存放两个配置中相同的部分，然后删除公共的部分；如下面的代码：<br>
+<code>webpack.dev.js</code>配置如下：</p>
+<pre><code class="language-js">
+const webpack = require('webpack');
+
+module.exports = {
+    // 配置打包模式
+    mode: 'development',
+    devtool: 'cheap-module-eval-source-map',
+    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/api': 'http://localhost:3000'
+      },
+      hot: true,
+    },
+    optimization: {
+      usedExports: true
+    },
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(), 
+    ],
+}
+</code></pre>
+<p><code>webpack.prod.js</code>配置如下：</p>
+<pre><code class="language-js">
+module.exports = {
+    // 配置打包模式
+    mode: 'production',
+    devtool: 'cheap-module-source-map',
+}
+</code></pre>
+<p><code>webpack.common.js</code>配置如下：</p>
+<pre><code class="language-js">// 引入node核心模块path
+const path = require('path')
+// 将我们写的html文件，进行打包；
+const HtmlWebpakcPlugin = require('html-webpack-plugin')
+// 清除上次打包生成的js文件
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+
+module.exports = {
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+    },
+    module: {
+        rules: [{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: &quot;babel-loader&quot;
+        },
+            {
+            test: /\.(png|jpe?g|gif)$/,
+            use: {
+                loader: 'url-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'images/',
+                    limit: 204800
+                }
+            }
+        }, {
+            test: /\.vue$/,
+            use: {
+                loader: 'vue-loader'
+            }
+        }, {
+            test: /\.scss$/,
+            use: [
+                'style-loader',
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 2
+                  }
+                },
+                'sass-loader',
+                'postcss-loader'
+            ]
+        }, {
+            test: /\.(eot|ttf|svg|woff)$/,
+            use: {
+                loader: 'file-loader'
+            }
+        }, {
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader',
+                'postcss-loader'
+            ]
+        },{
+            test: /\.(html)$/,
+            use: {
+                loader: 'html-loader',
+            }
+        }]
+    },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpakcPlugin({
+          template: './src/index.html'
+        })
+    ],
+    // 打包出的文件配置
+    output: {
+        path: path.resolve(__dirname, 'dist')
+    }
+}
+</code></pre>
+<p>然后我们通过<code>webpack-merage</code>插件来进行合并我们的配置文件，输入命令：<code>npm install webpack-merge -D</code>进行安装；然后修改我们的<br>
+<code>webpack.prod.js</code>以及<code>webpack.dev.js</code>中的代码，修改后如下：<br>
+<code>webpack.dev.js</code>配置如下：</p>
+<pre><code class="language-js">
+const webpack = require('webpack');
+const merge = require('webpack-merge')
+const commonConfig = require('./webpack.common.js')
+const devConfig = {
+    // 配置打包模式
+    mode: 'development',
+    devtool: 'cheap-module-eval-source-map',
+    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/api': 'http://localhost:3000'
+      },
+      hot: true,
+    },
+    optimization: {
+      usedExports: true
+    },
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(), 
+    ],
+}
+module.exports = merge(commonConfig, devConfig)
+</code></pre>
+<p><code>webpack.prod.js</code>配置如下：</p>
+<pre><code class="language-js">const merge = require('webpack-merge')
+const commonConfig = require('./webpack.common.js')
+const prodConfig = {
+    // 配置打包模式
+    mode: 'production',
+    devtool: 'cheap-module-source-map',
+}
+//模块导出的是两个文件的合并
+module.exports = merge(commonConfig, prodConfig)
+</code></pre>
+<p>一般情况，我们会新建一个<code>build</code>文件夹来存放我们的这三个配置文件，然后修改我们的<code>package.json</code>中的命令：这样就可以了。</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;webpack-dev-server --config ./build/webpack.dev.js&quot;,
+    &quot;build&quot;: &quot;webpack --config ./build/webpack.prod.js&quot;,
+  },
+</code></pre>
+<h4 id="3-webpack-和-code-splitting">3. Webpack 和 Code Splitting</h4>
+<h5 id="31-打包配置的一些问题">3.1 打包配置的一些问题</h5>
+<p>我们在上面将开发版本以及生产版本的配置都通过提取方式写在了一个文件中，并放在了<code>build</code>文件夹中，但是我们没有修改打包输出文件的地址以及<code>clean-webpack-plugin</code>插件中清除文件夹的地址，所以我们修改<code>webpack.common.js</code>配置如下：</p>
+<pre><code class="language-js">    plugins: [
+        new CleanWebpackPlugin(['dist'], {
+            root: path.resolve(__dirname, '../')
+        }),
+        new HtmlWebpakcPlugin({
+          template: './src/index.html'
+        })
+    ],
+    // 打包出的文件配置
+    output: {
+         publicPath: './',
+         filename: '[name].js',
+        path: path.resolve(__dirname, '../dist')
+    }
+</code></pre>
+<p><code>clean-webpack-plugin</code>添加的<code>root</code>的配置意思的，重新设置了根目录，默认是认为配置文件所在的地址为根目录，这里我们的配置文件在<code>build</code>中，所以根目录在他的上一级。我查看<code>clean-webpack-plugin</code>的插件，并没有配置这个<code>root</code>选项；不知道哪个版本里面的，我们直接用如下的配置即可:还有我删除了打包输出文件的一些配置，因为<code>html-webpack-plugin</code>插件会有<code>bug</code>在我的基础文章笔记里面写了，可以去看看。</p>
+<pre><code class="language-js">    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpakcPlugin({
+          template: './src/index.html'
+        })
+    ],
+    // 打包出的文件配置
+    output: {
+        path: path.resolve(__dirname, '../dist')
+    }
+</code></pre>
+<h5 id="32-code-splitting代码分割">3.2 Code Splitting代码分割</h5>
+<p>我们在写代码的时候，经常会遇到引用很多第三方的包，来方便我们处理业务逻辑，比如我们使用<code>lodash</code>，但是这样会导致我们打包输出的时候，会将业务逻辑代码以及第三方库的代码打包到到一起；如果我们的业务网逻辑代码很多，会导致打包成功后的文件很大；页面加载速度很慢，如果我们修改了业务代码；这样整个页面得重新加载我们的代码。这个时候我们可以进行代码的分割：</p>
+<h6 id="321-第一种方式自己实现代码分割将其他引用的第三方库进行分离写在另一个js脚本中">3.2.1 第一种方式：自己实现代码分割：将其他引用的第三方库进行分离写在另一个js脚本中</h6>
+<p>将其他引用的第三方库进行分离写在另一个js脚本中，然后我们进行修改打包配置，进行配置多个入口如下：<br>
+我们之前写的<code>index.js</code>代码：</p>
+<pre><code class="language-js">import _ from 'lodash';
+// ...业务逻辑
+console.log(_.join(['a','b','c'],'***'))
+</code></pre>
+<p>修改后的配置文件</p>
+<pre><code class="language-js">    // 入口文件
+    entry: {
+        main: './src/index.js',
+        lodash: './src/lodash.js',
+    },
+</code></pre>
+<p>将<code>index.js</code>分离出一个<code>lodash.js</code>文件，内容如下：</p>
+<pre><code class="language-js">import _ from 'lodash';
+windows._ = _;
+</code></pre>
+<p>在<code>index.js</code>中我们不在引入<code>lodash</code>，因为他已经被挂载到了全局对象上，我们直接可以使用，这样，减少了如果业务逻辑代码频繁修改后页面重新加载很大的打包输出文件；减少了业务逻辑代码的体积；如果我们改变了业务代码，页面只会重新加载业务代码，第三方的<code>lodash.js</code>文件会被缓存起来，不会重新加载。</p>
+<h6 id="322-第二种方式使用webpack的代码分割同步加载包进行打包使用插件配置进行code-splitting">3.2.2  第二种方式：使用webpack的代码分割：同步加载包进行打包，使用插件配置进行Code Splitting</h6>
+<p>我们在<code>webpack.common.js</code>中添加一个配置，代码如下：意思就是帮我们做代码分割</p>
+<pre><code class="language-js">    optimization: {
+      splitChunks: {
+        chunks: 'all'
+      }
+    },
+</code></pre>
+<p>然后我们查看打包输出文件，会打包出一个<code>main.js</code>的业务逻辑代码，以及<code>vendors~main.js</code>的第三方库文件的代码：<br>
+<img src="https://img-blog.csdnimg.cn/20190525150350385.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+<code>vendors~main.js</code>文件内容：</p>
+<pre><code class="language-js">(window[&quot;webpackJsonp&quot;] = window[&quot;webpackJsonp&quot;] || []).push([[&quot;vendors~main&quot;],{
+
+/***/ &quot;./node_modules/_lodash@4.17.11@lodash/lodash.js&quot;:
+/*!*******************************************************!*\
+  !*** ./node_modules/_lodash@4.17.11@lodash/lodash.js ***!
+  \*******************************************************/
+</code></pre>
+<p><code>webpack</code>插件会很智能的分割我们的代码；</p>
+<h6 id="323-第三种方式使用webpack的代码分割异步引入模块的代码分割">3.2.3  第三种方式：使用webpack的代码分割：异步引入模块的代码分割</h6>
+<p>上面的包模块是一种同步的引入方式，然后<code>webpack</code>会先处理这些，然后进行处理我们的业务逻辑代码；我们这里再说一种异步b包模块引入的代码分割：我们的<code>index.js</code>代码如下</p>
+<pre><code class="language-js">function getComponent () {
+  return import('lodash').then(({default: _}) =&gt; {
+    var element = document.createElement('div')
+    element.innerHTML = _.join(['a','b','c'],'***')
+    return element
+  })
+}
+
+getComponent ().then((element) =&gt; {
+  document.body.appendChild(element)
+})
+</code></pre>
+<p>上面的代码通过<code>return import</code>这种引入方式是实验性质的语法会报错，我们可以通过一个<code>babel</code>的插件来解决这个问题，输入命令：<code>npm install babel-plugin-dynamic-import-webpack --save-dev</code>，然后在我们的<code>.babelrc</code>文件里面进行配置：多加一个<code>plugins: [&quot;dynamic-import-webpack&quot;]</code>配置</p>
+<pre><code class="language-js">{
+    presets: [
+        [
+            &quot;@babel/preset-env&quot;, {
+                targets: {
+                    chrome: &quot;67&quot;,
+                },
+                useBuiltIns: 'usage'
+            }
+        ],
+        &quot;@babel/preset-react&quot;
+    ],
+    plugins: [&quot;dynamic-import-webpack&quot;]
+}
+</code></pre>
+<p>可以查看打包的日志：会生成两个<code>js</code>文件，<code>0.js</code>里面就是我们引入包的打包文件；<br>
+<img src="https://img-blog.csdnimg.cn/20190525152610582.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>这里需要注意的是：首先代码分割跟我们的<code>webpack</code>是无关的，我们只是通过代码分割这种思想来提升我们项目的性能；<code>webpack</code>中实现代码分割两种方式：</p>
+<ol>
+<li>同步代码：只需要在<code>webpack.common.js</code>中做<code>optimization</code>的配置；</li>
+<li>异步代码（<code>import</code>）：无需做任何配置，会自动进行代码分割；</li>
+</ol>
+</blockquote>
+<h4 id="4-splitchunksplugin-配置参数详解">4 SplitChunksPlugin 配置参数详解</h4>
+<h5 id="41-修改打包输出的文件名">4.1 修改打包输出的文件名</h5>
+<p>其实我们上面讲的<code>webpack</code>代码分割是使用了<code>SplitChunksPlugin</code>这个插件来实现的；我们查看打包结果，他会将<code>lodash</code>的第三方库打包成<code>0.js</code>的文件，我们如果想要改这个生成的文件名，可以通过魔法注释的方法来实现：我们在引入<code>lodash</code>前加了一个<code>/* webpackChunkName = &quot;lodash&quot;*/</code>意思就是打包后，这个模块的名字叫做<code>lodash.js</code></p>
+<pre><code class="language-js">function getComponent () {
+  return import(/* webpackChunkName:&quot;lodash&quot;*/'lodash').then(({default: _}) =&gt; {
+    var element = document.createElement('div')
+    element.innerHTML = _.join(['a','b','c'],'***')
+    return element
+  })
+}
+
+getComponent ().then((element) =&gt; {
+  document.body.appendChild(element)
+})
+</code></pre>
+<p>然后移除掉我们前面安装的<code>babel-plugin-dynamic-import-webpack</code>插件，因为这个插件不支持我们的魔法注释这种功能；在<code>package.json</code>删除<code>babel-plugin-dynamic-import-webpack</code>，然后在<code>.babelrc</code>文件里面去除我们的配置；然后我们使用官方提供的动态引入第三库的插件；输入命令：<code>npm install --save-dev @babel/plugin-syntax-dynamic-import</code>;然后在<code>.babelrc</code>文件中我们引入这个插件：</p>
+<pre><code class="language-js">{
+    presets: [
+        [
+            &quot;@babel/preset-env&quot;, {
+                targets: {
+                    chrome: &quot;67&quot;,
+                },
+                useBuiltIns: 'usage'
+            }
+        ],
+        &quot;@babel/preset-react&quot;
+    ],
+    plugins: [&quot;@babel/plugin-syntax-dynamic-import&quot;]
+}
+</code></pre>
+<p>这样修改还是不行，他打包出的文件会在前面加一个<code>vendors~lodash.js</code>这样，我们需要去除这个前缀，打开<code>webpack.common.js</code>,修改<code>optimization</code>的配置如下：这样，打包之后的文件名就是我们所想要的了。</p>
+<pre><code class="language-js">    optimization: {
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendors: false,
+          default: false
+        }
+      }
+    },
+</code></pre>
+<p>其实我们不进行<code>splitChunks</code>配置，也可以进行打包的，因为，它本身有一个默认的配置，配置内容如下：</p>
+<pre><code class="language-js">    optimization: {
+      splitChunks: {
+        chunks: 'async',//代码分割只对异步加载的代码生效,如果想对同步、异步都进行分割设置为all
+        minSize: 30000,//设置模块大小大于30kb才会进行代码分割
+        maxSize: 0,//设置打包输出文件的最大体积，如果需要打包的模块超过这个大小，他会进行分割成多个文件进行打包输出
+        minChunks: 1,//当一个模块被用了至少多少次的时候，才进行分割。
+        maxAsyncRequests: 5,//同时加载的模块数。如果页面引用的模块超过五个，不会对超过的模块进行代码分割
+        maxInitialRequests: 3,//入口文件进行加载引入的模块最多数，这个设置为3，就是如果入口文件引入模块超过三个，超过的就不会进行代码分割
+        automaticNameDelimiter: '~',//打包输出文件的连接符，例如vendors~main.js；vendors是组名，后面就是连接符；vendors~main.js意思是vendors组的入口文件是main.js
+        name: true,
+        cacheGroups: {
+            // 如果引入的包是node_modules里面的内容，会进入到这里的配置
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,//检测引入的第三方库是不是node_modules里面的内容
+            priority: -10,
+            filename: 'vendors.js' //如果是node_modules里面的内容，会打包到这个文件里面
+          },
+          // 如果引入的包不是node_modules里面的内容，会进入到这里的配置
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true,
+            filename: 'common.js'
+          }
+        }
+      }
+   }
+</code></pre>
+<h5 id="42-splitchunksplugin-配置参数的意义">4.2 SplitChunksPlugin 配置参数的意义</h5>
+<p>各个参数的意义：</p>
+<ul>
+<li><code>chunks</code>：设置打包是对异步代码（<code>async</code>）f分割；还是对同步代码（<code>initial</code>）做代码分割；还是对所有（<code>all</code>）的代码都打包；如果设置<code>all</code>或者<code>initial，他会进入到</code>cacheGroups`这个配置项，查看打包的配置；</li>
+<li><code>vendors</code>：<code>test</code>是检测引入的包是不是<code>node_modules</code>里面的内容；如果是，他会将这库打包到<code>vendors</code>这个组中，打包后的文件会加一个<code>vendors~</code>前缀，代表是<code>vendors</code>这个组中；也就是这个库是<code>node_modules</code>里面的内容；我们可以加一个<code>filename: 'vendors.js'</code>这个配置项，这样，打包出来的所有的文件都会在<code>vendors.js</code>这个文件中；如果不是<code>node_modules</code>里面的内容，他会进入到<code>default</code>的配置中。</li>
+<li><code>minSize</code>：设置模块大小大于30kb才会进行代码分割，设置打包文件的最小体积。</li>
+<li><code>maxSize</code>：设置打包输出文件的最大体积，如果需要打包的模块超过这个大小，他会进行分割成多个文件进行打包输出</li>
+<li><code>minChunks</code>：当一个模块被用了至少多少次的时候，才进行分割。</li>
+<li><code>maxAsyncRequests</code>：同时加载的模块数。如果页面引用的模块超过五个，不会对超过的模块进行代码分割</li>
+<li><code>maxInitialRequests</code>：入口文件进行加载引入的模块最多数，这个设置为3，就是如果入口文件引入模块超过三个，超过的就不会进行代码分割</li>
+<li><code>automaticNameDelimiter</code>：打包输出文件的连接符，例如<code>vendors~main.js</code>；<code>vendors</code>是组名，后面就是连接符；<code>vendors~main.js</code>意思是<code>vendors</code>组的入口文件是<code>main.js</code></li>
+<li><code>cacheGroups</code>：具体的打包输出文件的规则；注意这里的<code>priority</code>，其实大部分的包都是满足既是<code>node_modules</code>中的，又是满足默认的配置，我们通过<code>priority</code>设置优先级，优先执行哪个配置；数越大，优先级越高；越先执行。</li>
+<li><code>reuseExistingChunk</code>：配置为<code>true</code>就是如果之前打包过该模块，再次遇到不会进行打包，只是复用以前打包的模块。</li>
+</ul>
+<h4 id="5-lazy-loading-懒加载chunk-是什么">5. Lazy Loading 懒加载，Chunk 是什么？</h4>
+<h5 id="51-懒加载">5.1 懒加载</h5>
+<p>我们的页面有时候会引入很多的包，或者第三方库文件；这时候整个页面加载速度会特别慢，我们可以通过懒加载的方式去加载这些包；来提高页面的响应速度。懒加载也就是说，我们在页面初始化的时候，不加载那些初始化不需要的包文件，只在需要包的函数中，进行异步加载包文件，如下面代码：这里，只要我们点击页面的时候才会需要<code>lodash</code>包，所以，我们通过异步加载，在页面首次加载的时候，不对该包进行加载；这样来提高页面的响应速度。</p>
+<pre><code class="language-js">function getComponent () {
+  return import(/* webpackChunkName:&quot;lodash&quot;*/'lodash').then(({default: _}) =&gt; {
+    var element = document.createElement('div')
+    element.innerHTML = _.join(['a','b','c'],'***')
+    return element
+  })
+}
+// 点击页面才会执行
+document.addEventListener('click', () =&gt; {
+  getComponent ().then((element) =&gt; {
+    document.body.appendChild(element)
+  })
+})
+</code></pre>
+<p>可以使用异步函数<code>async</code>来改写上面的函数：</p>
+<pre><code class="language-js">async function getComponent () {
+  const {default: _} = await import(/* webpackChunkName:&quot;lodash&quot;*/'lodash');
+  const element = document.createElement('div')
+  element.innerHTML = _.join(['a','b','c'],'***')
+  return element
+}
+// 点击页面才会执行
+document.addEventListener('click', () =&gt; {
+  getComponent ().then((element) =&gt; {
+    document.body.appendChild(element)
+  })
+})
+</code></pre>
+<h5 id="52-chunk-是什么">5.2 Chunk 是什么？</h5>
+<p>我们打包输出的每一个<code>js</code>文件，都是一个<code>Chunk</code>;可以查看我们打包输出的日志：<br>
+<img src="https://img-blog.csdnimg.cn/2019052720265522.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+比如我们前面配置的<code>chunks: 'async',</code>代码分割只对异步加载的代码生效,如果想对同步、异步都进行分割设置为all，还有就是我们配置进行打包最小引用次数;<code>minChunks: 1</code>当一个模块被用了至少多少次的时候，才进行分割。</p>
+<h4 id="6-打包分析preloading-prefetching">6. 打包分析，Preloading, Prefetching</h4>
+<h5 id="61-打包分析工具">6.1 打包分析工具</h5>
+<p><code>webpack</code>打包分析工具：<code>https://github.com/webpack/analyse</code>,如果要使用这个工具对我们打包生成的代码进行分析，我们首先需要生成一个打包过程的描述文件；通过这样命令<code>webpack --profile --json &gt; stats.json</code>，我们在<code>package.json</code>里面进行配置我们的打包命令：代码意思是，我们会将打包过程的描述信息放置到<code>stats.json</code>这个文件中；</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;dev-build&quot;: &quot;webpack --profile --json &gt; stats.json --config ./build/webpack.dev.js&quot;
+  },
+</code></pre>
+<p>然后点击进入这个网站<code>http://webpack.github.io/analyse/</code>（需要科学上网），上传我们打包的描述信息文件，会生成一个分析结果：<br>
+<img src="https://img-blog.csdnimg.cn/20190527205335701.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+<img src="https://img-blog.csdnimg.cn/20190527205400861.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+我的<code>webpack</code>版本是<code>4.31.0</code>这里，显示的是不合适。我们也可以使用其他的检测工具<code>https://webpack.js.org/guides/code-splitting#bundle-analysis</code>这里介绍了很多。比如这个<code>https://alexkuz.github.io/webpack-chart/</code>也可以进行检查；</p>
+<h5 id="62-preloading-prefetching">6.2 Preloading, Prefetching</h5>
+<h6 id="621-异步加载交互代码提高性能">6.2.1  异步加载交互代码提高性能</h6>
+<p>页面中一些交互的代码，比如点击页面才会执行的事件，或者点击按钮执行的事件这些；</p>
+<pre><code class="language-js">document.addEventListener('click', () =&gt; {
+  const element = document.createElement('div')
+  element.innerHTML = 'jiegiser'
+  document.body.appendChild(element)
+})
+</code></pre>
+<p>我们在页面初始化的时候，并没有用到这些；我们可以打开控制台，按<code>ctrl+shift+p</code>然后输入<code>&gt;show coverage</code>来查看我们文件的利用率：绿色的是页面加载有用的内容。<br>
+<img src="https://img-blog.csdnimg.cn/20190527212614385.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+可以看到我们在与页面交互的代码，没有被利用；页面一开始并没有使用这个交互式的函数，所以在页面初始化加载的时候，将这些代码全部下载进行加载，会浪费项目的性能。这种交互的代码最好是放在一个异步加载的模块里面，我们新建一个<code>click.js</code>文件，里面写我们异步加载模块等实现的交互式代码：</p>
+<pre><code class="language-js">function handleClick () {
+    const element = document.createElement('div')
+    element.innerHTML = 'jiegiser'
+    document.body.appendChild(element)
+}
+
+export default handleClick;
+</code></pre>
+<p>然后在<code>index.js</code>这样去引入我们的	<code>click.js</code>模块：</p>
+<pre><code class="language-js">document.addEventListener('click', () =&gt; {
+  // func就是我们导出的handleclick方法
+  import('./click.js').then(({default: func}) =&gt; {
+    func();
+  })
+})
+</code></pre>
+<p>再次打开控制台的<code>&gt;show coverage</code>来查看我们文件的利用率：会发现比之前的高跟多；<br>
+<img src="https://img-blog.csdnimg.cn/2019052808100047.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+这也就说明了为什么<code>webpack</code>的<code>chunks: 'async'</code>默认的配置项是打包异步的代码，<code>webpack</code>真正希望的是我们多写这种异步加载模块的代码，进行打包，来提升性能。</p>
+<h6 id="622-利用preloading-prefetching优化异步加载交互代码提高性能">6.2.2  利用Preloading, Prefetching优化异步加载交互代码提高性能</h6>
+<p>我们前面写的只有页面需要展示的内容在页面初始化的时候进行加载，其他的交互式的代码可以通过异步加载的方式提高性能；但是比如我们有一个交互式的是一个点击按钮之后，打开一个模态框；这种交互式的如果等到用户点击按钮的时候再进行异步加载代码，是会等待很长时间的，我们可以通过<code>Preloading, Prefetching</code>（<code>https://webpack.js.org/guides/code-splitting#prefetchingpreloading-modules</code>）来优化加载，等到页面全部加载完成，网络空闲之后，再进行加载我们的异步交互代码；通过添加一个<code>/* webpackPrefetch: true */</code>魔法注释来实现，等到页面主要的<code>js</code>文件加载完成之后，再进行加载我们的交互代码；</p>
+<pre><code class="language-js">document.addEventListener('click', () =&gt; {
+  // func就是我们导出的handleclick方法
+  import(/* webpackPrefetch: true */ './click.js').then(({default: func}) =&gt; {
+    func();
+  })
+})
+</code></pre>
+<p><code>Preloading</code>,和<code>Prefetching</code>基本是一样的；<code>Prefetching</code>是等到页面主要核心的<code>js</code>文件加载完成之后，带宽空闲的时候再进行加载异步加载的代码；<code>Preloading</code>是跟主要的业务逻辑代码一起加载的。</p>
+<h4 id="7-css-文件的代码分割">7. CSS 文件的代码分割</h4>
+<h5 id="71-使用minicssextractplugin-插件进行css代码分割">7.1 使用MiniCssExtractPlugin 插件进行css代码分割</h5>
+<p>我们在输出配置的时候可以添加一个<code>chunkFilename</code>的配置项；我们配置的入口文件在打包输出的时候其实是根据<code>filename: '[name].js',</code>我们配置的这个进行打包输出，而其他的打包输出文件会根据我们配置的<code>chunkFilename</code>的配置项，来进行打包输出；我们之前打包<code>css</code>，打包成功之后会将<code>css</code>与<code>js</code>文件打包在一起；我们现在想把我们的<code>css</code>文件打包输出的时候也跟打包<code>js</code>文件一样单独输出，这时候就需要这个<code>MiniCssExtractPlugin</code>插件，来帮助我们：<br>
+输入命令<code>npm install --save-dev mini-css-extract-plugin</code>进行安装这个插件，需要注意的是，这个插件不支持热更新，在开发环境的时候使用，开发效率较低，我们修改<code>css</code>样式之后，得手动刷新浏览器；一般我们在线上环境会使用这个插件。在开发环境的配置中添加下面的配置：</p>
+<pre><code class="language-js">const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const merge = require('webpack-merge')
+const commonConfig = require('./webpack.common.js')
+const prodConfig = {
+    // 配置打包模式
+    mode: 'production',
+    devtool: 'cheap-module-source-map',
+    plugins: [
+      new MiniCssExtractPlugin({})
+    ]
+}
+// 模块导出的是两个文件的合并
+module.exports = merge(commonConfig, prodConfig)
+</code></pre>
+<p>然后在打包的规则中，配置打包<code>css</code>文件的时候使用该插件提供的<code>loader</code>，把<code>css</code>单独打包成一个文件。然我们修改生产环境的配置，配置打包<code>css</code>文件的规则，如下代码：开发环境的打包<code>css</code>的规则可以不用修改</p>
+<pre><code class="language-js">    module: {
+      rules: [
+        {
+            test: /\.scss$/,
+            use: [
+                MiniCssExtractPlugin.loader,
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 2
+                  }
+                },
+                'sass-loader',
+                'postcss-loader'
+            ]
+        }, {
+            test: /\.css$/,
+            use: [
+                MiniCssExtractPlugin.loader,
+                'css-loader',
+                'postcss-loader'
+            ]
+        },
+      ]
+    },
+</code></pre>
+<p>然后我们只想打包会发现并没有生成一个<code>css</code>文件，是因为我们前面配置了<code>tree shaking</code>会检测引入的包是否使用，如果没有使用就会去除，不会进行打包；我们可以修改<code>package.json</code>里面的配置，让其不对<code>css</code>文件进行检查：</p>
+<pre><code class="language-js">  &quot;sideEffects&quot;: [
+    &quot;*.css&quot;
+  ],
+</code></pre>
+<p>然后将配置时候启用<code>tree shaking</code>检查的配置放在公用的配置文件（<code>webpack.common.js</code>）中：</p>
+<pre><code class="language-js">    optimization: {
+        usedExports: true
+      },
+</code></pre>
+<p>修改后如下：</p>
+<pre><code class="language-js">    // 修改配置，进行代码分割进行打包，以及去除打包成功之后添加的vendors~前缀
+    optimization: {
+      usedExports: true,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendors: false,
+          default: false
+        }
+      }
+    },
+</code></pre>
+<p>我们还可以在<code>MiniCssExtractPlugin</code>添加很多配置项，如下面代码：当打包的文件直接引入到页面的时候他的命名规则会走<code>filename</code>的配置项，如果是间接引入到页面，就会走下面的<code>chunkFilename</code>的配置项。如果页面直接引入了多个<code>css</code>文件，会直接将这些文件合并打包到一个<code>main.css</code>文件中。</p>
+<pre><code class="language-js">    plugins: [
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[name].chunk.css',
+      })
+    ]
+</code></pre>
+<h5 id="72-对打包输出的css文件进行压缩">7.2 对打包输出的css文件进行压缩</h5>
+<p>需要压缩<code>css</code>文件，我们使用一个插件，输入命令进行安装：<code>npm install --save-dev optimize-css-assets-webpack-plugin</code>,然后在<code>webpack.prod.js</code>里面引入这个插件，进行配置如下：</p>
+<pre><code class="language-js">const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const prodConfig = {
+......
+    optimization: {
+      minimizer: [new OptimizeCssAssetsPlugin({})]
+    },
+  }
+......
+</code></pre>
+<h5 id="73-多个js入口文件引入的css文件打包输出为一个文件">7.3 多个js入口文件引入的css文件打包输出为一个文件</h5>
+<p>我们需要通过代码分割的配置添加一个<code>styles</code>的组，配置如下：<code>enforce: true,</code>就是说忽略掉我们配置的其他有关<code>css</code>文件打包的默认参数；</p>
+<pre><code class="language-js">    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+</code></pre>
+<h5 id="74-根据配置入口js文件不同对其中引入的css文件进行单独打包">7.4 根据配置入口js文件不同，对其中引入的css文件进行单独打包</h5>
+<p>我们还可以根据我们配置的<code>js</code>文件，对每个文件中引入的<code>css</code>文件打包输出成单独的一个文件。如下面配置：入口文件有<code>foo</code>跟<code>bar</code>，分别进行打包输出为不同的文件。</p>
+<pre><code class="language-js">    splitChunks: {
+      cacheGroups: {
+        fooStyles: {
+          name: 'foo',
+          test: (m, c, entry = 'foo') =&gt;
+            m.constructor.name === 'CssModule' &amp;&amp; recursiveIssuer(m) === entry,
+          chunks: 'all',
+          enforce: true,
+        },
+        barStyles: {
+          name: 'bar',
+          test: (m, c, entry = 'bar') =&gt;
+            m.constructor.name === 'CssModule' &amp;&amp; recursiveIssuer(m) === entry,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+</code></pre>
+<h4 id="8-webpack-与浏览器缓存-caching">8. Webpack 与浏览器缓存( Caching )</h4>
+<h5 id="81-去除打包输出性能警告提示">8.1 去除打包输出性能警告提示</h5>
+<p>我们有时候在打包文件的时候，控制台会抛出一个警告：警告我们打包输出的文件太大了超过了最大的<code>244kb</code>的大小。<br>
+<img src="https://img-blog.csdnimg.cn/20190530083501241.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+我们可以去除这个性能的警告，在<code>webpack.common.js</code>中添加配置</p>
+<pre><code class="language-js">module.exports = {
+    ........
+    //去除控制台提示性能的问题
+    performance: false,
+    ........
+}
+</code></pre>
+<h5 id="82-浏览器缓存">8.2 浏览器缓存</h5>
+<p>我们每次打包之后的文件，如果不做添加文件修改，打包输出的文件每次都是一样的；这会导致浏览器加在我们的代码的时候出现使用缓存中已经缓存好的文件；这时候我们可以在打包输出的配置进行修改添加一个打包输出文件的唯一标识符：<code>contenthash</code>是文件的<code>hash</code>值；如果打包输出的文件没有变化，这个值不变，如果有变化，对应的这个值也会变化。</p>
+<pre><code class="language-js">    output: {
+      filename: '[name].[contenthash].js',
+      chunkFilename: '[name].[contenthash].js'
+    }
+</code></pre>
+<p>对于新版本的<code>webpack4.x</code>打包之后如果文件没有更改，会保持不变，但是老版本的<code>webpack4.x</code>货值之前的版本，有可能会发生变化，这个时候我们需要在<code>optimization</code>选项中添加下面的配置：</p>
+<pre><code class="language-js">    optimization: {
+      runtimeChunk: {
+          name: 'runtime'
+      },
+    }
+</code></pre>
+<p>我们会发现打包生成后，多出来一个<code>runtime--.js</code>的文件，这个文件保存着库代码与业务代码之间的引用关系。</p>
+<h4 id="9-shimming的作用">9. Shimming的作用</h4>
+<h5 id="91-shimming的使用">9.1 Shimming的使用</h5>
+<p><code>webpack</code> 编译器(<code>compiler</code>)能够识别遵循<code>ES2015</code>模块语法、<code>CommonJS</code>或 <code>AMD</code>规范编写的模块。然而，一些第三方的库(<code>library</code>)可能会引用一些全局依赖（例如 <code>jQuery</code>中的<code>$</code>）。这些库也可能创建一些需要被导出的全局变量。这些“不符合规范的模块”就是 <code>shimming</code>发挥作用的地方，在<code>webpack</code>中，每个库文件是单独的，彼此隔离的；如下面的代码：<br>
+新建的一个<code>jquery.ui.js</code>我们使用了<code>jquery</code>但事故我们的库文件没有引入他。</p>
+<pre><code class="language-js">export function ui () {
+  $('body').css('background', 'red')
+}
+
+</code></pre>
+<p><code>index.js</code>文件：</p>
+<pre><code class="language-js">import _ from 'lodash'
+import $ from 'jquery'
+import { ui } from './jquery.ui.js'
+ui();
+const dom = $('&lt;div&gt;')
+dom.html(_.join(['dell', 'lee'], '---'))
+$('body').append(dom)
+</code></pre>
+<p>这样会提示<code>$</code>没有定义，我们原本想着前面引入了<code>jquery</code>为什么还是没用，就是因为在<code>webpack</code>中，每个库文件是单独的，彼此隔离的，我们一般引入的库文件是第三方的，存放在<code>node_module</code>中，我们也不可能去修改它里面的内容，所以这时候就需要使用<code>Shimming</code>来解决问题；修改我们的<code>webpack.common.js</code>:<code>new webpack.ProvidePlugin</code>这个<code>webpack</code>自带的插件会进行对打包文件进行检查，如果检测到你的代码中有<code>$</code>这个符号，他会自动帮你引入<code>jquery</code>模块。然后将<code>jwuery</code>模块赋值给<code>$</code>字符串。</p>
+<pre><code class="language-js">const webpack = require('webpack')
+module.exports = {
+    // 添加插件清空打包路径以及根据模板进行打包html文件
+    plugins: [
+        .....
+        new webpack.ProvidePlugin({
+            $: 'jquery'
+        })
+    ],
+}
+</code></pre>
+<p>同样这里的配置我们还可以直接将某一个包的方法进行配置到这里，比如：我想使用<code>lodash</code>模块中的<code>join</code>方法，之前我们是引入<code>import _ from 'lodash'</code>这样引入，然后<code>_.join</code>这样调用他的<code>join</code>方法，但是我这里就想<code>_join</code>这样去调用<code>join</code>方法，我们可以在<code>webpack.common.js</code>进行配置</p>
+<pre><code class="language-js">export function ui () {
+  $('body').css('background', 'red')
+  $('body').html(_join(['ddd', 'ddd'],'----'))
+}
+</code></pre>
+<p>配置如下：<code>_join: ['lodash', 'join']</code>意思就是，当我们打包的时候遇到<code>_join</code>，就去引入<code>lodash</code>，将<code>lodash</code>中的<code>join</code>方法，赋值给他。</p>
+<pre><code class="language-js">    // 添加插件清空打包路径以及根据模板进行打包html文件
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpakcPlugin({
+          template: './src/index.html'
+        }),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            _join: ['lodash', 'join']
+        })  
+    ],
+</code></pre>
+<h5 id="92-利用shimming改变模块中this指向window">9.2 利用Shimming改变模块中this指向window</h5>
+<p>我们在模块中，比如我们的入口文件，我们打印<code>console.log(this === window);</code>会发现，里面的<code>this</code>指向并不是<code>window</code>对象，我们可以借助一些<code>loader</code>:输入命令进行安装<code>npm install imports-loader --save-dev</code>,然后进行修改<code>webpack.common.js</code>中打包<code>js</code>文件的配置：<code>loader: &quot;imports-loader?this=&gt;window&quot;</code>当我们打包<code>js</code>文件的时候，会走下面的规则，然后将我们每个模块中的<code>this</code>指向我们的<code>windos</code>对象。</p>
+<pre><code class="language-js">    module: {
+        rules: [{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: [
+            {
+              loader: &quot;babel-loader&quot;,
+            },
+            {
+              loader: &quot;imports-loader?this=&gt;window&quot;
+            }
+          ]
+        }]
+       }
+</code></pre>
+<blockquote>
+<p>深入学习：查看<code>webpack</code>官网中<code>guides</code>里所有内容。</p>
+</blockquote>
+<h4 id="10-webpack环境变量的使用方法">10. Webpack环境变量的使用方法</h4>
+<p>之前我们是将我们的配置文件分成了三个部分<code>webpack.dev.js webapck.common.js webapck.prod.js</code>然后在<code>package.json</code>配置命令如下：进行运行不同的文件：<br>
+<code>package.json</code>之前的配置：</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;webpack-dev-server --config ./build/webpack.dev.js&quot;,
+    &quot;build&quot;: &quot;webpack --config ./build/webpack.prod.js&quot;,
+    &quot;dev-build&quot;: &quot;webpack --config ./build/webpack.dev.js&quot;,
+  },
+</code></pre>
+<p>我们现在可以修改一下我们之前的配置，将<code>webpack.dev.js</code>配置如下：直接导出配置；</p>
+<pre><code class="language-js">
+const webpack = require('webpack');
+// const merge = require('webpack-merge')
+// const commonConfig = require('./webpack.common.js')
+const devConfig = {
+    // 配置打包模式
+    mode: 'development',
+    devtool: 'cheap-module-eval-source-map',
+    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/api': 'http://localhost:3000'
+      },
+      hot: true,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.scss$/,
+          use: [
+              'style-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 2
+                }
+              },
+              'sass-loader',
+              'postcss-loader'
+          ]
+      }, {
+          test: /\.css$/,
+          use: [
+              'style-loader',
+              'css-loader',
+              'postcss-loader'
+          ]
+      },
+      ]
+    },
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(), 
+    ],
+    // output: {
+    //   filename: '[name].js',
+    //   chunkFilename: '[name].js'
+    // }
+}
+// module.exports = merge(commonConfig, devConfig)
+
+module.exports = devConfig;
+</code></pre>
+<p>对应的<code>webpack.prod.js</code>修改为：</p>
+<pre><code class="language-js">const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+// const merge = require('webpack-merge')
+// const commonConfig = require('./webpack.common.js')
+const prodConfig = {
+    // 配置打包模式
+    mode: 'production',
+    // 暂时先屏蔽输出source文件
+    // devtool: 'cheap-module-source-map',
+    module: {
+      rules: [
+        {
+            test: /\.scss$/,
+            use: [
+                MiniCssExtractPlugin.loader,
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 2
+                  }
+                },
+                'sass-loader',
+                'postcss-loader'
+            ]
+        }, {
+            test: /\.css$/,
+            use: [
+                MiniCssExtractPlugin.loader,
+                'css-loader',
+                'postcss-loader'
+            ]
+        },
+      ]
+    },
+    optimization: {
+      minimizer: [new OptimizeCssAssetsPlugin({})]
+    },
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[name].chunk.css',
+      })
+    ],
+    output: {
+      filename: '[name].[contenthash].js',
+      chunkFilename: '[name].[contenthash].js'
+    }
+}
+// 模块导出的是两个文件的合并
+// module.exports = merge(commonConfig, prodConfig)
+module.exports = prodConfig;
+</code></pre>
+<p>然后我们在<code>webpack..common.js</code>进行根据我们在<code>package.json</code>中配置的命令进行判断是使用哪一个配置文件：<br>
+首先修改<code>package.json</code>：<code>--env.production</code>为传入参数；表示是生产环境的配置</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;webpack-dev-server --config ./build/webpack.common.js&quot;,
+    &quot;build&quot;: &quot;webpack --env.production --config ./build/webpack.common.js&quot;,
+    &quot;test&quot;: &quot;webpack-dev-server&quot;,
+    &quot;dev-build&quot;: &quot;webpack --config ./build/webpack.common.js&quot;,
+  },
+</code></pre>
+<p>然后在<code>webpack.common.js</code>配置如下：</p>
+<pre><code class="language-js">module.exports = (env) =&gt; {
+    if (env &amp;&amp; env.production) {
+        return merge (commonConfig, prodConfig)
+    } else {
+        return merge (commonConfig, devConfig)
+    }
+}
+</code></pre>
+<p><code>webpack.common.js</code>文件内容：</p>
+<pre><code class="language-js">// 引入node核心模块path
+const path = require('path')
+// 将我们写的html文件，进行打包；
+const HtmlWebpakcPlugin = require('html-webpack-plugin')
+// 清除上次打包生成的js文件
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+
+//重新配置环境变量
+/**************** */
+
+const merge = require('webpack-merge');
+const devConfig = require('./webpack.dev.js')
+const prodConfig = require('./webpack.prod.js')
+
+/*************** */
+const webpack = require('webpack')
+// module.exports = {
+const commonConfig = {
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+    },
+    module: {
+        rules: [{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: [
+            {
+              loader: &quot;babel-loader&quot;,
+            },
+            {
+              loader: &quot;imports-loader?this=&gt;window&quot;
+            }
+          ]
+        },
+            {
+            test: /\.(png|jpe?g|gif)$/,
+            use: {
+                loader: 'url-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'images/',
+                    limit: 204800
+                }
+            }
+        }, {
+            test: /\.vue$/,
+            use: {
+                loader: 'vue-loader'
+            }
+        },  {
+            test: /\.(eot|ttf|svg|woff)$/,
+            use: {
+                loader: 'file-loader'
+            }
+        },{
+            test: /\.(html)$/,
+            use: {
+                loader: 'html-loader',
+            }
+        }]
+    },
+    // 添加插件清空打包路径以及根据模板进行打包html文件
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpakcPlugin({
+          template: './src/index.html'
+        }),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            _join: ['lodash', 'join']
+        })  
+    ],
+    //去除控制台提示性能的问题
+    performance: false,
+    // 修改配置，进行代码分割进行打包，以及去除打包成功之后添加的vendors~前缀
+    optimization: {
+      runtimeChunk: {
+          name: 'runtime'
+      },
+      usedExports: true,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            name: 'vendors'
+          },
+        }
+      }
+    },
+  //   optimization: {
+  //     splitChunks: {
+  //       chunks: 'async',//代码分割只对异步加载的代码生效,如果想对同步、异步都进行分割设置为all
+  //       minSize: 30000,//设置模块大小大于30kb才会进行代码分割
+  //       maxSize: 0,//设置打包输出文件的最大体积，如果需要打包的模块超过这个大小，他会进行分割成多个文件进行打包输出
+  //       minChunks: 1,//当一个模块被用了至少多少次的时候，才进行分割。
+  //       maxAsyncRequests: 5,//同时加载的模块数。如果页面引用的模块超过五个，不会对超过的模块进行代码分割
+  //       maxInitialRequests: 3,//入口文件进行加载引入的模块最多数，这个设置为3，就是如果入口文件引入模块超过三个，超过的就不会进行代码分割
+  //       automaticNameDelimiter: '~',//打包输出文件的连接符，例如vendors~main.js；vendors是组名，后面就是连接符；vendors~main.js意思是vendors组的入口文件是main.js
+  //       name: true,//
+  //       cacheGroups: {
+  //           // 如果引入的包是node_modules里面的内容，会进入到这里的配置
+  //         vendors: {
+  //           test: /[\\/]node_modules[\\/]/,//检测引入的第三方库是不是node_modules里面的内容
+  //           priority: -10,
+  //           filename: 'vendors.js' //如果是node_modules里面的内容，会打包到这个文件里面
+  //         },
+  //         // 如果引入的包不是node_modules里面的内容，会进入到这里的配置
+  //         default: {
+  //           minChunks: 2,
+  //           priority: -20,
+  //           reuseExistingChunk: true,
+  //           filename: 'common.js'
+  //         }
+  //       }
+  //     }
+  //  },
+    // 打包出的文件配置/*这里的配置会跟打包HTML的插件冲突 */
+    output: {
+        // 文件引入的cnd地址
+        // publicPath: 'http://cdn.com.cn',
+        // publicPath: './',
+        // // 文件名
+        // filename: '[name].js',
+        //  打包后的文件放在哪个文件夹，是一个绝对路径 
+        //  __dirname就是webpack.config.js所在的当前目录的路径,当前模块的目录名,改成bundle就是说，打包后的文件放在dist文件夹中
+        // 非入口文件打包输出走下面的配置项
+        // chunkFilename: '[name].chunk.js',
+        path: path.resolve(__dirname, '../dist')
+    }
+}
+
+module.exports = (env) =&gt; {
+    if (env &amp;&amp; env.production) {
+        return merge (commonConfig, prodConfig)
+    } else {
+        return merge (commonConfig, devConfig)
+    }
+}
+</code></pre>
+<p>我们也可以进行传参数，这样：</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;webpack-dev-server --config ./build/webpack.common.js&quot;,
+    &quot;build&quot;: &quot;webpack --env production --config ./build/webpack.common.js&quot;,
+    &quot;dev-build&quot;: &quot;webpack --config ./build/webpack.common.js&quot;,
+  },
+</code></pre>
+<p>然后<code>webpack.common.js</code>这样：</p>
+<pre><code class="language-js">module.exports = (production) =&gt; {
+    if (production) {
+        return merge (commonConfig, prodConfig)
+    } else {
+        return merge (commonConfig, devConfig)
+    }
+}
+</code></pre>
+<p>或者在传参数的时候传入一个字符串：</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;webpack-dev-server --config ./build/webpack.common.js&quot;,
+    &quot;build&quot;: &quot;webpack --env.production =abc --config ./build/webpack.common.js&quot;,
+    &quot;dev-build&quot;: &quot;webpack --config ./build/webpack.common.js&quot;,
+  },
+</code></pre>
+<p>然后<code>webpack.common.js</code>这样：</p>
+<pre><code class="language-js">module.exports = (env) =&gt; {
+    if (env &amp;&amp; env.production === 'abc) {
+        return merge (commonConfig, prodConfig)
+    } else {
+        return merge (commonConfig, devConfig)
+    }
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-tree-shaking-%E6%A6%82%E5%BF%B5%E8%AF%A6%E8%A7%A3">1. Tree Shaking 概念详解</a>
+<ul>
+<li><a href="#11-babelpolyfill%E4%B8%8Ebabelpreset-env%E4%B9%8B%E9%97%B4%E7%9A%84%E5%BC%95%E7%94%A8%E5%B0%8F%E5%86%B2%E7%AA%81">1.1 babel/polyfill与babel/preset-env之间的引用小冲突</a></li>
+<li><a href="#12-tree-shaking-%E6%A6%82%E5%BF%B5">1.2 Tree Shaking 概念</a></li>
+</ul>
+</li>
+<li><a href="#2-develoment-%E5%92%8C-production-%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%8C%BA%E5%88%86%E6%89%93%E5%8C%85">2. Develoment 和 Production 模式的区分打包</a></li>
+<li><a href="#3-webpack-%E5%92%8C-code-splitting">3. Webpack 和 Code Splitting</a>
+<ul>
+<li><a href="#31-%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98">3.1 打包配置的一些问题</a></li>
+<li><a href="#32-code-splitting%E4%BB%A3%E7%A0%81%E5%88%86%E5%89%B2">3.2 Code Splitting代码分割</a>
+<ul>
+<li><a href="#321-%E7%AC%AC%E4%B8%80%E7%A7%8D%E6%96%B9%E5%BC%8F%E8%87%AA%E5%B7%B1%E5%AE%9E%E7%8E%B0%E4%BB%A3%E7%A0%81%E5%88%86%E5%89%B2%E5%B0%86%E5%85%B6%E4%BB%96%E5%BC%95%E7%94%A8%E7%9A%84%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93%E8%BF%9B%E8%A1%8C%E5%88%86%E7%A6%BB%E5%86%99%E5%9C%A8%E5%8F%A6%E4%B8%80%E4%B8%AAjs%E8%84%9A%E6%9C%AC%E4%B8%AD">3.2.1 第一种方式：自己实现代码分割：将其他引用的第三方库进行分离写在另一个js脚本中</a></li>
+<li><a href="#322-%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BD%BF%E7%94%A8webpack%E7%9A%84%E4%BB%A3%E7%A0%81%E5%88%86%E5%89%B2%E5%90%8C%E6%AD%A5%E5%8A%A0%E8%BD%BD%E5%8C%85%E8%BF%9B%E8%A1%8C%E6%89%93%E5%8C%85%E4%BD%BF%E7%94%A8%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E8%BF%9B%E8%A1%8Ccode-splitting">3.2.2  第二种方式：使用webpack的代码分割：同步加载包进行打包，使用插件配置进行Code Splitting</a></li>
+<li><a href="#323-%E7%AC%AC%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F%E4%BD%BF%E7%94%A8webpack%E7%9A%84%E4%BB%A3%E7%A0%81%E5%88%86%E5%89%B2%E5%BC%82%E6%AD%A5%E5%BC%95%E5%85%A5%E6%A8%A1%E5%9D%97%E7%9A%84%E4%BB%A3%E7%A0%81%E5%88%86%E5%89%B2">3.2.3  第三种方式：使用webpack的代码分割：异步引入模块的代码分割</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-splitchunksplugin-%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3">4 SplitChunksPlugin 配置参数详解</a>
+<ul>
+<li><a href="#41-%E4%BF%AE%E6%94%B9%E6%89%93%E5%8C%85%E8%BE%93%E5%87%BA%E7%9A%84%E6%96%87%E4%BB%B6%E5%90%8D">4.1 修改打包输出的文件名</a></li>
+<li><a href="#42-splitchunksplugin-%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E7%9A%84%E6%84%8F%E4%B9%89">4.2 SplitChunksPlugin 配置参数的意义</a></li>
+</ul>
+</li>
+<li><a href="#5-lazy-loading-%E6%87%92%E5%8A%A0%E8%BD%BDchunk-%E6%98%AF%E4%BB%80%E4%B9%88">5. Lazy Loading 懒加载，Chunk 是什么？</a>
+<ul>
+<li><a href="#51-%E6%87%92%E5%8A%A0%E8%BD%BD">5.1 懒加载</a></li>
+<li><a href="#52-chunk-%E6%98%AF%E4%BB%80%E4%B9%88">5.2 Chunk 是什么？</a></li>
+</ul>
+</li>
+<li><a href="#6-%E6%89%93%E5%8C%85%E5%88%86%E6%9E%90preloading-prefetching">6. 打包分析，Preloading, Prefetching</a>
+<ul>
+<li><a href="#61-%E6%89%93%E5%8C%85%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7">6.1 打包分析工具</a></li>
+<li><a href="#62-preloading-prefetching">6.2 Preloading, Prefetching</a>
+<ul>
+<li><a href="#621-%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD%E4%BA%A4%E4%BA%92%E4%BB%A3%E7%A0%81%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD">6.2.1  异步加载交互代码提高性能</a></li>
+<li><a href="#622-%E5%88%A9%E7%94%A8preloading-prefetching%E4%BC%98%E5%8C%96%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD%E4%BA%A4%E4%BA%92%E4%BB%A3%E7%A0%81%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD">6.2.2  利用Preloading, Prefetching优化异步加载交互代码提高性能</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#7-css-%E6%96%87%E4%BB%B6%E7%9A%84%E4%BB%A3%E7%A0%81%E5%88%86%E5%89%B2">7. CSS 文件的代码分割</a>
+<ul>
+<li><a href="#71-%E4%BD%BF%E7%94%A8minicssextractplugin-%E6%8F%92%E4%BB%B6%E8%BF%9B%E8%A1%8Ccss%E4%BB%A3%E7%A0%81%E5%88%86%E5%89%B2">7.1 使用MiniCssExtractPlugin 插件进行css代码分割</a></li>
+<li><a href="#72-%E5%AF%B9%E6%89%93%E5%8C%85%E8%BE%93%E5%87%BA%E7%9A%84css%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E5%8E%8B%E7%BC%A9">7.2 对打包输出的css文件进行压缩</a></li>
+<li><a href="#73-%E5%A4%9A%E4%B8%AAjs%E5%85%A5%E5%8F%A3%E6%96%87%E4%BB%B6%E5%BC%95%E5%85%A5%E7%9A%84css%E6%96%87%E4%BB%B6%E6%89%93%E5%8C%85%E8%BE%93%E5%87%BA%E4%B8%BA%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6">7.3 多个js入口文件引入的css文件打包输出为一个文件</a></li>
+<li><a href="#74-%E6%A0%B9%E6%8D%AE%E9%85%8D%E7%BD%AE%E5%85%A5%E5%8F%A3js%E6%96%87%E4%BB%B6%E4%B8%8D%E5%90%8C%E5%AF%B9%E5%85%B6%E4%B8%AD%E5%BC%95%E5%85%A5%E7%9A%84css%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E5%8D%95%E7%8B%AC%E6%89%93%E5%8C%85">7.4 根据配置入口js文件不同，对其中引入的css文件进行单独打包</a></li>
+</ul>
+</li>
+<li><a href="#8-webpack-%E4%B8%8E%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98-caching">8. Webpack 与浏览器缓存( Caching )</a>
+<ul>
+<li><a href="#81-%E5%8E%BB%E9%99%A4%E6%89%93%E5%8C%85%E8%BE%93%E5%87%BA%E6%80%A7%E8%83%BD%E8%AD%A6%E5%91%8A%E6%8F%90%E7%A4%BA">8.1 去除打包输出性能警告提示</a></li>
+<li><a href="#82-%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98">8.2 浏览器缓存</a></li>
+</ul>
+</li>
+<li><a href="#9-shimming%E7%9A%84%E4%BD%9C%E7%94%A8">9. Shimming的作用</a>
+<ul>
+<li><a href="#91-shimming%E7%9A%84%E4%BD%BF%E7%94%A8">9.1 Shimming的使用</a></li>
+<li><a href="#92-%E5%88%A9%E7%94%A8shimming%E6%94%B9%E5%8F%98%E6%A8%A1%E5%9D%97%E4%B8%ADthis%E6%8C%87%E5%90%91window">9.2 利用Shimming改变模块中this指向window</a></li>
+</ul>
+</li>
+<li><a href="#10-webpack%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">10. Webpack环境变量的使用方法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jiegiser.github.io/newBlog/post/webpack-shi-zhan-pei-zhi-an-li">
+              <h3 class="post-title">
+                Webpack实战配置案例
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
+  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
