@@ -1,0 +1,1064 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Webpack实战配置案例 | jiegiser的博客</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575596377870">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jiegiser.github.io/newBlog">
+  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575596377870" alt="">
+  </a>
+  <h1 class="site-title">
+    jiegiser的博客
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Webpack实战配置案例
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-06
+              </span>
+              <span>
+                30 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/webpack-shi-zhan-pei-zhi-an-li.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h4 id="1-library打包">1. Library打包</h4>
+<h5 id="11-对库文件进行打包">1.1 对库文件进行打包</h5>
+<p>库文件的打包：我们新建一个工程，新建<code>index.js math.js string.js</code>,代码如下：<br>
+<code>index.js</code>文件</p>
+<pre><code class="language-js">import * as math from './math.js'
+import * as string from './string.js'
+export default { math, string }
+</code></pre>
+<p><code>math.js</code>文件：</p>
+<pre><code class="language-js">export function add (a, b) {
+ return a + b;
+}
+export function minius (a, b) {
+  return a - b;
+}
+export function multiply (a, b) {
+  return a * b;
+}
+export function division (a, b) {
+  return a / b;
+}
+</code></pre>
+<p><code>string.js</code>文件</p>
+<pre><code class="language-js">export function join (a, b) {
+    return a + ' ' + b
+}
+</code></pre>
+<p>然后我们打包输出，我们这个库，在给被人使用的是，别人会有很多种方式，进行使用；比如：<br>
+<code>ES module</code>：</p>
+<pre><code class="language-js">import library from ‘library’
+</code></pre>
+<p><code>commonJS</code>方式：</p>
+<pre><code class="language-js">const library = require('library')
+</code></pre>
+<p><code>AMD</code>引入方式：</p>
+<pre><code class="language-js">require(['library'], function () {
+
+})
+</code></pre>
+<p>我们如果想让我们的库文件，在外面可以用上面的这些方式引入，我们可以进行配置，在<code>webpack.config.js</code>中配置如下：<code>libraryTarget: 'umd'</code>代码意思就是不管是在<code>AMD</code>的环境，还是<code>CommonJS</code>的环境、或者是<code>import</code>方式引入，都可以正确使用我们的库文件。</p>
+<pre><code class="language-js">const path = require('path')
+module.exports = {
+    mode: 'production',
+    entry: './src/index.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'library.js',
+        libraryTarget: 'umd'
+    }
+}
+</code></pre>
+<p>如果我们想用</p>
+<pre><code class="language-js">&lt;script src=&quot;library.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>这种方式引入，然后使用<code>library.math</code>这种全局变量来使用我们的库，这时候我们需要在<code>webpack.config.js</code>中添加一个配置项：<code>library: 'library',</code>意思是将<code>library</code>挂载到了全局变量上，这样，就可以通过<code>script</code>引入，然后进行使用了。</p>
+<pre><code class="language-js">    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'library.js',
+        library: 'library',
+        libraryTarget: 'umd'
+    }
+</code></pre>
+<p>其实<code>libraryTarget</code>跟<code>library</code>相互作用的，如果配置成上面的，是没有多大关系的，我们可以修改 <code>libraryTarget: 'this'</code>意思就是它不支持<code>AMD commonJS</code>等这些语法引入了，但是我们的<code>library</code>会挂载到全局的<code>this</code>上面。同样，也可以是<code>window</code>；，如果在<code>nodeJS</code>环境下，也可以配置 <code>global</code>；</p>
+<pre><code class="language-js">    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'library.js',
+        library: 'library',
+        libraryTarget: 'this'
+    }
+</code></pre>
+<p>我们有时候在我们的库文件中，我们使用了第三方的库文件，比如我们将我们的<code>string.js</code>代码改成下面的：我们引入了<code>lodash</code>,</p>
+<pre><code class="language-js">import _ from 'lodash'
+export function join (a, b) {
+    return _.join([a, b],' ')
+}
+</code></pre>
+<p>然后别人在使用我们的库文件的时候，有可能也会使用<code>lodash</code>这个库文件，这样可能会导致一个问题，用户打包后的代码会出现两个<code>lodash</code>文件，我们可以通过配置，来去除这种重复引用;<code>externals: ['lodash'],</code>意思就是打包过程中，如果遇到<code>lodash</code>就忽略这个库文件，然后比尔使用我们这个库的使用还是需要在自己的业务代码中引入<code>lodash</code>库。</p>
+<pre><code class="language-js">const path = require('path')
+module.exports = {
+    mode: 'production',
+    entry: './src/index.js',
+    externals: ['lodash'],
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'library.js',
+        library: 'library',
+        libraryTarget: 'umd'
+    }
+}
+</code></pre>
+<p>这里的<code>externals</code>也可以是一个对象：下面配置的意思是如果在<code>commonJS</code>环境下，我们使用<code>library</code>库文件：</p>
+<pre><code class="language-js">const library = require('library')
+</code></pre>
+<p>这样，我们引入<code>lodash</code>的时候，命名必须定义成<code>lodash</code>:如下：<code>const lodash = require('lodash')</code></p>
+<pre><code class="language-js">const path = require('path')
+module.exports = {
+    mode: 'production',
+    entry: './src/index.js',
+    externals: {
+        lodash: {
+            commonjs: 'lodash',
+        }
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'library.js',
+        library: 'library',
+        libraryTarget: 'umd'
+    }
+}
+</code></pre>
+<h5 id="12-发布一个包">1.2 发布一个包</h5>
+<p>首先我们需要修改<code>pachage.json</code>中入口改成：<code>./dist/library.js</code>表示，我们的库文件最终给别人使用的时候，入口文件是<code>./dist/library.js</code>文件。然后在<code>npm</code>上注册一个账号；<br>
+然后在命令行里面输入<code>npm adduser</code>，然后输入用户名与密邮箱等。然后输入命令<code>npm publish</code>进行发布我们的包文件，这里需要注意的是，包的名字，不能重复；需要修改<code>name</code>，值，然后我们使用我们发布的包，可以运行命令<code>npm install 包名</code>就可以了。</p>
+<h4 id="2-pwaprogressive-web-application的打包配置">2. PWA（Progressive Web Application）的打包配置</h4>
+<p>这个是一个新的前端技术。首先一个知识点就是在配置<code>js</code>文件打包输出的时候，配置<code>this</code>的指向：在<code>webpack.config.js</code>中的配置打包输出<code>js</code>的<code>loader</code>中，进行配置：<code>loader: &quot;imports-loader?this=&gt;window&quot;</code>这句话就是将<code>this</code>指向了<code>window</code>对象。</p>
+<pre><code class="language-js">{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: [
+            {
+              loader: &quot;babel-loader&quot;,
+            },
+            {
+              loader: &quot;imports-loader?this=&gt;window&quot;
+            }
+</code></pre>
+<p>我们可以通过一个<code>http-server</code>模块来模拟我们的服务器，当然也可以使用<code>live-server</code>两个都是一样的。输入命令<code>npm install http-server -D</code>进行安装。然后我们在<code>package.json</code>里面进行配置一个命令，来运行我们的服务器：<code>&quot;start&quot;: &quot;http-server dist&quot;</code>代码的意思就是在我们打包输出的<code>dist</code>的文件夹中启动一个服务器。</p>
+<pre><code class="language-js">  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;http-server dist&quot;
+  },
+</code></pre>
+<p>输入运行命令之后，我们可以看到我们的网页正常显示了。如果这个时候，我们将服务器断开，浏览器会出现：无法访问此网站，也就是我们的网站挂了，而<code>pwa</code>技术是如果你第一次访问网站，访问成功之后，突然之间服务器挂了，你第二次再次访问这个网站的时候，他会利用你本地的缓存，可以利用缓存，把之前访问的页面展示出来。也就是说，即便服务器挂了，我在本地还是可以看到之前访问到的页面。<br>
+我们可以在<code>webpack</code>中，通过一个插件来实现：<br>
+输入命令：<code>npm install workbox-webpack-plugin --save-dev</code>进行安装，我们只需要在线上环境之后，进行使用<code>pwa</code>技术，让用户体验更好，所以，我们只需要修改<code>webapck.prod.js</code>的配置文件。</p>
+<pre><code class="language-js">.....
+const WorkboxPlugin = require('workbox-webpack-plugin')
+const prodConfig = {
+....
+    plugins: [
+    ....
+      new WorkboxPlugin.GenerateSW({
+        // 这些选项帮助快速启用 ServiceWorkers
+        // 不允许遗留任何“旧的” ServiceWorkers
+        clientsClaim: true,
+        skipWaiting: true
+      })
+    ....
+    ],
+}
+....
+</code></pre>
+<p>然后我们进行运行<code>npm run build</code>进行打包，现在你可以看到，生成了两个额外的文件：<code>service-worker.js</code>和名称冗长的 <code>precache-manifest.b5ca1c555e832d6fbf9462efd29d27eb.js</code>。<code>service-worker.js</code>是<code>Service Worker</code>文件，<code>precache-manifest.b5ca1c555e832d6fbf9462efd29d27eb.js</code>是 <code>service-worker.js</code>引用的文件，所以它也可以运行。可能你本地生成的文件可能会有所不同；但是应该会有一个<code>service-worker.js</code>文件。但是我们重复上面的操作之后，关闭服务器，再次访问的时候，还是不能查看我们上次访问的网页，因为我们还差一步，那就是注册<code>Service Worker</code>，在我们的<code>src</code>目录中的主入口<code>js</code>文件加上下面代码：</p>
+<pre><code class="language-js">if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () =&gt; {
+    navigator.serviceWorker.register('/service-worker.js').then(registration =&gt; {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError =&gt; {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
+</code></pre>
+<p>再次运行<code>npm build build</code>来构建包含注册代码版本的应用程序。然后用 <code>npm start</code>将构建结果<code>serve</code>到服务下。导航至 <code>http://localhost:8080</code>并查看 <code>console</code> 控制台。应该看到：<code>SW registered</code>,现在来进行测试。停止 <code>server</code>并刷新页面。如果浏览器能够支持 <code>Service Worker</code>，应该可以看到你的应用程序还在正常运行。</p>
+<h4 id="3-typescript-的打包配置">3. TypeScript 的打包配置</h4>
+<p><code>TypeScript</code>可以进行代码的规范，也可以很方便的进行报错提示；可以有效的提升<code>JavaSCript</code>的可维护性。首先我们进行配置打包<code>typescript</code>的规则，我们要使用一个<code>ts-loader</code>这个<code>loader</code>来进行打包<code>tsx</code>的文件，当然我们首先需要安装这个<code>loader</code>,使用这个<code>loader</code>的时候，你必须要安装<code>typescript</code>，所以运行下面的命令进行安装：<code>npm install ts-loader typescript --save-dev</code><br>
+配置<code>webpack.config.json</code>如下：</p>
+<pre><code class="language-js">const path = require('path')
+module.exports = {
+    entry: './src/index.tsx',
+    module: {
+        rules: [{
+            test: /\.tsx?$/,
+            use: 'ts-loader',
+            exclude: /node_modules/
+        }]
+    },
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist')
+    }
+}
+</code></pre>
+<p>但是这样还是不能够进行打包，我们需要添加一个<code>tsconfig.json</code>，进行配置打包<code>TypeScript</code>的规则：</p>
+<pre><code class="language-js">{
+    &quot;compilerOptions&quot;: {
+        &quot;outDir&quot;: &quot;./dist&quot;,//打包输出的地址
+        &quot;module&quot;: &quot;es6&quot;,// 模块的引用方式是使用esmodule的语法
+        &quot;target&quot;: &quot;es5&quot;,//打包成es5的代码
+        &quot;allowJs&quot;: true//是否允许在TypeScript中引入js模块
+    }
+}
+</code></pre>
+<p>这样就可以打包成功了；我们之所以使用<code>TypeScript</code>是进行规范我们代码书写，以及类型引用的正确；比如我们使用<code>lodash</code>这样的库文件，我们在使用这个库的时候，我们有时候不知道这个函数的参数是什么 ，也没有提示我们书写的正确性，只有运行之后，才会知道；当然你也可以去查看文档。我们可以使用对应库文件的<code>TypeScript</code>类型文件，比如我们前面说<code>lodash</code>，我们进行输入命令<code>npm install @types/lodash --save-dev</code>进行安装对应的<code>TypeScript</code>类型文件，然后我们调用里面的函数，如果传入的参数不对，会直接进行提示；<br>
+我们在<code>TypeScript</code>中引用<code>lodash</code>,需要使用下面的代码：</p>
+<pre><code class="language-js">import * as _ from 'lodash'
+</code></pre>
+<p>如果需要使用其他库文件，就安装对应的<code>TypeScript</code>类型文件。如果你不知道有还是没有，可以在这个网站;<code>https://microsoft.github.io/TypeSearch/</code>进行搜索对应的库文件。</p>
+<h4 id="4-使用-webpackdevserver-实现请求转发">4. 使用 WebpackDevServer 实现请求转发</h4>
+<p>我们一般在前端发送<code>ajax</code>请求是使用<code>axios</code>这个库进行发送请求，首先我们需要进行安装；一个简单的请求如下：</p>
+<pre><code class="language-js">import axios from 'axios'
+axios.get('http://www.dell-lee.com/react/api/header.json')
+.then((res) =&gt; {
+  console.log(res)
+})
+</code></pre>
+<p>我们一般在生产环境的时候，是使用其他服务器的<code>api</code>接口，并不是使用真正的后台接口，是一台测试的服务器，线上环境我们是使用真正的接口数据。所所以这个时候，我们就需要进行对接口的转发。配置<code>devServer</code>如下：<code>'/react/api': 'http://www.dell-lee.com'</code>代码的意思就是当我发送请求<code>/react/api</code>地址的时候，接口转发到<code>http://www.dell-lee.com</code>这个地址。进行获取对应的数据。</p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/react/api': 'http://www.dell-lee.com',
+      },
+      hot: true,
+    },
+</code></pre>
+<p>然后在发送请求的地址如下代码：</p>
+<pre><code class="language-js">import axios from 'axios'
+axios.get('/react/api/header.json')
+.then((res) =&gt; {
+  console.log(res)
+})
+</code></pre>
+<p>也可以对一个接口请求的地址进行转发，比如我们现在请求的是<code>http://www.dell-lee.com/react/api/header.json</code>实际我们需要请求的是<code>http://www.dell-lee.com/react/api/demo.json</code>,可以在<code>devserver</code>配置如下;</p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/react/api': {
+          target: 'https://www.dell-lee.com',
+          pathRewrite: {
+            'header.json': 'demo.json'
+          }
+        },
+      },
+      hot: true,
+    },
+</code></pre>
+<p>当然我们只有在开发环境的时候进行上面的配置是有用的，有时候我们请求的地址是<code>https</code>协议的网址，需要加一个配置项：<code>secure: false,</code></p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/react/api': {
+          target: 'https://www.dell-lee.com',
+          secure: false,
+          pathRewrite: {
+            'header.json': 'demo.json'
+          }
+        },
+      },
+      hot: true,
+    },
+</code></pre>
+<p>我们在这里也可以进行拦截，比如下面的代码配置：<code>bypass</code>里面的配置项就是说当发送请求要接手的是<code>html</code>页面数据的时候，也就是说请求是一个<code>html</code>的地址的时候，直接跳转到<code>index.html</code>页面。</p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/react/api': {
+          target: 'https://www.dell-lee.com',
+          secure: false,
+          bypass: function(req, res, proxyOptions) {
+            if (req.headers.accept.indexOf('html') !== -1) {
+              console.log('Skipping proxy for browser request.');
+              return '/index.html';
+            }
+          },
+          pathRewrite: {
+            'header.json': 'demo.json'
+          }
+        },
+      },
+      hot: true,
+    },
+</code></pre>
+<p>如果我们代理多个路基，可以进行下面这样的配置：我们上面只有一个<code>'/react/api'</code>一个路径，下面代码表示遇到<code>'/auth', '/api'</code>这两个地址，都是转发到<code>https://www.dell-lee.com</code>这个服务器。</p>
+<pre><code class="language-js">    devServer: {
+      proxy: {
+      context: ['/auth', '/api'],
+      target: 'https://www.dell-lee.com',
+      },
+      hot: true,
+    },
+</code></pre>
+<p>如果我们想做一个根目录的路径的转发，也就是<code>'/'</code>，我们需要将配置项的<code>index</code>设置为<code>false</code>或者为<code>''</code>空字符串，如下配置:</p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        index: '',
+        '/': {
+          target: 'https://www.dell-lee.com',
+          secure: false,
+          bypass: function(req, res, proxyOptions) {
+            if (req.headers.accept.indexOf('html') !== -1) {
+              console.log('Skipping proxy for browser request.');
+              return '/index.html';
+            }
+          },
+          pathRewrite: {
+            'header.json': 'demo.json'
+          }
+        },
+      },
+      hot: true,
+    },
+</code></pre>
+<p>我们可以设置<code>changeOrigin: true</code>来覆盖一些请求服务器对<code>origin</code>进行的配置，如下代码：</p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        index: '',
+        '/': {
+          target: 'https://www.dell-lee.com',
+          secure: false,
+          changeOrigin: true,
+          bypass: function(req, res, proxyOptions) {
+            if (req.headers.accept.indexOf('html') !== -1) {
+              console.log('Skipping proxy for browser request.');
+              return '/index.html';
+            }
+          },
+          pathRewrite: {
+            'header.json': 'demo.json'
+          }
+        },
+      },
+      hot: true,
+    },
+</code></pre>
+<h4 id="5-webpackdevserver-解决单页面应用路由问题">5.  WebpackDevServer 解决单页面应用路由问题</h4>
+<p>如果我们需要实现<code>react</code>的路由功能实现单页面应用，需要安装路由组件，输入命令：<code>npm intall react-router-dom --save</code>，然后我们写了两个组件<code>home</code> 跟 <code>list</code> 两个组件，代码如下：</p>
+<pre><code class="language-js">import React, { Component } from 'react'
+import {BrowserRouter, Router} from 'react-router-dom';
+import ReactDom from 'react-dom'
+import Home from './home.js';
+import List from './list.js'
+
+
+class App extends Component {
+  return () {
+    return (
+      &lt;BrowserRouter&gt;
+        &lt;div&gt;
+         &lt;Router path='/' component={Home} /&gt;
+         &lt;Router path='/list' component={List}/&gt;
+         &lt;/div&gt;
+      &lt;/BrowserRouter&gt;
+    )
+  }
+}
+ReactDom.render(&lt;h1&gt;Hello, world!&lt;/h1&gt;, document.getElementById('root'))
+</code></pre>
+<p><code>home.js</code>代码：</p>
+<pre><code class="language-js">import React, { Component } from 'react';
+
+class Home extends Component {
+    render () {
+        return &lt;div&gt;HomePages&lt;/div&gt;
+    }
+}
+export default Home
+</code></pre>
+<p><code>list.js</code>代码：</p>
+<pre><code class="language-js">import React, { Component } from 'react';
+
+class Home extends Component {
+    render () {
+        return &lt;div&gt;HomePages&lt;/div&gt;
+    }
+}
+export default Home
+</code></pre>
+<p>我们写完代码之后，运行；当我们地址中访问<code>list</code>页面的时候，会发现找不到对应的页面，这是因为，<code>webpack</code>将我们页面 的请求以为是发送到后台的<code>api</code>接口。解决这个问题，我们就需要在<code>devserver</code>中进行配置<code>historyApiFallback</code>的配置项，具体配置如下：<code>historyApiFallback: true,</code></p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      historyApiFallback: true,
+      proxy: {
+        '/react/api': {
+          target: 'https://www.dell-lee.com',
+          secure: false,
+          changeOrigin: true,
+          bypass: function(req, res, proxyOptions) {
+            if (req.headers.accept.indexOf('html') !== -1) {
+              console.log('Skipping proxy for browser request.');
+              return '/index.html';
+            }
+          },
+          pathRewrite: {
+            'header.json': 'demo.json'
+          }
+        },
+      },
+      hot: true,
+    },
+</code></pre>
+<p>这个选项也可以是一个对象，进行配置规则，进行进一步配置：代码意思是，当访问<code>item.html</code>的时候，实际访问的是<code>list.html</code>页面。</p>
+<pre><code class="language-js">      historyApiFallback: {
+        rewrites: [
+          { 
+            from: '/item.html',
+            to: '/list.html'
+          }
+        ]
+      },
+</code></pre>
+<p>其实我们前面配置的<code>historyApiFallback: true,</code>实际等价于下面的配置：也就是不官方文哪一个都是指向<code>index.html</code>页面。</p>
+<pre><code class="language-js">      historyApiFallback: {
+        rewrites: [
+          { 
+            from: '/\.*/',
+            to: '/index.html'
+          }
+        ]
+      },
+</code></pre>
+<h4 id="6-eslint-在-webpack-中的配置">6.  EsLint 在 Webpack 中的配置</h4>
+<p><code>EsLint</code>就是规范我们代码书写的插件，输入命令<code>npm install eslint --save-dev</code>,然后在我们的项目中，通过命令<code>npx eslint --init</code>快速生成我们代码约束的配置文件，按照提示的信息进行配置我们的代码约束规则。我们可以输入命令<code>npx eslint src</code>这样的命令。来检测<code>src</code>目录下文件的书写规范，或者直接可以检测一个文件<code>npx eslint index.js</code>这样进行检测。<br>
+如果我们配置的代码检测的规范是使用<code>airbnb</code>这种规范，我们会发现，我们去检测我们写的<code>react</code>的代码的时候，会提示很多错误，这是因为这个规范只是检测常规的<code>js</code>代码的一些规范，不会进行解析<code>react</code>的代码，进行检测规范，这个时候，我们需要添加一个解析器，<code>.eslintrc.js</code>配置代码如下：需要安装<code>babel-eslint</code>这个解析器，输入命令<code>npm install babel-eslint --save-dev</code>进行安装。</p>
+<pre><code class="language-js">module.exports = {
+  &quot;extends&quot;: &quot;airbnb&quot;,
+  &quot;parser&quot;: &quot;babel-eslint&quot;
+}
+</code></pre>
+<p>也可以直接在<code>vscode</code>这个编译器中进行安装<code>eslint</code>插件，进行检测我们的代码规范，进行提示。我们也可以自己进行配置一些规范是否启用，在<code>.eslintrc.js</code>中进行配置，比如我们不需要一个配置，直接在<code>rules</code>中将对应的规范配置为0：</p>
+<pre><code class="language-js">module.exports = {
+  &quot;extends&quot;: &quot;airbnb&quot;,
+  &quot;parser&quot;: &quot;babel-eslint&quot;,
+  &quot;rules&quot;: {
+    &quot;react/prefer-stateless-function&quot;: 0
+  }
+}
+</code></pre>
+<p>还有一些<code>eslint</code>的配置可以查看另一篇文章：https://blog.csdn.net/cj9551/article/details/90740377#15_ESLint_457  里面有对应的<code>eslint</code>的配置。<br>
+如果需要使用全局变量，可以在配置项中进行配置：<code>document: false</code>不会被重新覆盖。</p>
+<pre><code class="language-js">module.exports = {
+  &quot;extends&quot;: &quot;airbnb&quot;,
+  &quot;parser&quot;: &quot;babel-eslint&quot;,
+  &quot;rules&quot;: {
+    &quot;react/prefer-stateless-function&quot;: 0
+  },
+  global: {
+    document: false
+  }
+}
+</code></pre>
+<p>如果有的人的编译软件，是不能安装<code>eslint</code>查看，我们可以直接在<code>webpack</code>中进行配置这样一个检测环境，首先安装<code>eslint-loader</code>这样一个<code>loader</code>，输入命令<code>npm install eslint-loader --save-dev</code>，然后在<code>webpack.config.js</code>中进行配置：</p>
+<pre><code class="language-js">module: {
+        rules: [{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: ['babel-loader', 'eslint-loader']
+        }]
+    },
+</code></pre>
+<p>然后运行命令，就可以在终端窗口看到一些代码规范的提示，我们也可以在<code>devserver</code>中进行添加一个<code>overlay: true</code>的配置，将代码规范的提示，直接显示在浏览器的页面中：</p>
+<pre><code class="language-js">    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      // historyApiFallback: true,
+      historyApiFallback: {
+        rewrites: [
+          { 
+            from: '/item.html',
+            to: '/list.html'
+          }
+        ]
+      },
+      proxy: {
+        '/react/api': {
+          target: 'https://www.dell-lee.com',
+          secure: false,
+          changeOrigin: true,
+          overlay: true,
+          bypass: function(req, res, proxyOptions) {
+            if (req.headers.accept.indexOf('html') !== -1) {
+              console.log('Skipping proxy for browser request.');
+              return '/index.html';
+            }
+          },
+          pathRewrite: {
+            'header.json': 'demo.json'
+          }
+        },
+      },
+      hot: true,
+    },
+</code></pre>
+<h4 id="7-webpack-性能优化">7.   webpack 性能优化</h4>
+<ul>
+<li>跟上技术的迭代（node，npm，yarn）：升级我们对应的工具；<code>webpack</code>运行在<code>node</code>之上。升级到新的版本，也会间接提升<code>webpack</code>打包速度。</li>
+<li>在尽可能少的模块上应用<code>Loader</code>： 比如我们在打包<code>js</code>的文件的时候使用<code>babel-loader</code>进行转换，我们可以通过<code>includes</code>以及<code>excludes</code>等选项，进行配置不对其他库文件进行转换，降低使用<code>loader</code>的频率。</li>
+<li><code>Plugin</code> 尽可能精简并确保可靠：比如我们在线上环境的配置中使用了<code>MiniCssExtractPlugin</code>插件进行将<code>css</code>代码进行压缩，但是我们在生产环境中，并不需要使用这个插件进行压缩我们的代码，要尽可能的精简。减少了代码压缩的时间。还有就是尽量使用<code>webpack</code>官网中推荐的插件。</li>
+<li>一般我们在打包配置<code>js</code>的文件，与<code>jsx</code>的文件，打包规则是一样的，我们在<code>test</code>匹配的时候，可以使用<code>test: /\.jsx?$/,</code>进行匹配打包。</li>
+<li>尽量减少下面的一些操作：我们有时候通过<code>import</code>的方式进行引入一个模块，我们在模块的结尾并没有明确是加载哪个类型的文件，<code>import List from './list'</code>默认是加载<code>js</code>结尾的文件，但是有时候我们的库文件是<code>jsx</code>结尾的文件，我们也想通过这种方式进行加载<code>jsx</code>文件，可以进行下面的配置：<code>extensions: ['.js', '.jsx']</code>代码意思就是引入包之后，他会按照是否有对应的<code>js</code>,如果有就进行加载，如果没有继续找是否有对应的<code>jsx</code>文件进行加载。</li>
+</ul>
+<pre><code class="language-js">module.exports = {
+.....
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+    },
+    resolve: {
+       extensions: ['.js', '.jsx']
+    }
+.....
+}
+</code></pre>
+<p>这个选项还可以配置我们通过引入路径，然后对路径中的文件名进行对应的加载，比如：<code>import List from './list/'</code>这个<code>list</code>是<code>src</code>目录中的一个文件夹名，然后该文件夹中有很多<code>js</code>文件，如果按照这种引入方式，他会自动检查是否有文件名叫<code>index</code>的文件，然后进行引入，如果没有，就不会进行引入，我们可以通过配置<code>resolve</code>选项，配置加载的文件名：<code>mainFiles: ['index', 'list']</code>代码意思是如果通过路径的方式进行引入模块，首先检查进行加载<code>index</code>的文件名，如果没有，进行检查是否有<code>list</code>的文件名进行引入。</p>
+<pre><code class="language-js">module.exports = {
+.....
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+    },
+    resolve: {
+       extensions: ['.js', '.jsx'],
+       mainFiles: ['index', 'list']
+    }
+.....
+}
+</code></pre>
+<p>同样上面的<code>extensions</code>,以及 <code>mainFiles</code>的配置，会影响打包的性能。在<code>resolve</code>中，我们也可以进行设置路径的别名：比如我们有时候想引入一个模块通过一个字符串，进行代表该库文件的地址，进行引入模块：<code>import list from 'listpath'</code>这样的方法进行引入模块。我们就可以设置别名，让<code>listpath</code>指向该模块的地址。</p>
+<pre><code class="language-js">module.exports = {
+.....
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+    },
+    resolve: {
+       extensions: ['.js', '.jsx'],
+       mainFiles: ['index', 'list'],
+       alias: {
+        listpath: path.resolve(__dirname, '../src/list')
+      }
+    }
+.....
+}
+</code></pre>
+<h4 id="8-使用dllplugin提高打包速度">8.  使用DllPlugin提高打包速度</h4>
+<p>我们实现的思路：</p>
+<ol>
+<li>第三方模块打包一次</li>
+<li>我们引入第三方模块的时候，要去使用打包输出的第三方模块的文件进行引入。<br>
+我们在打包自己的项目的时候会发现，如果引入了过多的第三方库文件，会使打包的速度降低；我们可以想如果能够实现在第一次打包的时候就去分析第三方模块的代码，然后再次打包的时候，就根据前面分析的结果进行打包，不用再次分析，提高打包效率；<br>
+添加一个<code>webpack.dll.js</code>的配置文件，代码如下：这里是将我们引入的第三方模块打包到<code>dll</code>文件夹中，<code>library: '[name]'</code>这句代码的意思就是，将我们打包后的第三方模块通过变量的形式暴露到全局中；变量的名字叫<code>vender</code>；</li>
+</ol>
+<pre><code class="language-js">const path = require('path')
+nodule.exports = {
+    mode: 'production',
+    entry: {
+        vendors: ['react', 'react-dom', 'lodash']
+    },
+    output: {
+        filename: '[name].dll.js',
+        path: path.resolve(__dirname, '../dll'),
+        library: '[name]'
+    }
+}
+</code></pre>
+<p>然后我们需要安装一个插件，将我们的打包后的文件进行挂载到我们打包输出的页面中，输入命令<code>npm install add-asset-html-webpack-plugin --save</code>这个插件的作用就是往<code>html</code>页面中去增加静态资源。然后在<code>webpack.config.js</code>中进行配置：这样页面就会将我们打包输出的第三方模块的<code>vender.dll.js</code>进行挂载；</p>
+<pre><code class="language-js">const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
+......
+module.exports = {
+......
+    plugins: [
+        new AddAssetHtmlWebpackPlugin({
+            filepath: path.resolve(__dirname, '../dll/vendors.dll.js')
+        }) 
+    ]
+.......
+}
+</code></pre>
+<p>接下来我们就要实现引入第三方模块的时候，通过我们上一步打包输出的文件进行引入，首先我们需要进行分析前面打包输出的第三方库文件，将分析结果进行保存，使用<code>DllPlugin</code>进行分析，在<code>webpack.dll.js</code>的配置文件中进行如下配置：<code>name: '[name]',</code>是指要分析的库名，<code>path: path.resolve(__dirname, '../dll/[name].manifest.json')</code>代码意思就是将分析的结构放在<code>../dll/[name].manifest.json</code></p>
+<pre><code class="language-js">const path = require('path')
+const webpack = require('webpack')
+nodule.exports = {
+    mode: 'production',
+    entry: {
+        vendors: ['react', 'react-dom', 'lodash']
+    },
+    output: {
+        filename: '[name].dll.js',
+        path: path.resolve(__dirname, '../dll'),
+        library: '[name]'
+    },
+    plugins: [
+        new webpack.DllPlugin({
+            name: '[name]',
+            path: path.resolve(__dirname, '../dll/[name].manifest.json')
+        })
+    ]
+}
+</code></pre>
+<p>然后我们做的就是根据我们前面生成的<code>library: '[name]'</code>全局变量的名字，以及分析的文件，在<code>webpack</code>进行配置打包：<br>
+在<code>webpack.config.js</code>中使用一个插件：<code>manifest: path.resolve(__dirname, '../dll/vendors.manifest.js')</code>意思就是我们在代码中如果引入了第三方模块。他就会在<code>vendors.manifest.json</code>这个文件中去找对应的第三方模块的映射关系，如果可以找到，他就会知道这个第三方模块不用再次引入了，直接使用<code>vendors.dll.js</code>这个文件就可以了，他会在全局变量中进行使用我们的第三方模块。如果没有映射关系，就会进行将第三方库进行打包。</p>
+<pre><code class="language-js">const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
+......
+module.exports = {
+......
+    plugins: [
+        new AddAssetHtmlWebpackPlugin({
+            filepath: path.resolve(__dirname, '../dll/vendors.dll.js')
+        }),
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, '../dll/vendors.manifest.json')
+        })
+    ]
+.......
+}
+</code></pre>
+<p>然后我们在<code>package.json</code>里面配置一个命令：<code>&quot;build:dll&quot;: &quot;webpack --config ./build/webpack.dll.js&quot;</code>来执行我们的打包第三方模块的命令。然后进行打包，会发现比之前的打包速度要快很多。<br>
+其实我们前面打包第三方库输出额时候可以进行拆分：</p>
+<pre><code class="language-js">const path = require('path')
+nodule.exports = {
+    mode: 'production',
+    entry: {
+        vendors: ['lodash'],
+        react: ['react', 'react-dom']
+    },
+    output: {
+        filename: '[name].dll.js',
+        path: path.resolve(__dirname, '../dll'),
+        library: '[name]'
+    }
+}
+</code></pre>
+<p>对应的在<code>webpack.config.js</code>中也需要进行配置：</p>
+<pre><code class="language-js">const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
+......
+module.exports = {
+......
+    plugins: [
+        new AddAssetHtmlWebpackPlugin({
+            filepath: path.resolve(__dirname, '../dll/vendors.dll.js')
+        }),
+        new AddAssetHtmlWebpackPlugin({
+            filepath: path.resolve(__dirname, '../dll/react.dll.js')
+        }),
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, '../dll/vendors.manifest.json')
+        }),
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, '../dll/react.manifest.json')
+        })
+    ]
+.......
+}
+</code></pre>
+<p>如果我们按照上面的，配置很多的话，就特别繁琐，我们可以通过下面的方法进行简单化：</p>
+<pre><code class="language-js">const plugins = [
+    new CleanWebpackPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpakcPlugin({
+        template: './src/index.html'
+    })
+]
+const fs = require('fs')
+const files = fs.readdirSync(path.resolve(__dirname, './dll'))
+files.forEach(file =&gt; {
+    if(/.*\.dll.js/.test(file)) {
+        plugins.push(
+          new AddAssetHtmlWebpackPlugin({
+              filepath: path.resolve(__dirname, '../dll', file)
+          }))
+    }
+    if(/.*\.manifest.json/.test(file)) {
+        new webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, '../dll', file)
+        })
+    }
+})
+
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
+......
+module.exports = {
+......
+    plugins: plugins
+.......
+}
+</code></pre>
+<h4 id="9-webpack其他打包优化方法">9. Webpack其他打包优化方法</h4>
+<ul>
+<li>控制包文件大小：在源代码中将用不到的包文件在打包的时候通过<code>Tree Shaking</code>进行去除，或者直接不进行引入；也可以通过<code>splitchunkplugins</code>插件进行包的拆分，提高打包速率。</li>
+<li><code>tread-loader, parallel-webpack, happypack</code> 多进程打包。</li>
+<li>合理使用<code>sourceMap</code>：不同环境打包，使用最佳的<code>sourceMap</code>方式。</li>
+<li>结合<code>stats</code>分析打包结果：根据分析结果进行优化。</li>
+<li>开发环境内存编译。</li>
+<li>开发环境无用插件剔除：比如开发环境中不需要对代码进行压缩，将<code>mode</code>设置为<code>production</code>。</li>
+</ul>
+<h4 id="10-多页面打包配置">10. 多页面打包配置</h4>
+<p>我们前面所说的都是单页面进行打包，也就是打包之后就生成一个<code>index.html</code>页面。比如说我们有两个页面一个<code>index.js</code>，一个<code>list.js</code>内容分别如下：<br>
+<code>index.js</code>:</p>
+<pre><code class="language-js">class App extends Component {
+  return () {
+    return (
+        &lt;div&gt;
+        index
+         &lt;/div&gt;
+    )
+  }
+}
+ReactDom.render(&lt;h1&gt;Hello, world!&lt;/h1&gt;, document.getElementById('root'))
+</code></pre>
+<p><code>list.js</code>:</p>
+<pre><code class="language-js">class App extends Component {
+  return () {
+    return (
+        &lt;div&gt;
+        list
+         &lt;/div&gt;
+    )
+  }
+}
+ReactDom.render(&lt;h1&gt;list!&lt;/h1&gt;, document.getElementById('root'))
+</code></pre>
+<p>这是两个不同的页面，我们希望打包之后有两个<code>html</code>页面，一个引入<code>iindex.js</code>打包之后的文件，一个引入<code>list.js</code>打包之后的文件。首先我们需要修改打包的入口文件，将<code>list.js</code>文件进行添加：</p>
+<pre><code class="language-js">    // 入口文件
+    entry: {
+        main: './src/index.js',
+        list: './src/list.js'
+    },
+</code></pre>
+<p>然后修改我们之前配置的打包输出设置的模板<code>html</code>：设置打包输出的<code>html</code>的文件名，并且设置页面引用的包文件。</p>
+<pre><code class="language-js">plugins: [
+    new CleanWebpackPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpakcPlugin({
+        template: './src/index.html',
+        filename: 'index.html',
+        chunks: ['runtime', 'vendors', 'main']
+    }),
+    new HtmlWebpakcPlugin({
+        template: './src/index.html',
+        filename: 'list.html',
+        chunks: ['runtime', 'vendors', 'list']
+    })
+]
+</code></pre>
+<p>我们如果有很多页面进行打包，如果重复上面的操作就特别麻烦，所以我们可以进行处理上面的代码：</p>
+<pre><code class="language-js">// 引入node核心模块path
+const path = require('path')
+// 将我们写的html文件，进行打包；
+const HtmlWebpakcPlugin = require('html-webpack-plugin')
+// 清除上次打包生成的js文件
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack = require('webpack');
+const fs = require('fs')
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
+
+const makePlugins = (configs) =&gt; {
+    const plugins = [new CleanWebpackPlugin()]
+    const files = fs.readdirSync(path.resolve(__dirname, './dll'))
+    Object.keys(configs.entry).forEach(item =&gt; [
+        plugins.push(new HtmlWebpakcPlugin({
+            template: './src/index.html',
+            filename: `${item}.html`,
+            chunks: ['runtime', 'vendors', item]
+        }))
+    ]);
+
+    files.forEach(file =&gt; {
+        if(/.*\.dll.js/.test(file)) {
+            plugins.push(
+              new AddAssetHtmlWebpackPlugin({
+                  filepath: path.resolve(__dirname, '../dll', file)
+              }))
+        }
+        if(/.*\.manifest.json/.test(file)) {
+            new webpack.DllReferencePlugin({
+                manifest: path.resolve(__dirname, '../dll', file)
+            })
+        }
+    })
+    return plugins;
+}
+
+const configs =  {
+    // 配置打包模式
+    mode: 'development',
+    devtool: 'cheap-module-eval-source-map',
+    // 入口文件
+    entry: {
+        main: './src/index.js',
+        list: './src/list.js'
+    },
+    devServer: {
+      // 服务器启动的根路径
+      contentBase: './dist',
+      open: true,
+      proxy: {
+        '/api': 'http://localhost:3000'
+      },
+      hot: true,
+      hotOnly: true
+    },
+    stats: { children: false },
+    module: {
+        rules: [{ 
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: &quot;babel-loader&quot;
+        },
+            {
+            test: /\.(png|jpe?g|gif)$/,
+            use: {
+                loader: 'url-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'images/',
+                    limit: 204800
+                }
+            }
+        }, {
+            test: /\.vue$/,
+            use: {
+                loader: 'vue-loader'
+            }
+        }, {
+            test: /\.scss$/,
+            use: [
+                'style-loader',
+                {
+                  loader: 'css-loader',
+                  options: {
+                    importLoaders: 2
+                  }
+                },
+                'sass-loader',
+                'postcss-loader'
+            ]
+        }, {
+            test: /\.(eot|ttf|svg|woff)$/,
+            use: {
+                loader: 'file-loader'
+            }
+        }, {
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader',
+                'postcss-loader'
+            ]
+        },{
+            test: /\.(html)$/,
+            use: {
+                loader: 'html-loader',
+            }
+        }]
+    },
+    optimization: {
+      usedExports: true
+    },
+    // 打包出的文件配置
+    output: {
+        path: path.resolve(__dirname, 'dist')
+    }
+}
+module.exports = configs
+configs.plugins = makePlugins(configs)
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-library%E6%89%93%E5%8C%85">1. Library打包</a>
+<ul>
+<li><a href="#11-%E5%AF%B9%E5%BA%93%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E6%89%93%E5%8C%85">1.1 对库文件进行打包</a></li>
+<li><a href="#12-%E5%8F%91%E5%B8%83%E4%B8%80%E4%B8%AA%E5%8C%85">1.2 发布一个包</a></li>
+</ul>
+</li>
+<li><a href="#2-pwaprogressive-web-application%E7%9A%84%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE">2. PWA（Progressive Web Application）的打包配置</a></li>
+<li><a href="#3-typescript-%E7%9A%84%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE">3. TypeScript 的打包配置</a></li>
+<li><a href="#4-%E4%BD%BF%E7%94%A8-webpackdevserver-%E5%AE%9E%E7%8E%B0%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91">4. 使用 WebpackDevServer 实现请求转发</a></li>
+<li><a href="#5-webpackdevserver-%E8%A7%A3%E5%86%B3%E5%8D%95%E9%A1%B5%E9%9D%A2%E5%BA%94%E7%94%A8%E8%B7%AF%E7%94%B1%E9%97%AE%E9%A2%98">5.  WebpackDevServer 解决单页面应用路由问题</a></li>
+<li><a href="#6-eslint-%E5%9C%A8-webpack-%E4%B8%AD%E7%9A%84%E9%85%8D%E7%BD%AE">6.  EsLint 在 Webpack 中的配置</a></li>
+<li><a href="#7-webpack-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96">7.   webpack 性能优化</a></li>
+<li><a href="#8-%E4%BD%BF%E7%94%A8dllplugin%E6%8F%90%E9%AB%98%E6%89%93%E5%8C%85%E9%80%9F%E5%BA%A6">8.  使用DllPlugin提高打包速度</a></li>
+<li><a href="#9-webpack%E5%85%B6%E4%BB%96%E6%89%93%E5%8C%85%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95">9. Webpack其他打包优化方法</a></li>
+<li><a href="#10-%E5%A4%9A%E9%A1%B5%E9%9D%A2%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE">10. 多页面打包配置</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jiegiser.github.io/newBlog/post/es6-bi-ji">
+              <h3 class="post-title">
+                ES6笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
+  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
