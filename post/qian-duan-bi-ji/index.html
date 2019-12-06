@@ -1,22 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://jiegiser.github.io/newBlog</id>
-    <title>jiegiser的博客</title>
-    <updated>2019-12-06T00:53:06.642Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
-    <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
-    <logo>https://jiegiser.github.io/newBlog/images/avatar.png</logo>
-    <icon>https://jiegiser.github.io/newBlog/favicon.ico</icon>
-    <rights>All rights reserved 2019, jiegiser的博客</rights>
-    <entry>
-        <title type="html"><![CDATA[前端笔记]]></title>
-        <id>https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji</id>
-        <link href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji">
-        </link>
-        <updated>2019-12-06T00:50:02.000Z</updated>
-        <content type="html"><![CDATA[<p><ul class="markdownIt-TOC">
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>前端笔记 | jiegiser的博客</title>
+<meta name="description" content="温故而知新" />
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1575593582617">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://jiegiser.github.io/newBlog">
+  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1575593582617" alt="">
+  </a>
+  <h1 class="site-title">
+    jiegiser的博客
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              前端笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-12-06
+              </span>
+              <span>
+                82 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/qian-duan-bi-ji.jfif" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><ul class="markdownIt-TOC">
 <li>
 <ul>
 <li>
@@ -2288,218 +2361,170 @@ scrolldelay  设置活动字幕两次滚动之间的延迟时间
 <h5 id="9-git">9 git</h5>
 <p>创建分支：<code>git branch b1</code><br>
 切换分支：<code>git checkout b1</code></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[WebGIS实战系列 三 项目的重新开始]]></title>
-        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi</id>
-        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
-        </link>
-        <updated>2019-12-04T12:05:35.000Z</updated>
-        <content type="html"><![CDATA[<h4 id="说明">说明</h4>
-<p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
-<hr>
-<p>上面的项目截图：</p>
-<p>界面搭建使用模板   <a href="https://panjiachen.github.io/vue-element-admin">vue-element-admin</a></p>
-<p>该项目是Geoserver+openlayers5的一些例子，<br>
-完成的功能如下：</p>
-<h4 id="1-地图控件">1. 地图控件</h4>
-<pre><code>1.1  导航控件
-</code></pre>
-<p><img src="https://img-blog.csdnimg.cn/20191119080035550.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-1.2  zoomslider<br>
-<img src="https://img-blog.csdnimg.cn/20191119080116925.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-1.3 鼠标位置</p>
-<h4 id="2-属性查询">2. 属性查询</h4>
-<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20191119080228618.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h4 id="3-空间查询">3. 空间查询</h4>
-<p><img src="https://img-blog.csdnimg.cn/20191119080405552.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-<img src="https://img-blog.csdnimg.cn/20191119080441815.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<h4 id="4-在线编辑">4. 在线编辑</h4>
-<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20191119080323688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h4 id="5-测量">5. 测量</h4>
-<pre><code>5.1 长度测量
 
-5.2 面积测量
-</code></pre>
-<p><img src="https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-5.3 面积测量填充</p>
-<h4 id="6-加载天地图">6. 加载天地图</h4>
-<h4 id="7-加载天地图投影转换">7. 加载天地图投影转换</h4>
-<h4 id="8-缓冲区绘制turf">8. 缓冲区绘制（turf）</h4>
-<h4 id="9-拉框放大缩小">9. 拉框放大缩小</h4>
-<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20191119080523328.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h4 id="10-点生成缓冲范围查询">10. 点生成缓冲范围查询（√）</h4>
-<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20191125171230587.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h4 id="11-轨迹回放">11. 轨迹回放（√）</h4>
-<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20191126124814612.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h4 id="12-位置监控">12. 位置监控（√）</h4>
-<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20191127140600667.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h4 id="13-面添加标注">13. 面添加标注（√）</h4>
-<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20191127140454748.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<hr>
-<p>设置高亮显示关键代码：</p>
-<pre><code class="language-js">if (this.resultVterSource.clear) {
-  this.resultVterSource.clear();
-}
-const feature = this.vectorSource.getFeatureById(item.id);
-this.resultVterSource.addFeature(feature);
-// 设置显示区域偏移
-this.getMap.getView().fit(this.resultVterSource.getExtent(), {
-  padding: [0, 0, 0, document.body.clientWidth * 0.5]
-});
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[WebGIS实战系列 二、 加载geoserver发布的WMS服务]]></title>
-        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu</id>
-        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
-        </link>
-        <updated>2019-12-04T12:04:12.000Z</updated>
-        <content type="html"><![CDATA[<p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
-我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
-<pre><code class="language-js">&lt;template&gt;
-  &lt;div class=&quot;map&quot; id=&quot;home&quot; ref=&quot;map&quot;&gt;
-    &lt;div ref=&quot;button&quot;&gt;&lt;/div&gt;
-    &lt;div ref=&quot;location&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;touch&quot;&gt;
-      &lt;el-button @click=&quot;zoomIn&quot;&gt;放大&lt;/el-button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-
-&lt;script&gt;
-import { loadModules } from 'esri-loader';
-export default {
-  name: 'user-special',
-  data () {
-    return {
-      map: null,
-      navToolbar: null
-    }
-  },
-  mounted () {
-    this.initMap()
-  },
-  methods: {
-    initMap () {
-      loadModules([
-      'esri/map', 'esri/layers/WMSLayer', 'esri/geometry/Extent'
-    ])
-        .then(([Map, WMSLayer, Extent]) =&gt; {
-          // 创建地图以及配置参数
-          const map = new Map(this.$refs.map, {
-            center: [599206, 4921137],
-            zoom: 5,
-          })
-          let resourceInfo = {
-              extent: new Extent(589434.8564686741,4914006.337837095,609527.2102150217,4928063.398014731, {
-                  wkid: 26713
-              }),
-              layerInfos: [],
-              version: '1.1.0'
-          };
-          //注：setVisibleLayers中的参数对应网址中的“LAYERS=”后面的值
-          let geoWmsUrl = &quot;http://localhost:8088/geoserver/sf/wms&quot;;
-          var geoWmsLayer = new WMSLayer(geoWmsUrl, {resourceInfo: resourceInfo});
-          geoWmsLayer.setImageFormat(&quot;png&quot;);
-          geoWmsLayer.setVisibleLayers(&quot;sf:roads&quot;);
-          map.addLayer(geoWmsLayer);
-          this.map = map
-        })
-        .catch(err =&gt; {
-          console.log(err)
-        })
-    },
-    zoomIn () {
-      loadModules(['esri/toolbars/navigation'])
-        .then(([Navigation]) =&gt; {
-          let navToolbar = new Navigation(this.map)
-          navToolbar.activate(Navigation.ZOOM_IN)
-        })
-    }
-  }
-
-}
-&lt;/script&gt;
-
-</code></pre>
-<p>实现效果如下：<br>
-<img src="https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[WebGIS实战系列 一、环境准备]]></title>
-        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-yi-huan-jing-zhun-bei</id>
-        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-yi-huan-jing-zhun-bei">
-        </link>
-        <updated>2019-12-04T11:59:22.000Z</updated>
-        <content type="html"><![CDATA[<!-- more -->
-<h4 id="前言">前言</h4>
-<p>近期会在博客发布一系列有关<code>WebGIS</code>的实战课程，技术栈：<code>vue</code>全家桶+<code>arcgis Server</code>+<code>arcgis API 3.x</code>+<code>asp.net</code>实现一个简单的城市供水管网系统。<br>
-前置知识准备：</p>
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
 <ul>
-<li><code>es6</code>语法</li>
-<li><code>node</code>的简单安装包</li>
-<li><code>vue</code>、<code>vue-cli 3.0</code>、<code>vuex</code>，<code>vue-router</code>，以及<code>elementUI</code>框架</li>
-<li><code>axios</code></li>
-<li><code>asp net mvc</code>框架（后台可能会使用<code>koa2</code>）</li>
-<li><code>arcgis SOE</code>开发扩展<code>arcgis server</code>功能</li>
-<li><code>arcgis</code>的简单操作：发布地图服务，矢量化地图等等。</li>
-<li><code>arcgis sde for postgresql</code>安装</li>
-<li><code>ThreeJS</code>实现三维管道展示</li>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-js-%E7%9A%84%E5%AF%B9%E8%B1%A1">1. JS 的对象</a></li>
+<li><a href="#2-await-%E4%B8%8E-async">2. await 与 async</a></li>
+<li><a href="#3-js-%E6%95%B0%E6%8D%AE">3. JS 数据</a></li>
+<li><a href="#4-js-%E7%9F%A5%E8%AF%86">4. JS 知识</a>
+<ul>
+<li><a href="#41-%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B">4.1 基本类型：</a></li>
+<li><a href="#42-typeof-%E4%B8%8E-instanceof">4.2 typeof 与 instanceof</a></li>
+<li><a href="#43-for-offor-in-%E5%92%8C-foreachmap-%E7%9A%84%E5%8C%BA%E5%88%AB">4.3  for of，for in 和 forEach，map 的区别</a></li>
+<li><a href="#44-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0">4.4  箭头函数</a></li>
+<li><a href="#45-%E8%AF%8D%E6%B3%95%E4%BD%9C%E7%94%A8%E5%9F%9F">4.5 词法作用域</a></li>
+<li><a href="#46-call%E4%B8%8Eapply-bind-%E5%87%BD%E6%95%B0">4.6 call与apply、bind 函数</a></li>
+<li><a href="#47-this%E7%9A%84%E6%8C%87%E5%90%91">4.7 this的指向</a></li>
+<li><a href="#48-promise">4.8 Promise</a></li>
+<li><a href="#49-asyncawait">4.9 async/await</a></li>
+<li><a href="#410-%E4%BD%9C%E7%94%A8%E5%9F%9F">4.10 作用域</a></li>
+<li><a href="#411-this%E6%8C%87%E5%90%91">4.11 this指向</a></li>
+<li><a href="#412-%E9%97%AD%E5%8C%85closure">4.12 闭包(closure)</a></li>
+<li><a href="#413-%E5%8E%9F%E5%9E%8B%E9%93%BE">4.13 原型链</a></li>
+<li><a href="#414-%E5%87%A0%E7%A7%8D%E7%BB%A7%E6%89%BF%E6%96%B9%E5%BC%8F">4.14 几种继承方式</a></li>
+<li><a href="#415-js-%E7%9A%84%E6%9A%82%E6%97%B6%E6%80%A7%E6%AD%BB%E5%8C%BA">4.15 js 的暂时性死区</a></li>
+<li><a href="#416-es6-%E4%B8%AD%E7%9A%84-map-%E5%AF%B9%E8%B1%A1%E8%B7%9F%E5%8E%9F%E7%94%9F%E7%9A%84%E5%AF%B9%E8%B1%A1%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB">4.16 ES6 中的 map 对象跟原生的对象之间的区别</a></li>
+<li><a href="#417-es6-%E4%B8%AD%E7%9A%84-set-%E5%AF%B9%E8%B1%A1">4.17 ES6 中的 Set 对象</a></li>
+<li><a href="#418-%E4%BA%8B%E4%BB%B6%E7%9A%84%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%86%92%E6%B3%A1">4.18 事件的捕获与冒泡</a></li>
+<li><a href="#419-%E6%95%B0%E7%BB%84%E4%B8%8E%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%B7%B1%E6%8B%B7%E8%B4%9D">4.19 数组与对象的深拷贝</a></li>
+<li><a href="#412-%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97%E4%B8%8E%E5%A0%86%E6%A0%88">4.12 实现队列与堆栈</a></li>
 </ul>
-<blockquote>
-<p>我的环境是 <code>arcgis 10.2</code>版本的，大家也可以进行安装。</p>
-</blockquote>
-<p>可以补充一下这些知识，我也会在博客里面写有关代码的说明。</p>
-<h4 id="1-加载地图">1. 加载地图</h4>
-<p>首先使用<code>vue-cli</code>创建一个项目，我是使用<code>element UI</code>进行搭建项目的整体框架，界面如下，代码我会上传到我的<code>github</code>上面<br>
-<img src="https://img-blog.csdnimg.cn/20190628130217229.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-<code>esri</code>推出了一个非<code>dojo</code>框架加载地图的一个包<code>esri-loader</code>，我们可以查看 https://github.com/Esri/esri-loader ，按照提示的步骤进行操作，首先输入命令：<code>npm install --save esri-loader</code>进行安装，然后在<code>main.js</code>入口引用<code>esri-loader</code>：</p>
-<pre><code class="language-js">import { loadScript } from 'esri-loader'
-const options = {
-  url: 'https://js.arcgis.com/3.23/',
-}
-//加载脚本
-loadScript(options)
-</code></pre>
-<p>然后在我们加载地图的组件中进行加载地图操作：</p>
-<pre><code class="language-js">import { loadModules } from 'esri-loader';
-export default {
-  mounted () {
-    this.initMap()
-  },
-  methods: {
-    initMap () {
-      loadModules(['esri/map', 'esri/dijit/HomeButton', 'esri/layers/ArcGISTiledMapServiceLayer'])
-        .then(([Map, HomeButton, ArcGISTiledMapServiceLayer]) =&gt; {
-          // 创建地图以及配置参数
-          const map = new Map(this.$refs.map, {
-            center: [114.3, 30.51667],
-            zoom: 12,
-          })
-          // 实例化home按钮
-          const button = new HomeButton({
-            map
-          }, this.$refs.button)
-          // 启用按钮
-          button.startup()
-          let basemapurl=&quot;http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineStreetWarm/MapServer&quot;;
-          let graybasemap = new ArcGISTiledMapServiceLayer(basemapurl);
-          // 加载地图
-          map.addLayer(graybasemap);
-        })
-        .catch(err =&gt; {
-          console.log(err)
-        })
-    }
-  }
-}
-</code></pre>
-<p>实现效果：<br>
-<img src="https://img-blog.csdnimg.cn/20190628152905746.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-]]></content>
-    </entry>
-</feed>
+</li>
+<li><a href="#5-vue%E7%9B%B8%E5%85%B3">5. vue相关</a>
+<ul>
+<li><a href="#51-vue-cli">5.1 vue-cli</a></li>
+<li><a href="#52-vue-router-%E4%B8%AD-hash-%E6%A8%A1%E5%BC%8F%E4%B8%8E-history-%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%AF%B9%E6%AF%94">5.2 vue-router 中 hash 模式与 history 模式的对比</a></li>
+<li><a href="#53-%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E8%B0%83%E7%94%A8">5.3 组件之间的调用</a></li>
+<li><a href="#54-%E5%AF%B9mvvm%E7%9A%84%E7%90%86%E8%A7%A3">5.4 对MVVM的理解</a></li>
+<li><a href="#55-vue%E7%AD%89%E5%8D%95%E9%A1%B5%E9%9D%A2%E5%BA%94%E7%94%A8%E5%8F%8A%E4%BC%98%E7%BC%BA%E7%82%B9">5.5 vue等单页面应用及优缺点</a></li>
+<li><a href="#56-route%E5%92%8Crouter%E7%9A%84%E5%8C%BA%E5%88%AB">5.6 route和router的区别</a></li>
+<li><a href="#57-vue-router%E7%9A%84routes%E4%B8%ADname%E5%B1%9E%E6%80%A7%E4%BD%9C%E7%94%A8%E8%AF%A6%E8%A7%A3">5.7 vue-router的routes中name属性作用详解</a></li>
+<li><a href="#58-vue%E7%9A%84%E5%A3%B0%E6%98%8E%E5%91%A8%E6%9C%9F">5.8 vue的声明周期</a></li>
+<li><a href="#59-vue%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E8%BF%87%E6%BB%A4%E5%99%A8">5.9 vue如何自定义一个过滤器</a></li>
+<li><a href="#510-computed%E5%92%8Cwatch%E5%8C%BA%E5%88%AB">5.10 computed和watch区别</a></li>
+<li><a href="#511-extend%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88">5.11 extend能做什么</a></li>
+<li><a href="#512-mixin%E5%92%8Cmixins%E5%8C%BA%E5%88%AB">5.12 mixin和mixins区别</a></li>
+<li><a href="#513-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8vuenexttick">5.13 如何使用vue.nextTick()</a></li>
+<li><a href="#514-transition-%E8%BF%87%E6%B8%A1%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86">5.14 transition 过渡的实现原理</a></li>
+<li><a href="#515-%E9%9D%9E%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E9%80%9A%E8%AE%AF">5.15 非父子组件通讯</a></li>
+<li><a href="#516-vue-router">5.16 vue-Router</a></li>
+<li><a href="#517-vuex%E4%B8%AD%E7%9A%84mapstate-mapmutation-mapactions">5.17 vuex中的mapState、mapMutation、mapActions</a></li>
+<li><a href="#518-vue%E7%9A%84%E5%8F%8C%E5%90%91%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E5%8E%9F%E7%90%86%E7%9A%84%E7%90%86%E8%A7%A3">5.18 vue的双向数据绑定原理的理解</a></li>
+</ul>
+</li>
+<li><a href="#6-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84">6. 数据结构</a>
+<ul>
+<li><a href="#61-%E6%95%B0%E7%BB%84%E4%B8%8E%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8C%BA%E5%88%AB">6.1 数组与链表的区别</a></li>
+<li><a href="#62-%E5%A0%86%E4%B8%8E%E6%A0%88">6.2 堆与栈</a></li>
+</ul>
+</li>
+<li><a href="#7-%E5%85%B6%E4%BB%96">7. 其他</a>
+<ul>
+<li><a href="#71-es5-%E5%AE%9E%E7%8E%B0%E5%AE%9A%E4%B9%89%E5%B8%B8%E9%87%8F">7.1 es5 实现定义常量</a></li>
+<li><a href="#73-javascript%E5%AE%9E%E7%8E%B0%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1">7.3 JavaScript实现前端路由</a></li>
+<li><a href="#72-const-%E5%A3%B0%E6%98%8E%E7%9A%84%E5%8F%98%E9%87%8F%E4%B8%8D%E5%8F%AF%E4%BB%A5%E6%94%B9%E5%8F%98%E5%A3%B0%E6%98%8E%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%B1%9E%E6%80%A7%E4%B8%BA%E4%BD%95%E5%8F%AF%E4%BB%A5%E6%94%B9%E5%8F%98">7.2 const 声明的变量不可以改变，声明的对象属性为何可以改变</a></li>
+<li><a href="#73-jquery-%E4%B8%8E-vue%E4%B9%8B%E9%97%B4%E7%9A%84%E5%AF%B9%E6%AF%94">7.3 jQuery 与 vue之间的对比</a></li>
+<li><a href="#74-%E4%BB%8E%E8%BE%93%E5%85%A5url%E5%88%B0%E7%9C%8B%E5%88%B0%E9%A1%B5%E9%9D%A2%E5%8F%91%E7%94%9F%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B">7.4 从输入URL到看到页面发生的全过程</a></li>
+<li><a href="#75-%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B">7.5 三次握手，四次挥手</a></li>
+<li><a href="#76-%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D">7.6 数组去重</a></li>
+<li><a href="#78-%E5%8E%9F%E7%94%9Fjs%E6%97%A0%E7%BC%9D%E6%BB%9A%E5%8A%A8%E6%95%88%E6%9E%9C%E7%9A%84%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0">7.8 原生Js无缝滚动效果的简单实现</a></li>
+<li><a href="#79-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%BC%B9%E5%B9%95">7.9 如何实现一个弹幕</a></li>
+<li><a href="#710-js%E6%95%B0%E7%BB%84%E7%9A%84%E5%A0%86%E4%B8%8E%E6%A0%88%E5%AE%9E%E7%8E%B0">7.10 js数组的堆与栈实现</a></li>
+<li><a href="#711-4-%E5%A6%82%E6%9E%9C%E6%9C%89%E6%88%90%E5%8D%83%E4%B8%8A%E4%B8%87%E4%B8%AA%E8%8F%9C%E5%8D%95%E5%A6%82%E4%BD%95%E7%BB%91%E5%AE%9A%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6">7.11 4. 如果有成千上万个菜单，如何绑定点击事件</a></li>
+</ul>
+</li>
+<li><a href="#8-css-%E7%9B%B8%E5%85%B3">8 css 相关</a>
+<ul>
+<li><a href="#81-%E5%AE%9E%E7%8E%B0%E5%85%83%E7%B4%A0%E7%9A%84%E6%B0%B4%E5%B9%B3%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD">8.1 实现元素的水平垂直居中</a></li>
+<li><a href="#82-%E7%94%A8%E4%BC%AA%E7%B1%BB%E6%B8%85%E9%99%A4%E6%B5%AE%E5%8A%A8">8.2 用伪类清除浮动</a></li>
+</ul>
+</li>
+<li><a href="#9-git">9 git</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
+              <h3 class="post-title">
+                WebGIS实战系列 三 项目的重新开始
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
+  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+
+  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+  // This should probably be throttled.
+  // Especially because it triggers during smooth scrolling.
+  // https://lodash.com/docs/4.17.10#throttle
+  // You could do like...
+  // window.addEventListener("scroll", () => {
+  //    _.throttle(doThatStuff, 100);
+  // });
+  // Only not doing it here to keep this Pen dependency-free.
+
+  window.addEventListener("scroll", event => {
+    let fromTop = window.scrollY;
+
+    mainNavLinks.forEach((link, index) => {
+      let section = document.getElementById(decodeURI(link.hash).substring(1));
+      let nextSection = null
+      if (mainNavLinks[index + 1]) {
+        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+      }
+      if (section.offsetTop <= fromTop) {
+        if (nextSection) {
+          if (nextSection.offsetTop > fromTop) {
+            link.classList.add("current");
+          } else {
+            link.classList.remove("current");    
+          }
+        } else {
+          link.classList.add("current");
+        }
+      } else {
+        link.classList.remove("current");
+      }
+    });
+  });
+
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
