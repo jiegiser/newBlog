@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2019-12-09T01:34:13.123Z</updated>
+    <updated>2019-12-21T02:18:00.073Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -10,6 +10,673 @@
     <logo>https://jiegiser.github.io/newBlog/images/avatar.png</logo>
     <icon>https://jiegiser.github.io/newBlog/favicon.ico</icon>
     <rights>All rights reserved 2019, jiegiser的博客</rights>
+    <entry>
+        <title type="html"><![CDATA[geoserver 中 WMS 服务说明]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/geoserver-zhong-wms-fu-wu-shuo-ming</id>
+        <link href="https://jiegiser.github.io/newBlog/post/geoserver-zhong-wms-fu-wu-shuo-ming">
+        </link>
+        <updated>2019-12-21T01:10:56.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="简介">简介</h3>
+<p>OGC Web地图服务（WMS）规范定义了一个HTTP接口，用于从服务器请求地理参考的地图图像。GeoServer支持WMS 1.1.1（使用最多的WMS版本）以及WMS 1.3.0。<br>
+GeoServer还支持样式化图层描述符（SLD）标准对WMS规范的某些扩展，以控制地图输出的样式。</p>
+<h3 id="wms可以做什么">WMS可以做什么</h3>
+<p>WMS提供了用于请求地理空间地图图像的标准接口。这样做的好处是WMS客户端可以从多个WMS服务器请求图像，然后将它们组合到一个用户视图中。该标准保证了这些图像都可以像现实中那样完全重叠。许多服务器和客户端支持WMS。</p>
+<h3 id="功能">功能</h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exceptions</td>
+<td>发生异常</td>
+</tr>
+<tr>
+<td>GetCapabilities</td>
+<td>检索有关服务的元数据，包括支持的操作和参数以及可用层的列表</td>
+</tr>
+<tr>
+<td>GetMap</td>
+<td>检索指定区域和内容的地图图像</td>
+</tr>
+<tr>
+<td>GetFeatureInfo</td>
+<td>检索地图上像素位置的基础数据，包括几何和属性值</td>
+</tr>
+<tr>
+<td>DescribeLayer</td>
+<td>指示WFS或WCS检索有关该图层的其他信息。</td>
+</tr>
+<tr>
+<td>GetLegendGraphic</td>
+<td>检索地图生成的图例</td>
+</tr>
+</tbody>
+</table>
+<p>下面就详细介绍一个每个功能类型。</p>
+<h4 id="exceptions">Exceptions</h4>
+<p>WMS可以报告异常的格式。支持的异常值为：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XML格式</td>
+<td>EXCEPTIONS=application/vnd.ogc.se_xml</td>
+<td>Xml输出。（默认格式）</td>
+</tr>
+<tr>
+<td>图形</td>
+<td>EXCEPTIONS=application/vnd.ogc.se_inimage</td>
+<td>生成图像（在geoserver的图层预览功能中发生异常会使用）</td>
+</tr>
+<tr>
+<td>空白</td>
+<td>EXCEPTIONS=application/vnd.ogc.se_blank</td>
+<td>生成空白图像</td>
+</tr>
+<tr>
+<td>局部图</td>
+<td>EXCEPTIONS=application/vnd.gs.wms_partial</td>
+<td>这是一个GeoServer供应商参数，仅适用于getMap请求。返回渲染过程引发异常时渲染的所有内容。可以与WMS配置限制一起使用，以返回部分图像，即使由于超过这些限制之一而被终止的请求也是如此。它也可以与timeout vendor参数一起使用。</td>
+</tr>
+<tr>
+<td>JSON格式</td>
+<td>EXCEPTIONS=application/json</td>
+<td>简单的Json表示形式。</td>
+</tr>
+<tr>
+<td>JSONP</td>
+<td>EXCEPTIONS=text/javascript</td>
+<td>返回以下格式的JsonP：paddingOutput（…jsonp…）。请参阅WMS供应商参数以更改回调名称。请注意，默认情况下禁用此格式（请参阅影响WMS的全局变量）。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="getcapabilities">GetCapabilities</h4>
+<p>该操作请求有关由WMS服务器提供的操作，服务和数据的元数据。<br>
+GetCapabilities操作的参数为：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>service</td>
+<td>是</td>
+<td>服务名称。值是WMS</td>
+</tr>
+<tr>
+<td>version</td>
+<td>是</td>
+<td>服务版本。值是一个1.0.0，1.1.0，1.1.1，1.3.0。</td>
+</tr>
+<tr>
+<td>request</td>
+<td>是</td>
+<td>操作名称。值是GetCapabilities。</td>
+</tr>
+</tbody>
+</table>
+<p>GeoServer为GetCapabilities操作提供以下特定于供应商的参数。它们在WMS供应商参数部分中有完整记录。</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>namespace</td>
+<td>否</td>
+<td>将响应限制为给定名称空间中的层</td>
+</tr>
+<tr>
+<td>format</td>
+<td>否</td>
+<td>以某种格式请求功能文档</td>
+</tr>
+<tr>
+<td>rootLayer</td>
+<td>否</td>
+<td>标记以启用/禁用标准“根”顶层图层元素。值是对还是错。如果为false，则仅当存在多个顶级层时才包括Root元素，如果只有一层，则它将是根层本身。指定后，将以相同的行为覆盖全局WMS设置或图层/组设置。</td>
+</tr>
+</tbody>
+</table>
+<p>GetCapabilities请求的一个示例：</p>
+<pre><code class="language-js">http://localhost:8080/geoserver/wms?
+service=wms&amp;
+version=1.1.1&amp;
+request=GetCapabilities
+</code></pre>
+<p>有被传递到WMS服务器，三个参数service=wms，version=1.1.1和request=GetCapabilities。该service参数告诉WMS服务器即将收到WMS请求。该version参数表示正在请求哪个版本的WMS。该request参数指定GetCapabilities操作。WMS标准要求请求始终包含这三个参数。GeoServer放宽了这些要求（如果省略则通过设置默认版本），但是对于标准合规性，应始终指定它们。</p>
+<p>响应是功能XML文档，该文档是WMS服务的详细说明。它包含三个主要部分：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Service</td>
+<td>包含服务元数据，例如服务于服务器的组织的服务名称，关键字和联系信息。</td>
+</tr>
+<tr>
+<td>Request</td>
+<td>描述WMS服务提供的操作以及每个操作的参数和输出格式。如果需要，可以将GeoServer配置为禁用对某些WMS操作的支持。</td>
+</tr>
+<tr>
+<td>Request</td>
+<td>列出可用的坐标系和图层。在GeoServer中，图层以“名称空间：图层”的形式命名。每一层都提供服务元数据，例如标题，摘要和关键字。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="getmap">GetMap</h4>
+<p>GetMap操作是获取到服务器生成的地图。他的请求参数可以控制在地图上显示的一个或多个图层和样式，地图范围的边界框，目标空间参考系统以及输出的宽度，高度和格式。</p>
+<p>响应是地图图像或其他地图输出工件，具体取决于请求的格式。GeoServer提供了多种输出格式，以WMS输出格式描述。</p>
+<p>GetMap操作的标准参数为：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>service</td>
+<td>是</td>
+<td>服务名称。值是WMS。</td>
+</tr>
+<tr>
+<td>version</td>
+<td>是</td>
+<td>服务版本。值可以是1.0.0，1.1.0，1.1.1，1.3.0。</td>
+</tr>
+<tr>
+<td>request</td>
+<td>是</td>
+<td>操作名称。值是GetMap。</td>
+</tr>
+<tr>
+<td>layers</td>
+<td>是</td>
+<td>要在地图上显示的图层。值是层名称的逗号分隔列表。</td>
+</tr>
+<tr>
+<td>styles</td>
+<td>是</td>
+<td>渲染图层的样式。值是样式名称的逗号分隔列表，如果需要默认样式，则为空。列表中的样式名称可能为空，以使用默认的图层样式。</td>
+</tr>
+<tr>
+<td>srs/crs</td>
+<td>是</td>
+<td>地图输出的空间参考系统。格式是<code>EPSG:nnn</code>。 crs是WMS 1.3.0中使用的参数。</td>
+</tr>
+<tr>
+<td>bbox</td>
+<td>是</td>
+<td>地图范围的边界框。格式是 minx,miny,maxx,maxy以SRS 为单位。</td>
+</tr>
+<tr>
+<td>width</td>
+<td>是</td>
+<td>地图输出的宽度（以像素为单位）。</td>
+</tr>
+<tr>
+<td>height</td>
+<td>是</td>
+<td>地图输出的高度，以像素为单位。</td>
+</tr>
+<tr>
+<td>format</td>
+<td>是</td>
+<td>地图输出的格式。有关支持的值，请参阅WMS输出格式。</td>
+</tr>
+<tr>
+<td>transparent</td>
+<td>否</td>
+<td>地图背景是否应该透明。值是true或false。默认为false</td>
+</tr>
+<tr>
+<td>bgcolor</td>
+<td>否</td>
+<td>地图图像的背景色。格式是RRGGBB。默认为FFFFFF（白色）。</td>
+</tr>
+<tr>
+<td>exceptions</td>
+<td>否</td>
+<td>报告异常的格式。默认值为application/vnd.ogc.se_xml。</td>
+</tr>
+<tr>
+<td>time</td>
+<td>否</td>
+<td>地图数据的时间值或范围。有关更多信息，请参见GeoServer WMS中的时间支持。</td>
+</tr>
+<tr>
+<td>sld</td>
+<td>否</td>
+<td>引用StyledLayerDescriptor XML文件的URL，该URL 可以控制或增强地图图层和样式</td>
+</tr>
+<tr>
+<td>sld_body</td>
+<td>否</td>
+<td>URL编码的StyledLayerDescriptor XML文档，用于控制或增强地图图层和样式</td>
+</tr>
+</tbody>
+</table>
+<p>下面的示例是在<code>SRS:'EPGS：4326'</code>中使用默认样式,将图层输出为<code>PNG</code>的<code>WMS</code>请求：</p>
+<pre><code class="language-js">http://localhost:8080/geoserver/wms?
+request=GetMap
+&amp;service=WMS
+&amp;version=1.1.1
+&amp;layers=topp%3Astates
+&amp;styles=population
+&amp;srs=EPSG%3A4326
+&amp;bbox=-145.15104058007,21.731919794922,-57.154894212888,58.961058642578&amp;
+&amp;width=780
+&amp;height=330
+&amp;format=image%2Fpng
+</code></pre>
+<p>使用<code>GetMap XML</code>文档的示例<code>WMS</code>请求为：</p>
+<pre><code class="language-html">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;ogc:GetMap xmlns:ogc=&quot;http://www.opengis.net/ows&quot;
+            xmlns:gml=&quot;http://www.opengis.net/gml&quot;
+   version=&quot;1.1.1&quot; service=&quot;WMS&quot;&gt;
+   &lt;StyledLayerDescriptor version=&quot;1.0.0&quot;&gt;
+      &lt;NamedLayer&gt;
+        &lt;Name&gt;topp:states&lt;/Name&gt;
+        &lt;NamedStyle&gt;&lt;Name&gt;population&lt;/Name&gt;&lt;/NamedStyle&gt;
+      &lt;/NamedLayer&gt;
+   &lt;/StyledLayerDescriptor&gt;
+   &lt;BoundingBox srsName=&quot;http://www.opengis.net/gml/srs/epsg.xml#4326&quot;&gt;
+      &lt;gml:coord&gt;&lt;gml:X&gt;-130&lt;/gml:X&gt;&lt;gml:Y&gt;24&lt;/gml:Y&gt;&lt;/gml:coord&gt;
+      &lt;gml:coord&gt;&lt;gml:X&gt;-55&lt;/gml:X&gt;&lt;gml:Y&gt;50&lt;/gml:Y&gt;&lt;/gml:coord&gt;
+   &lt;/BoundingBox&gt;
+   &lt;Output&gt;
+      &lt;Format&gt;image/png&lt;/Format&gt;
+      &lt;Size&gt;&lt;Width&gt;550&lt;/Width&gt;&lt;Height&gt;250&lt;/Height&gt;&lt;/Size&gt;
+   &lt;/Output&gt;
+&lt;/ogc:GetMap&gt;
+</code></pre>
+<p><code>time</code>参数允许按时间切片和空间图块过滤数据集以进行渲染。</p>
+<h4 id="getfeatureinfo">GetFeatureInfo</h4>
+<p><code>GetFeatureInfo</code>操作是请求地图上给定位置要素的空间和属性数据。它与<code>WFS GetFeature</code>操作类似，但是在输入和输出方面都不太灵活。由于<code>GeoServer</code>提供了<code>WFS</code>服务，因此建议尽可能不要使用<code>GetFeatureInfo</code>。<br>
+<code>GetFeatureInfo</code>操作的一个优点是他的请求使用来自返回的<code>WMS</code>图像的（<code>x，y</code>）像素值。对于有时候获取不到地理参考坐标，这个操作还是很方便的。<br>
+<code>GetFeatureInfo</code>操作的标准参数是：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>service</td>
+<td>是</td>
+<td>服务名称。值是WMS。</td>
+</tr>
+<tr>
+<td>version</td>
+<td>是</td>
+<td>服务版本。值是一个1.0.0，1.1.0，1.1.1，1.3.0。</td>
+</tr>
+<tr>
+<td>request</td>
+<td>是</td>
+<td>操作名称。值是GetFeatureInfo。</td>
+</tr>
+<tr>
+<td>layers</td>
+<td>是</td>
+<td>同GetMap操作</td>
+</tr>
+<tr>
+<td>styles</td>
+<td>是</td>
+<td>同GetMap操作</td>
+</tr>
+<tr>
+<td>srs/crs</td>
+<td>是}	同GetMap操作</td>
+<td></td>
+</tr>
+<tr>
+<td>bbox</td>
+<td>是</td>
+<td>同GetMap操作</td>
+</tr>
+<tr>
+<td>width</td>
+<td>是</td>
+<td>同GetMap操作</td>
+</tr>
+<tr>
+<td>height</td>
+<td>是</td>
+<td>同GetMap操作</td>
+</tr>
+<tr>
+<td>query_layers</td>
+<td>是</td>
+<td>用逗号分隔的一层或多层查询列表。</td>
+</tr>
+<tr>
+<td>info_format</td>
+<td>否</td>
+<td>功能信息响应的格式。有关值，请参见下文。</td>
+</tr>
+<tr>
+<td>feature_count</td>
+<td>否</td>
+<td>要返回的最大特征数。默认值为1。</td>
+</tr>
+<tr>
+<td>x / i</td>
+<td>是</td>
+<td>地图上查询点的X坐标，以像素为单位。左侧为0。 i是WMS 1.3.0中使用的参数键。</td>
+</tr>
+<tr>
+<td>y / j</td>
+<td>是</td>
+<td>地图上查询点的Y坐标，以像素为单位。0是顶部。 j是WMS 1.3.0中使用的参数键。</td>
+</tr>
+<tr>
+<td>exceptions</td>
+<td>否</td>
+<td>报告异常的格式。默认值为application/vnd.ogc.se_xml。</td>
+</tr>
+</tbody>
+</table>
+<p><code>GeoServer</code>支持多种<code>GetFeatureInfo</code>响应输出格式。默认的格式是服务器上定义的<code>HTML</code>格式。为了最大程度地控制和定制，客户端应使用<code>GML3</code>并对原始数据本身进行样式设置。支持的格式为：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文本</td>
+<td>info_format=text/plain</td>
+<td>简单文本输出。（默认格式）</td>
+</tr>
+<tr>
+<td>GML 2</td>
+<td>info_format=application/vnd.ogc.gml</td>
+<td>仅适用于简单功能（请参阅复杂功能）</td>
+</tr>
+<tr>
+<td>GML 3</td>
+<td>info_format=application/vnd.ogc.gml/3.1.1</td>
+<td>适用于简单功能和复杂功能（请参阅“ 复杂功能”）</td>
+</tr>
+<tr>
+<td>HTML</td>
+<td>info_format=text/html</td>
+<td>使用服务器上定义的HTML模板。有关如何对HTML输出进行模板化的信息，请参见GetFeatureInfo模板。</td>
+</tr>
+<tr>
+<td>JSON格式</td>
+<td>info_format=application/json</td>
+<td>简单的Json表示形式。</td>
+</tr>
+<tr>
+<td>JSONP</td>
+<td>info_format=text/javascript</td>
+<td>返回JSONP形式：parseResponse(...json...)。请参阅WMS供应商参数以更改回调名称。请注意，默认情况下禁用此格式（请参阅影响WMS的全局变量）。</td>
+</tr>
+</tbody>
+</table>
+<p>GeoServer为GetFeatureInfo操作提供以下特定于供应商的参数。</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buffer</td>
+<td>否</td>
+<td>查询点周围搜索半径的宽度。</td>
+</tr>
+<tr>
+<td>cql_filter</td>
+<td>否</td>
+<td>过滤返回的数据，采用ECQL格式</td>
+</tr>
+<tr>
+<td>filter</td>
+<td>否</td>
+<td>以OGC过滤器格式过滤返回的数据</td>
+</tr>
+<tr>
+<td>propertyName</td>
+<td>否</td>
+<td>要返回的特征属性</td>
+</tr>
+<tr>
+<td>exclude_nodata_result</td>
+<td>否</td>
+<td>设置为true时，当要素的查询像素值为nodata时，将返回NaN。</td>
+</tr>
+</tbody>
+</table>
+<p>下面的示例是从topp:states图层以HTML格式请求要素信息：</p>
+<pre><code class="language-js">http://localhost:8080/geoserver/wms?
+request=GetFeatureInfo
+&amp;service=WMS
+&amp;version=1.1.1
+&amp;layers=topp%3Astates
+&amp;styles=
+&amp;srs=EPSG%3A4326
+&amp;format=image%2Fpng
+&amp;bbox=-145.151041%2C21.73192%2C-57.154894%2C58.961059
+&amp;width=780
+&amp;height=330
+&amp;query_layers=topp%3Astates
+&amp;info_format=text%2Fhtml
+&amp;feature_count=50
+&amp;x=353
+&amp;y=145
+&amp;exceptions=application%2Fvnd.ogc.se_xml
+</code></pre>
+<p>对GeoJSON格式的特征信息的示例请求为：</p>
+<pre><code class="language-js">http://localhost:8080/geoserver/wms?
+&amp;INFO_FORMAT=application/json
+&amp;REQUEST=GetFeatureInfo
+&amp;EXCEPTIONS=application/vnd.ogc.se_xml
+&amp;SERVICE=WMS
+&amp;VERSION=1.1.1
+&amp;WIDTH=970&amp;HEIGHT=485&amp;X=486&amp;Y=165&amp;BBOX=-180,-90,180,90
+&amp;LAYERS=COUNTRYPROFILES:grp_administrative_map
+&amp;QUERY_LAYERS=COUNTRYPROFILES:grp_administrative_map
+&amp;TYPENAME=COUNTRYPROFILES:grp_administrative_map
+</code></pre>
+<p>请求的结果：</p>
+<pre><code class="language-js">{
+&quot;type&quot;:&quot;FeatureCollection&quot;,
+&quot;features&quot;:[
+   {
+      &quot;type&quot;:&quot;Feature&quot;,
+      &quot;id&quot;:&quot;dt_gaul_geom.fid-138e3070879&quot;,
+      &quot;geometry&quot;:{
+         &quot;type&quot;:&quot;MultiPolygon&quot;,
+         &quot;coordinates&quot;:[
+            [
+               [
+                  [
+                     XXXXXXXXXX,
+                     XXXXXXXXXX
+                  ],
+                  ...
+                  [
+                     XXXXXXXXXX,
+                     XXXXXXXXXX
+                  ]
+               ]
+            ]
+         ]
+      },
+      &quot;geometry_name&quot;:&quot;at_geom&quot;,
+      &quot;properties&quot;:{
+         &quot;bk_gaul&quot;:X,
+         &quot;at_admlevel&quot;:0,
+         &quot;at_iso3&quot;:&quot;XXX&quot;,
+         &quot;ia_name&quot;:&quot;XXXX&quot;,
+         &quot;at_gaul_l0&quot;:X,
+         &quot;bbox&quot;:[
+            XXXX,
+            XXXX,
+            XXXX,
+            XXXX
+         ]
+      }
+   }
+],
+&quot;crs&quot;:{
+   &quot;type&quot;:&quot;EPSG&quot;,
+   &quot;properties&quot;:{
+      &quot;code&quot;:&quot;4326&quot;
+   }
+},
+&quot;bbox&quot;:[
+   XXXX,
+   XXXX,
+   XXXX,
+   XXXX
+]
+}
+</code></pre>
+<h4 id="describelayer">DescribeLayer</h4>
+<p>该<code>DescribeLayer</code>操作主要是通过了解基于<code>SLD-WMS</code>客户端使用。为了制作<code>SLD</code>，需要知道数据的结构。<code>WMS</code>和<code>WFS</code>都有执行此操作的操作，因此<code>DescribeLayer</code>操作仅将客户端路由到适当的服务。<br>
+<code>DescribeLayer</code>操作的标准参数是：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>service</td>
+<td>是</td>
+<td>服务名称。值是WMS。</td>
+</tr>
+<tr>
+<td>version</td>
+<td>是</td>
+<td>服务版本。值是1.1.1。</td>
+</tr>
+<tr>
+<td>request</td>
+<td>是</td>
+<td>操作名称。值是DescribeLayer。</td>
+</tr>
+<tr>
+<td>layers</td>
+<td>是</td>
+<td>同GetMap</td>
+</tr>
+<tr>
+<td>exceptions</td>
+<td>否</td>
+<td>报告异常的格式。默认值为application/vnd.ogc.se_xml。</td>
+</tr>
+</tbody>
+</table>
+<p><code>GeoServer</code>支持多种<code>DescribeLayer</code>响应输出格式。最常用的格式是服务器样式的<code>HTML</code>模板。支持的格式为：</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文本</td>
+<td>output_format=text/xml</td>
+<td>与默认值相同。</td>
+</tr>
+<tr>
+<td>GML 2</td>
+<td>output_format=application/vnd.ogc.wms_xml</td>
+<td>默认格式。</td>
+</tr>
+<tr>
+<td>JSON格式</td>
+<td>output_format=application/json</td>
+<td>简单的Json表示形式。</td>
+</tr>
+<tr>
+<td>JSONP</td>
+<td>output_format=text/javascript</td>
+<td>返回以下格式的JsonP：paddingOutput（…jsonp…）。请参阅WMS供应商参数以更改回调名称。请注意，默认情况下禁用此格式（请参阅影响WMS的全局变量）。</td>
+</tr>
+</tbody>
+</table>
+<p>对图层组上的JSON格式的特征描述的示例请求为：</p>
+<pre><code class="language-js">http://localhost:8080/geoserver/wms?service=WMS
+&amp;version=1.1.1
+&amp;request=DescribeLayer
+&amp;layers=sf:roads,topp:tasmania_roads,nurc:mosaic
+&amp;outputFormat=application/json
+</code></pre>
+<p>请求结果：</p>
+<pre><code class="language-js">{
+  version: &quot;1.1.1&quot;,
+  layerDescriptions: [
+    {
+        layerName: &quot;sf:roads&quot;,
+        owsURL: &quot;http://localhost:8080/geoserver/wfs/WfsDispatcher?&quot;,
+        owsType: &quot;WFS&quot;,
+        typeName: &quot;sf:roads&quot;
+    },
+    {
+        layerName: &quot;topp:tasmania_roads&quot;,
+        owsURL: &quot;http://localhost:8080/geoserver/wfs/WfsDispatcher?&quot;,
+        owsType: &quot;WFS&quot;,
+        typeName: &quot;topp:tasmania_roads&quot;
+    },
+    {
+        layerName: &quot;nurc:mosaic&quot;,
+        owsURL: &quot;http://localhost:8080/geoserver/wcs?&quot;,
+        owsType: &quot;WCS&quot;,
+        typeName: &quot;nurc:mosaic&quot;
+    }
+  ]
+</code></pre>
+<h4 id="getlegendgraphic">GetLegendGraphic</h4>
+<p>可以查看这篇文章 https://docs.geoserver.org/stable/en/user/services/wms/get_legend_graphic/index.html#get-legend-graphic</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Vue笔记]]></title>
         <id>https://jiegiser.github.io/newBlog/post/vue-bi-ji</id>
@@ -8357,88 +9024,6 @@ this.getMap.getView().fit(this.resultVterSource.getExtent(), {
   padding: [0, 0, 0, document.body.clientWidth * 0.5]
 });
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[WebGIS实战系列 二、 加载geoserver发布的WMS服务]]></title>
-        <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu</id>
-        <link href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
-        </link>
-        <updated>2019-12-04T12:04:12.000Z</updated>
-        <summary type="html"><![CDATA[<p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
-我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
-我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
-<!-- more -->
-<pre><code class="language-js">&lt;template&gt;
-  &lt;div class=&quot;map&quot; id=&quot;home&quot; ref=&quot;map&quot;&gt;
-    &lt;div ref=&quot;button&quot;&gt;&lt;/div&gt;
-    &lt;div ref=&quot;location&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;touch&quot;&gt;
-      &lt;el-button @click=&quot;zoomIn&quot;&gt;放大&lt;/el-button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-
-&lt;script&gt;
-import { loadModules } from 'esri-loader';
-export default {
-  name: 'user-special',
-  data () {
-    return {
-      map: null,
-      navToolbar: null
-    }
-  },
-  mounted () {
-    this.initMap()
-  },
-  methods: {
-    initMap () {
-      loadModules([
-      'esri/map', 'esri/layers/WMSLayer', 'esri/geometry/Extent'
-    ])
-        .then(([Map, WMSLayer, Extent]) =&gt; {
-          // 创建地图以及配置参数
-          const map = new Map(this.$refs.map, {
-            center: [599206, 4921137],
-            zoom: 5,
-          })
-          let resourceInfo = {
-              extent: new Extent(589434.8564686741,4914006.337837095,609527.2102150217,4928063.398014731, {
-                  wkid: 26713
-              }),
-              layerInfos: [],
-              version: '1.1.0'
-          };
-          //注：setVisibleLayers中的参数对应网址中的“LAYERS=”后面的值
-          let geoWmsUrl = &quot;http://localhost:8088/geoserver/sf/wms&quot;;
-          var geoWmsLayer = new WMSLayer(geoWmsUrl, {resourceInfo: resourceInfo});
-          geoWmsLayer.setImageFormat(&quot;png&quot;);
-          geoWmsLayer.setVisibleLayers(&quot;sf:roads&quot;);
-          map.addLayer(geoWmsLayer);
-          this.map = map
-        })
-        .catch(err =&gt; {
-          console.log(err)
-        })
-    },
-    zoomIn () {
-      loadModules(['esri/toolbars/navigation'])
-        .then(([Navigation]) =&gt; {
-          let navToolbar = new Navigation(this.map)
-          navToolbar.activate(Navigation.ZOOM_IN)
-        })
-    }
-  }
-
-}
-&lt;/script&gt;
-
-</code></pre>
-<p>实现效果如下：<br>
-<img src="https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 ]]></content>
     </entry>
 </feed>
