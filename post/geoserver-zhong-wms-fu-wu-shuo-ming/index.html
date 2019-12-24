@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>geoserver 中 WMS 服务说明 | jiegiser的博客</title>
 <meta name="description" content="温故而知新" />
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1576894670739">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1577184363828">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
@@ -20,7 +20,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://jiegiser.github.io/newBlog">
-  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1576894670739" alt="">
+  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1577184363828" alt="">
   </a>
   <h1 class="site-title">
     jiegiser的博客
@@ -102,10 +102,10 @@
             <div class="post-content-wrapper">
               <div class="post-content">
                 <h3 id="简介">简介</h3>
-<p>OGC Web地图服务（WMS）规范定义了一个HTTP接口，用于从服务器请求地理参考的地图图像。GeoServer支持WMS 1.1.1（使用最多的WMS版本）以及WMS 1.3.0。<br>
-GeoServer还支持样式化图层描述符（SLD）标准对WMS规范的某些扩展，以控制地图输出的样式。</p>
+<p><code>OGC Web</code>地图服务（<code>WMS</code>）规范定义了一个<code>HTTP</code>接口，用于从服务器请求地理参考的地图图像。<code>GeoServer</code>支持<code>WMS 1.1.1</code>（使用最多的<code>WMS</code>版本）以及<code>WMS 1.3.0</code>。<br>
+<code>GeoServer</code>还支持样式化图层描述符（<code>SLD</code>）标准对<code>WMS</code>规范的某些扩展，以控制地图输出的样式。</p>
 <h3 id="wms可以做什么">WMS可以做什么</h3>
-<p>WMS提供了用于请求地理空间地图图像的标准接口。这样做的好处是WMS客户端可以从多个WMS服务器请求图像，然后将它们组合到一个用户视图中。该标准保证了这些图像都可以像现实中那样完全重叠。许多服务器和客户端支持WMS。</p>
+<p><code>WMS</code>提供了用于请求地理空间地图图像的标准接口。这样做的好处是<code>WMS</code>客户端可以从多个<code>WMS</code>服务器请求图像，然后将它们组合到一个用户视图中。该标准保证了这些图像都可以像现实中那样完全重叠。许多服务器和客户端支持<code>WMS</code>。</p>
 <h3 id="功能">功能</h3>
 <table>
 <thead>
@@ -143,7 +143,7 @@ GeoServer还支持样式化图层描述符（SLD）标准对WMS规范的某些�
 </table>
 <p>下面就详细介绍一个每个功能类型。</p>
 <h4 id="exceptions">Exceptions</h4>
-<p>WMS可以报告异常的格式。支持的异常值为：</p>
+<p><code>WMS</code>可以报告异常的格式。支持的异常值为：</p>
 <table>
 <thead>
 <tr>
@@ -186,8 +186,8 @@ GeoServer还支持样式化图层描述符（SLD）标准对WMS规范的某些�
 </tbody>
 </table>
 <h4 id="getcapabilities">GetCapabilities</h4>
-<p>该操作请求有关由WMS服务器提供的操作，服务和数据的元数据。<br>
-GetCapabilities操作的参数为：</p>
+<p>该操作请求有关由<code>WMS</code>服务器提供的操作，服务和数据的元数据。<br>
+<code>GetCapabilities</code>操作的参数为：</p>
 <table>
 <thead>
 <tr>
@@ -214,7 +214,7 @@ GetCapabilities操作的参数为：</p>
 </tr>
 </tbody>
 </table>
-<p>GeoServer为GetCapabilities操作提供以下特定于供应商的参数。它们在WMS供应商参数部分中有完整记录。</p>
+<p><code>GeoServer</code>为<code>GetCapabilities</code>操作提供以下特定于供应商的参数。它们在<code>WMS</code>供应商参数部分中有完整记录。</p>
 <table>
 <thead>
 <tr>
@@ -241,14 +241,14 @@ GetCapabilities操作的参数为：</p>
 </tr>
 </tbody>
 </table>
-<p>GetCapabilities请求的一个示例：</p>
+<p><code>GetCapabilities</code>请求的一个示例：</p>
 <pre><code class="language-js">http://localhost:8080/geoserver/wms?
 service=wms&amp;
 version=1.1.1&amp;
 request=GetCapabilities
 </code></pre>
-<p>有被传递到WMS服务器，三个参数service=wms，version=1.1.1和request=GetCapabilities。该service参数告诉WMS服务器即将收到WMS请求。该version参数表示正在请求哪个版本的WMS。该request参数指定GetCapabilities操作。WMS标准要求请求始终包含这三个参数。GeoServer放宽了这些要求（如果省略则通过设置默认版本），但是对于标准合规性，应始终指定它们。</p>
-<p>响应是功能XML文档，该文档是WMS服务的详细说明。它包含三个主要部分：</p>
+<p>有被传递到<code>WMS</code>服务器，三个参数<code>service=wms</code>，<code>version=1.1.1</code>和<code>request=GetCapabilities</code>。该<code>service</code>参数告诉<code>WMS</code>服务器即将收到<code>WMS</code>请求。该<code>version</code>参数表示正在请求哪个版本的<code>WMS</code>。该<code>request</code>参数指定<code>GetCapabilities</code>操作。<code>WMS</code>标准要求请求始终包含这三个参数。<code>GeoServer</code>放宽了这些要求（如果省略则通过设置默认版本），但是对于标准合规性，应始终指定它们。</p>
+<p>响应是功能<code>XML</code>文档，该文档是<code>WMS</code>服务的详细说明。它包含三个主要部分：</p>
 <table>
 <thead>
 <tr>
@@ -272,9 +272,9 @@ request=GetCapabilities
 </tbody>
 </table>
 <h4 id="getmap">GetMap</h4>
-<p>GetMap操作是获取到服务器生成的地图。他的请求参数可以控制在地图上显示的一个或多个图层和样式，地图范围的边界框，目标空间参考系统以及输出的宽度，高度和格式。</p>
-<p>响应是地图图像或其他地图输出工件，具体取决于请求的格式。GeoServer提供了多种输出格式，以WMS输出格式描述。</p>
-<p>GetMap操作的标准参数为：</p>
+<p><code>GetMap</code>操作是获取到服务器生成的地图。他的请求参数可以控制在地图上显示的一个或多个图层和样式，地图范围的边界框，目标空间参考系统以及输出的宽度，高度和格式。</p>
+<p>响应是地图图像或其他地图输出工件，具体取决于请求的格式。<code>GeoServer</code>提供了多种输出格式，以<code>WMS</code>输出格式描述。</p>
+<p><code>GetMap</code>操作的标准参数为：</p>
 <table>
 <thead>
 <tr>
@@ -533,7 +533,7 @@ request=GetMap
 </tr>
 </tbody>
 </table>
-<p>GeoServer为GetFeatureInfo操作提供以下特定于供应商的参数。</p>
+<p><code>GeoServer</code>为<code>GetFeatureInfo</code>操作提供以下特定于供应商的参数。</p>
 <table>
 <thead>
 <tr>
@@ -570,7 +570,7 @@ request=GetMap
 </tr>
 </tbody>
 </table>
-<p>下面的示例是从topp:states图层以HTML格式请求要素信息：</p>
+<p>下面的示例是从<code>topp:states</code>图层以<code>HTML</code>格式请求要素信息：</p>
 <pre><code class="language-js">http://localhost:8080/geoserver/wms?
 request=GetFeatureInfo
 &amp;service=WMS
@@ -589,7 +589,7 @@ request=GetFeatureInfo
 &amp;y=145
 &amp;exceptions=application%2Fvnd.ogc.se_xml
 </code></pre>
-<p>对GeoJSON格式的特征信息的示例请求为：</p>
+<p>对<code>GeoJSON</code>格式的特征信息的示例请求为：</p>
 <pre><code class="language-js">http://localhost:8080/geoserver/wms?
 &amp;INFO_FORMAT=application/json
 &amp;REQUEST=GetFeatureInfo
@@ -727,7 +727,7 @@ request=GetFeatureInfo
 </tr>
 </tbody>
 </table>
-<p>对图层组上的JSON格式的特征描述的示例请求为：</p>
+<p>对图层组上的<code>JSON</code>格式的特征描述的示例请求为：</p>
 <pre><code class="language-js">http://localhost:8080/geoserver/wms?service=WMS
 &amp;version=1.1.1
 &amp;request=DescribeLayer
