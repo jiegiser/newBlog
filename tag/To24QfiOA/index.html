@@ -1,234 +1,191 @@
+<!DOCTYPE html>
 <html>
   <head>
-  <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>webgis | jiegiser的博客</title>
-<meta name="description" content="温故而知新" />
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200140241">
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200172119">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://jiegiser.github.io/newBlog">
-  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200140241" alt="">
-  </a>
-  <h1 class="site-title">
-    jiegiser的博客
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200172119" class="site-logo">
+        <h1 class="site-title">jiegiser的博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/" class="menu">
-          首页
-        </a>
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
       
-    
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-    
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-        <a href="https://github.com/jiegiser" target="_blank">
-          <i class="fab fa-github"></i>
-        </a>
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="current-tag-container">
-            <h2 class="title">
-                标签：# webgis
-            </h2> 
-        </div>
-        <div class="post-container">
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/geoserver-zhong-wms-fu-wu-shuo-ming">
-        <h2 class="post-title">geoserver 中 WMS 服务说明</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-21
-        </span>
-        <span>
-          14 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/4IlMTsTht" class="post-tag">
-            # geoserver
-          </a>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/To24QfiOA" class="post-tag">
-            # webgis
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/geoserver-zhong-wms-fu-wu-shuo-ming" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/geoserver-zhong-wms-fu-wu-shuo-ming.png')">
-        </a>
-      
-      <div class="post-abstract">
-        
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
-        <h2 class="post-title">WebGIS实战系列 三 项目的重新开始</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-04
-        </span>
-        <span>
-          2 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/To24QfiOA" class="post-tag">
-            # webgis
-          </a>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi" class="post-feature-image" style="background-image: url('https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="说明">说明</h4>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <h2 class="current-tag">标签: webgis</h2>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/geoserver-zhong-wms-fu-wu-shuo-ming">
+                  <h2 class="post-title">geoserver 中 WMS 服务说明</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-21
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/geoserver-zhong-wms-fu-wu-shuo-ming">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/geoserver-zhong-wms-fu-wu-shuo-ming.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
+                  <h2 class="post-title">WebGIS实战系列 三 项目的重新开始</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-04
+                </div>
+                <div class="post-abstract">
+                  <h4 id="说明">说明</h4>
 <p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
-        <h2 class="post-title">WebGIS实战系列 二、 加载geoserver发布的WMS服务</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-04
-        </span>
-        <span>
-          2 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/To24QfiOA" class="post-tag">
-            # webgis
-          </a>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu" class="post-feature-image" style="background-image: url('https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
-        </a>
-      
-      <div class="post-abstract">
-        <p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
+                  <div class="feature-container" style="background-image: url('https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
+                  <h2 class="post-title">WebGIS实战系列 二、 加载geoserver发布的WMS服务</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-04
+                </div>
+                <div class="post-abstract">
+                  <p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
 我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
 
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
+                  <div class="feature-container" style="background-image: url('https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
+                  </div>
+                </a>
+              
+            </article>
+          
+
+          <div class="pagination-container">
+  
+  
+</div>
+
+        </div>
       </div>
-    </article>
-  
-</div>
+    </div>
 
-        <div class="pagination-container">
-  
-  
-</div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-        <div class="site-footer">
-  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
-  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
-</div>
+<script type="application/javascript">
 
-<script>
-  hljs.initHighlightingOnLoad()
+AOS.init();
 
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+hljs.initHighlightingOnLoad()
 
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
-
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
-      </div>
-    </div>
+
+
+
   </body>
 </html>

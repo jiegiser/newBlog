@@ -1,103 +1,111 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>Vue笔记 | jiegiser的博客</title>
-<meta name="description" content="温故而知新" />
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200140241">
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200172119">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://jiegiser.github.io/newBlog">
-  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200140241" alt="">
-  </a>
-  <h1 class="site-title">
-    jiegiser的博客
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200172119" class="site-logo">
+        <h1 class="site-title">jiegiser的博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/" class="menu">
-          首页
-        </a>
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
       
-    
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-    
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-        <a href="https://github.com/jiegiser" target="_blank">
-          <i class="fab fa-github"></i>
-        </a>
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              Vue笔记
-            </h2>
-            <div class="post-info">
-              <span>
-                2019-12-06
-              </span>
-              <span>
-                61 min read
-              </span>
-              
-                <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-                  # 前端
-                </a>
-              
-            </div>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Vue笔记</h2>
+            <div class="post-date">2019-12-06</div>
             
-              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/vue-bi-ji.png" alt="">
+              <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/vue-bi-ji.png')">
+              </div>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h4 id="1-传统的-mvp-开发模式与-mvvm-开发模式对比">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</h4>
+            <div class="post-content">
+              <h4 id="1-传统的-mvp-开发模式与-mvvm-开发模式对比">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</h4>
 <ol>
 <li>对于传统的<code>mvp</code>开发模式，<code>m</code>也就是<code>model</code>一般是通过发送<code>ajax</code>请求获取到的数据，<code>v</code>也就是视图，<code>p</code>就是<code>Presenter</code>相当于控制器，</li>
 </ol>
@@ -1415,244 +1423,83 @@ router.push({ path: '/user', params: { userId }}) // -&gt; /user
 <li>浏览器的基本工作原理从输入url到使用各种线程渲染页面。</li>
 </ol>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#1-%E4%BC%A0%E7%BB%9F%E7%9A%84-mvp-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F%E4%B8%8E-mvvm-%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F%E5%AF%B9%E6%AF%94">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</a></li>
-<li><a href="#2-%E4%B8%80%E4%BA%9B%E6%8C%87%E4%BB%A4%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7">2. 一些指令以及使用技巧</a>
-<ul>
-<li><a href="#21-vue-%E4%B8%AD%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7%E7%9A%84%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7">2.1.  Vue 中计算属性的使用技巧</a></li>
-<li><a href="#22-v-bind-%E7%BB%91%E5%AE%9A-class-%E4%B8%8E-%E5%86%85%E8%81%94%E6%A0%B7%E5%BC%8F">2.2. v-bind 绑定 class 与 内联样式</a>
-<ul>
-<li><a href="#221-v-bind-%E7%BB%91%E5%AE%9A-class">2.2.1.  v-bind 绑定 class</a></li>
-<li><a href="#222-%E7%BB%91%E5%AE%9A%E5%86%85%E8%81%94%E6%A0%B7%E5%BC%8F">2.2.2.  绑定内联样式</a></li>
-</ul>
-</li>
-<li><a href="#23-v-if-%E4%B8%8E-v-else-%E6%A0%87%E7%AD%BE%E5%BF%85%E9%A1%BB%E8%A6%81%E8%BF%9E%E5%9C%A8%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8%E4%B8%8D%E7%84%B6%E4%BC%9A%E6%8A%9B%E5%87%BA%E9%94%99%E8%AF%AF">2.3. v-if 与 v-else 标签必须要连在一起使用，不然会抛出错误。</a></li>
-<li><a href="#24-key-%E5%80%BC">2.4. key 值</a></li>
-<li><a href="#25-v-for-%E5%BE%AA%E7%8E%AF">2.5.  v-for 循环</a></li>
-<li><a href="#26-vue-%E4%B8%AD%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BB%84">2.6. Vue 中操作数组</a></li>
-<li><a href="#27-template-%E6%A8%A1%E6%9D%BF%E5%8D%A0%E4%BD%8D%E7%AC%A6">2.7.  template 模板占位符</a></li>
-<li><a href="#28-vue-%E4%B8%AD%E9%81%8D%E5%8E%86%E5%AF%B9%E8%B1%A1%E8%BF%9B%E8%A1%8C%E6%B8%B2%E6%9F%93%E4%BB%A5%E5%8F%8A%E5%AF%B9%E6%A0%B9%E7%BA%A7%E5%88%AB%E5%93%8D%E5%BA%94%E5%BC%8F%E5%AF%B9%E8%B1%A1%E6%B7%BB%E5%8A%A0%E5%B1%9E%E6%80%A7">2.8. Vue 中遍历对象进行渲染以及对根级别响应式对象添加属性</a></li>
-<li><a href="#29-%E5%AF%B9%E4%BA%8E%E6%95%B0%E7%BB%84%E7%9A%84-set-%E6%96%B9%E6%B3%95">2.9. 对于数组的 set 方法</a></li>
-<li><a href="#210-v-text-%E4%B8%8E-v-html">2.10 v-text 与 v-html</a></li>
-</ul>
-</li>
-<li><a href="#3-%E7%BB%84%E4%BB%B6%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86">3. 组件的一些知识</a>
-<ul>
-<li><a href="#31-is%E5%B1%9E%E6%80%A7">3.1. is属性</a></li>
-<li><a href="#32-%E5%AD%90%E7%BB%84%E4%BB%B6%E4%B8%AD-data">3.2 . 子组件中 data</a></li>
-<li><a href="#33-%E7%BB%84%E4%BB%B6%E4%B8%AD%E6%93%8D%E4%BD%9C-dom">3.3. 组件中操作 DOM</a></li>
-<li><a href="#34-%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E9%80%9A%E8%AE%AF">3.4. 组件之间的通讯</a>
-<ul>
-<li><a href="#341-%E5%AD%90%E7%BB%84%E4%BB%B6%E5%90%91%E7%88%B6%E7%BB%84%E4%BB%B6%E6%B4%BE%E5%8F%91%E4%BA%8B%E4%BB%B6">3.4.1 子组件向父组件派发事件</a></li>
-<li><a href="#342-%E7%88%B6%E7%BB%84%E4%BB%B6%E5%90%91%E5%AD%90%E7%BB%84%E4%BB%B6%E4%BC%A0%E9%80%92">3.4.2 父组件向子组件传递</a></li>
-</ul>
-</li>
-<li><a href="#35-%E7%BB%84%E4%BB%B6%E7%BB%91%E5%AE%9A%E5%8E%9F%E7%94%9F%E4%BA%8B%E4%BB%B6">3.5 组件绑定原生事件</a></li>
-<li><a href="#36-%E9%9D%9E%E7%88%B6%E5%AD%90%E7%BB%84%E4%BB%B6%E4%BC%A0%E5%80%BC-bus-%E6%80%BB%E7%BA%BF%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F">3.6. 非父子组件传值（ Bus 总线/发布订阅模式/观察者模式）</a></li>
-<li><a href="#37-%E6%8F%92%E6%A7%BD%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86">3.7.  插槽相关知识</a></li>
-<li><a href="#38-%E5%8A%A8%E6%80%81%E7%BB%84%E4%BB%B6">3.8.  动态组件</a></li>
-<li><a href="#39-vue-%E4%B8%AD%E7%9A%84%E5%8A%A8%E7%94%BB">3.9. vue 中的动画</a></li>
-<li><a href="#311-%E9%9D%9E-props-%E7%89%B9%E6%80%A7">3.11. 非 Props 特性</a></li>
-<li><a href="#312-%E7%BB%84%E4%BB%B6%E4%B8%AD%E6%9B%BF%E6%8D%A2%E5%90%88%E5%B9%B6%E5%B7%B2%E6%9C%89%E7%9A%84%E7%89%B9%E6%80%A7">3.12. 组件中替换/合并已有的特性</a></li>
-<li><a href="#313-%E7%BB%84%E4%BB%B6%E7%9A%84%E7%A6%81%E7%94%A8%E7%89%B9%E6%80%A7%E7%BB%A7%E6%89%BF">3.13. 组件的禁用特性继承</a></li>
-</ul>
-</li>
-<li><a href="#4-vue-cli-%E4%BB%A5%E5%8F%8A-vue-router">4.  vue-cli 以及 vue-router</a>
-<ul>
-<li><a href="#41-javascript-%E4%B8%AD-promise-%E5%AF%B9%E8%B1%A1%E4%B8%8E-callbacks-%E7%9A%84%E5%8C%BA%E5%88%AB">4.1. Javascript 中 Promise 对象与 callbacks 的区别</a></li>
-<li><a href="#42-vue-cli-%E7%9F%A5%E8%AF%86">4.2. vue-cli 知识</a></li>
-<li><a href="#43-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%B8%80%E4%BA%9B%E6%8A%80%E5%B7%A7">4.3. 项目中一些技巧</a>
-<ul>
-<li><a href="#431-import-%E5%BC%95%E5%85%A5-css">4.3.1. import 引入 css</a></li>
-<li><a href="#432-%E7%A7%BB%E5%8A%A8%E7%AB%AF-click-%E4%BA%8B%E4%BB%B6%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C">4.3.2. 移动端 Click 事件延迟执行</a></li>
-<li><a href="#433-vue-cl%E9%A1%B9%E7%9B%AE%E4%B8%AD%E9%85%8D%E7%BD%AE%E8%B7%AF%E5%BE%84%E5%88%AB%E5%90%8D">4.3.3. vue-cl项目中配置路径别名</a></li>
-<li><a href="#434-vue-cl%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-stylus">4.3.4. vue-cl项目中使用 stylus</a></li>
-<li><a href="#435-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E5%83%8F%E7%B4%A0%E9%97%AE%E9%A2%98">4.3.5. 移动端像素问题</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#5-%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86">5. 项目开发中的一些知识</a>
-<ul>
-<li><a href="#51-%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B">5.1. 开发流程</a></li>
-<li><a href="#52-vue-%E7%AC%AC%E4%B8%89%E6%96%B9%E8%BD%AE%E6%92%AD%E5%9B%BE%E6%8F%92%E4%BB%B6-vue-awesome-swiper">5.2. vue 第三方轮播图插件 vue-awesome-swiper</a></li>
-<li><a href="#53-%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%B0%8F%E6%8A%80%E5%B7%A7%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C">5.3. 浏览器的小技巧模拟网络</a></li>
-<li><a href="#54-css-%E4%BB%A3%E7%A0%81%E6%8A%80%E5%B7%A7">5.4.  css 代码技巧</a>
-<ul>
-<li><a href="#541-%E5%AE%BD%E9%AB%98%E4%BF%9D%E6%8C%81%E4%B8%80%E5%AE%9A%E7%9A%84%E7%99%BE%E5%88%86%E6%AF%94">5.4.1. 宽高保持一定的百分比</a></li>
-<li><a href="#542-%E4%BF%AE%E6%94%B9%E7%AC%AC%E4%B8%89%E6%96%B9%E6%8F%92%E4%BB%B6%E6%A0%B7%E5%BC%8F">5.4.2. 修改第三方插件样式</a></li>
-<li><a href="#543-div-%E5%85%83%E7%B4%A0%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD">5.4.3. div 元素垂直居中</a></li>
-<li><a href="#544-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0%E7%A6%BB%E9%A1%B6%E9%83%A8%E5%85%83%E7%B4%A0%E7%9C%9F%E5%AE%9E%E9%AB%98%E5%BA%A6">5.4.4. 移动端获取元素离顶部元素真实高度</a></li>
-</ul>
-</li>
-<li><a href="#55-vue-cli-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%9A%84%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E8%AE%BF%E9%97%AE%E4%BB%A5%E5%8F%8A%E4%BB%A3%E7%A0%81%E6%8F%90%E4%BA%A4%E9%85%8D%E7%BD%AE">5.5.  vue-cli 项目中的静态资源访问以及代码提交配置</a></li>
-<li><a href="#56-%E9%A1%B9%E7%9B%AE%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%BD%AC%E6%8E%A5">5.6. 项目接口的转接</a></li>
-<li><a href="#57-math-%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%B8%80%E4%BA%9B%E6%96%B9%E6%B3%95">5.7. Math 对象的一些方法</a></li>
-<li><a href="#58-css-%E7%9A%84-rem-%E4%BB%A5%E5%8F%8A-vm">5.8. CSS 的 rem 以及 vm</a></li>
-<li><a href="#59-better-scroll-%E6%8F%92%E4%BB%B6">5.9. Better-scroll 插件</a></li>
-<li><a href="#510-%E9%98%B2%E6%8A%96%E8%8A%82%E6%B5%81%E7%9A%84%E4%BE%8B%E5%AD%90">5.10. 防抖节流的例子</a></li>
-<li><a href="#511-touch-%E4%BA%8B%E4%BB%B6%E4%B8%8E-click-%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%86%B2%E7%AA%81">5.11.  touch 事件与 click 事件的冲突</a></li>
-<li><a href="#512-%E8%A7%A3%E5%86%B3%E6%89%8B%E6%9C%BA%E4%B8%8D%E6%94%AF%E6%8C%81-es6-%E6%96%B0%E7%89%B9%E6%80%A7">5.12.  解决手机不支持 es6 新特性</a></li>
-</ul>
-</li>
-<li><a href="#6-vuex-%E7%9F%A5%E8%AF%86">6. vuex 知识</a>
-<ul>
-<li><a href="#61-vuex-%E7%9A%84%E4%BD%BF%E7%94%A8">6.1.  vuex 的使用</a></li>
-<li><a href="#62-%E9%A1%B5%E9%9D%A2%E4%B9%8B%E9%97%B4%E8%B7%B3%E8%BD%AC">6.2. 页面之间跳转</a></li>
-<li><a href="#63-%E8%AE%BF%E9%97%AE-vuex-%E6%95%B0%E6%8D%AE%E6%8A%80%E5%B7%A7">6.3. 访问 vuex 数据技巧</a>
-<ul>
-<li><a href="#631-%E7%BB%84%E4%BB%B6%E4%B8%AD%E8%AE%BF%E9%97%AEstate%E6%95%B0%E6%8D%AE">6.3.1. 组件中访问state数据</a></li>
-<li><a href="#632-mapstate-%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0">6.3.2. mapState 辅助函数</a></li>
-<li><a href="#633-%E4%BD%BF%E7%94%A8%E5%B8%B8%E9%87%8F%E6%9B%BF%E4%BB%A3-mutation-%E4%BA%8B%E4%BB%B6%E7%B1%BB%E5%9E%8B">6.3.3. 使用常量替代 Mutation 事件类型</a></li>
-</ul>
-</li>
-<li><a href="#64-vuex-%E4%B8%AD%E7%9A%84-getters-%E5%B1%9E%E6%80%A7">6.4.  vuex 中的 getters 属性</a></li>
-<li><a href="#65-%E4%BD%BF%E7%94%A8-keep-alive-%E4%BC%98%E5%8C%96%E6%80%A7%E8%83%BD">6.5. 使用 keep-alive 优化性能</a></li>
-<li><a href="#66-router-link-%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86">6.6. router-link 一些知识</a>
-<ul>
-<li><a href="#661-tag-%E5%B1%9E%E6%80%A7">6.6.1. tag 属性</a></li>
-<li><a href="#662-%E8%BF%94%E5%9B%9E%E5%88%B0%E5%89%8D%E4%B8%80%E9%A1%B5">6.6.2. 返回到前一页</a></li>
-</ul>
-</li>
-<li><a href="#67-keep-alive-%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9">6.7.   &lt;keep-alive&gt;  一些知识点</a></li>
-<li><a href="#68-vuex-%E4%B8%AD%E7%9A%84%E6%8F%92%E4%BB%B6">6.8.  vuex 中的插件</a></li>
-<li><a href="#68-%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F">6.8.  严格模式</a></li>
-</ul>
-</li>
-<li><a href="#7-vue-router-%E7%9F%A5%E8%AF%86%E7%82%B9">7. vue-router 知识点</a>
-<ul>
-<li><a href="#71-%E8%B7%AF%E7%94%B1%E4%B8%AD%E5%8F%82%E6%95%B0%E7%9A%84%E4%BC%A0%E9%80%92">7.1. 路由中参数的传递</a></li>
-<li><a href="#72-%E7%BB%84%E4%BB%B6%E4%B8%AD-name-%E7%9A%84%E7%94%A8%E6%B3%95%E6%80%BB%E7%BB%93">7.2 组件中 name 的用法总结</a>
-<ul>
-<li><a href="#721-%E5%8E%BB%E9%99%A4%E7%BC%93%E5%AD%98">7.2.1. 去除缓存</a></li>
-<li><a href="#722-%E6%B8%85%E9%99%A4%E9%A1%B5%E9%9D%A2%E6%BB%9A%E5%8A%A8">7.2.2. 清除页面滚动</a></li>
-<li><a href="#723-%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%92%E5%BD%92">7.2.3. 组件的递归</a></li>
-</ul>
-</li>
-<li><a href="#73-%E5%93%8D%E5%BA%94%E8%B7%AF%E7%94%B1%E5%8F%82%E6%95%B0%E7%9A%84%E5%8F%98%E5%8C%96">7.3. 响应路由参数的变化</a></li>
-<li><a href="#74-%E8%B7%AF%E7%94%B1%E4%B8%AD%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0">7.4. 路由中传递参数</a></li>
-<li><a href="#75-%E5%91%BD%E5%90%8D%E8%B7%AF%E7%94%B1">7.5. 命名路由</a></li>
-<li><a href="#76-%E5%91%BD%E5%90%8D%E8%A7%86%E5%9B%BE">7.6. 命名视图</a></li>
-<li><a href="#77-%E7%BB%84%E5%BB%BA%E5%86%85%E7%9A%84%E5%AE%88%E5%8D%AB">7.7. 组建内的守卫</a></li>
-<li><a href="#78%E5%AE%8C%E6%95%B4%E7%9A%84%E5%AF%BC%E8%88%AA%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B">7.8.完整的导航解析流程</a></li>
-</ul>
-</li>
-<li><a href="#8-%E9%A1%B9%E7%9B%AE%E4%B8%8A%E7%BA%BF%E5%87%86%E5%A4%87">8. 项目上线准备</a>
-<ul>
-<li><a href="#81-api-%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%9B%BF%E6%8D%A2">8.1. API 接口的替换</a></li>
-<li><a href="#82-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E9%A1%B9%E7%9B%AE%E7%9C%9F%E6%9C%BA%E8%B0%83%E8%AF%95">8.2. 移动端项目真机调试</a></li>
-<li><a href="#83-%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85">8.3. 项目打包</a></li>
-</ul>
-</li>
-<li><a href="#9-vue-%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF">9. vue 学习路线</a></li>
-<li><a href="#10-%E5%85%B6%E4%BB%96">10. 其他</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
-          </article>
-        </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="tag">
+                    前端
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji">
+                  <h3 class="post-title">
+                    webpack4.X 基础知识笔记
+                  </h3>
+                </a>
+              </div>
+            
 
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji">
-              <h3 class="post-title">
-                webpack4.X 基础知识笔记
-              </h3>
-            </a>
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
           </div>
-        
 
-        
-          
-            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-
-<div id="gitalk-container"></div>
-
-<script>
-
-  var gitalk = new Gitalk({
-    clientID: '4018355925b4a033100a',
-    clientSecret: 'dca55db969b5b038fd93d505abde0d058ad3032e',
-    repo: 'newBlog',
-    owner: 'jiegiser',
-    admin: ['jiegiser'],
-    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
-    distractionFreeMode: false  // Facebook-like distraction free mode
-  })
-
-  gitalk.render('gitalk-container')
-
-</script>
-
-          
-
-          
-        
-
-        <div class="site-footer">
-  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
-  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
-</div>
-
-<script>
-  hljs.initHighlightingOnLoad()
-
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
-
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
-
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
-
-</script>
-
+        </div>
       </div>
     </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '4018355925b4a033100a',
+        clientSecret: 'dca55db969b5b038fd93d505abde0d058ad3032e',
+        repo: 'newBlog',
+        owner: 'jiegiser',
+        admin: ['jiegiser'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
   </body>
 </html>

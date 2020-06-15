@@ -1,103 +1,111 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>ES6笔记 | jiegiser的博客</title>
-<meta name="description" content="温故而知新" />
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200140241">
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200172119">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://jiegiser.github.io/newBlog">
-  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200140241" alt="">
-  </a>
-  <h1 class="site-title">
-    jiegiser的博客
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200172119" class="site-logo">
+        <h1 class="site-title">jiegiser的博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/" class="menu">
-          首页
-        </a>
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
       
-    
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-    
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-        <a href="https://github.com/jiegiser" target="_blank">
-          <i class="fab fa-github"></i>
-        </a>
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              ES6笔记
-            </h2>
-            <div class="post-info">
-              <span>
-                2019-12-06
-              </span>
-              <span>
-                25 min read
-              </span>
-              
-                <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-                  # 前端
-                </a>
-              
-            </div>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">ES6笔记</h2>
+            <div class="post-date">2019-12-06</div>
             
-              <img class="post-feature-image" src="https://jiegiser.github.io/newBlog/post-images/es6-bi-ji.png" alt="">
+              <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/es6-bi-ji.png')">
+              </div>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h4 id="1-变量">1. 变量</h4>
+            <div class="post-content">
+              <h4 id="1-变量">1. 变量</h4>
 <ul>
 <li><code>var</code>声明的变量是<code>function scope</code>也就是在函数中可以访问到，并不是在大括号里面声明的，外层就访问不到。<code>let const</code>声明的变量都是<code>block scope</code>块级作用域，也就是在大括号里面可以访问到。</li>
 </ul>
@@ -856,158 +864,83 @@ people.set('{}',3)
 </code></pre>
 <p><code>wekMap</code>没有<code>size</code>属性，不能循环；他的<code>key</code>必须是对象；垃圾回收机制，会自动回收。</p>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li><a href="#1-%E5%8F%98%E9%87%8F">1. 变量</a></li>
-<li><a href="#2-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0">2. 箭头函数</a>
-<ul>
-<li><a href="#21-%E4%BC%98%E7%82%B9">2.1 优点：</a></li>
-<li><a href="#22-%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7">2.2 箭头函数的局限性：</a></li>
-</ul>
-</li>
-<li><a href="#3-es6-%E5%8F%82%E6%95%B0%E9%BB%98%E8%AE%A4%E5%80%BC">3. ES6 参数默认值</a></li>
-<li><a href="#4-%E6%A8%A1%E6%9D%BF%E5%AD%97%E7%AC%A6%E4%B8%B2">4. 模板字符串</a></li>
-<li><a href="#5-%E5%AF%B9%E8%B1%A1%E8%A7%A3%E6%9E%84">5. 对象解构</a></li>
-<li><a href="#6-%E6%95%B0%E7%BB%84%E8%A7%A3%E6%9E%84">6. 数组解构</a></li>
-<li><a href="#7-for-of-%E7%94%A8%E6%B3%95">7. for of 用法</a></li>
-<li><a href="#8-arrayfrom-arrayof">8. Array.from()  Array.of()</a>
-<ul>
-<li><a href="#81-arrayfrom">8.1 Array.from()</a></li>
-<li><a href="#82-arrayof">8.2 Array.of()</a></li>
-</ul>
-</li>
-<li><a href="#9-%E6%95%B0%E7%BB%84%E7%9A%84%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95">9. 数组的其他方法</a>
-<ul>
-<li><a href="#91-find">9.1 .find()</a></li>
-<li><a href="#92-findindex">9.2 .findIndex()</a></li>
-<li><a href="#93-some">9.3 .some()</a></li>
-<li><a href="#94-every">9.4 .every()</a></li>
-</ul>
-</li>
-<li><a href="#10-%E5%89%A9%E4%BD%99%E5%8F%82%E6%95%B0">10. 剩余参数</a></li>
-<li><a href="#11-%E6%89%A9%E5%B1%95%E8%BF%90%E7%AE%97%E7%AC%A6">11. 扩展运算符</a></li>
-<li><a href="#12-%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7">12. 对象的计算属性</a></li>
-<li><a href="#13-es6-%E7%9A%84promise%E5%AF%B9%E8%B1%A1">13. ES6  的Promise对象</a></li>
-<li><a href="#14-symbol">14. Symbol</a></li>
-<li><a href="#15-eslint">15. ESLint</a></li>
-<li><a href="#16-import-export">16. import  export</a></li>
-<li><a href="#17-%E4%BD%BF%E7%94%A8-systemjs-%E8%BF%9B%E8%A1%8C%E6%89%93%E5%8C%85">17. 使用 SystemJS 进行打包</a></li>
-<li><a href="#18-class">18. Class</a>
-<ul>
-<li><a href="#181-class%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95">18.1 Class基本用法</a></li>
-<li><a href="#182-class%E7%9A%84%E6%89%A9%E5%B1%95">18.2 Class的扩展</a></li>
-<li><a href="#183-class-%E8%BF%9B%E8%A1%8C%E6%89%A9%E5%B1%95%E5%86%85%E5%BB%BA%E5%AF%B9%E8%B1%A1">18.3 Class 进行扩展内建对象</a></li>
-</ul>
-</li>
-<li><a href="#19-proxy">19. Proxy</a></li>
-<li><a href="#20-set">20. Set</a></li>
-<li><a href="#21-map">21. Map</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
-          </article>
-        </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="tag">
+                    前端
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
+                  <h3 class="post-title">
+                    Webpack底层原理及脚手架工具分析
+                  </h3>
+                </a>
+              </div>
+            
 
-        
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
-              <h3 class="post-title">
-                Webpack底层原理及脚手架工具分析
-              </h3>
-            </a>
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
           </div>
-        
 
-        
-          
-            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-
-<div id="gitalk-container"></div>
-
-<script>
-
-  var gitalk = new Gitalk({
-    clientID: '4018355925b4a033100a',
-    clientSecret: 'dca55db969b5b038fd93d505abde0d058ad3032e',
-    repo: 'newBlog',
-    owner: 'jiegiser',
-    admin: ['jiegiser'],
-    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
-    distractionFreeMode: false  // Facebook-like distraction free mode
-  })
-
-  gitalk.render('gitalk-container')
-
-</script>
-
-          
-
-          
-        
-
-        <div class="site-footer">
-  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
-  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
-</div>
-
-<script>
-  hljs.initHighlightingOnLoad()
-
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
-
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
-
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
-
-</script>
-
+        </div>
       </div>
     </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '4018355925b4a033100a',
+        clientSecret: 'dca55db969b5b038fd93d505abde0d058ad3032e',
+        repo: 'newBlog',
+        owner: 'jiegiser',
+        admin: ['jiegiser'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
   </body>
 </html>

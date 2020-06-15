@@ -1,418 +1,335 @@
+<!DOCTYPE html>
 <html>
   <head>
-  <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>前端 | jiegiser的博客</title>
-<meta name="description" content="温故而知新" />
-<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200140241">
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592200172119">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://jiegiser.github.io/newBlog">
-  <img class="avatar" src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200140241" alt="">
-  </a>
-  <h1 class="site-title">
-    jiegiser的博客
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592200172119" class="site-logo">
+        <h1 class="site-title">jiegiser的博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
       
-        <a href="/" class="menu">
-          首页
-        </a>
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
       
-    
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
       
-        <a href="/archives" class="menu">
-          归档
-        </a>
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
       
-    
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
       
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+    </div>
   </div>
-  <div class="social-container">
-    
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
       
-        <a href="https://github.com/jiegiser" target="_blank">
-          <i class="fab fa-github"></i>
-        </a>
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+        
       
-    
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+    </div>
   </div>
 </div>
 
-        <div class="current-tag-container">
-            <h2 class="title">
-                标签：# 前端
-            </h2> 
-        </div>
-        <div class="post-container">
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/vue-bi-ji">
-        <h2 class="post-title">Vue笔记</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-06
-        </span>
-        <span>
-          61 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/vue-bi-ji" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/vue-bi-ji.png')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="1-传统的-mvp-开发模式与-mvvm-开发模式对比">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</h4>
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <h2 class="current-tag">标签: 前端</h2>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/vue-bi-ji">
+                  <h2 class="post-title">Vue笔记</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-06
+                </div>
+                <div class="post-abstract">
+                  <h4 id="1-传统的-mvp-开发模式与-mvvm-开发模式对比">1. 传统的 MVP 开发模式与 MVVM 开发模式对比</h4>
 <ol>
 <li>对于传统的<code>mvp</code>开发模式，<code>m</code>也就是<code>model</code>一般是通过发送<code>ajax</code>请求获取到的数据，<code>v</code>也就是视图，<code>p</code>就是<code>Presenter</code>相当于控制器，</li>
 </ol>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji">
-        <h2 class="post-title">webpack4.X 基础知识笔记</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-06
-        </span>
-        <span>
-          42 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/webpack4x-ji-chu-zhi-shi-bi-ji.png')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="1-webpack-基础知识">1. WebPack 基础知识</h4>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/vue-bi-ji">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/vue-bi-ji.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji">
+                  <h2 class="post-title">webpack4.X 基础知识笔记</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-06
+                </div>
+                <div class="post-abstract">
+                  <h4 id="1-webpack-基础知识">1. WebPack 基础知识</h4>
 <p>首先需要明白<code>webpack</code>为什么会出现，作用是什么，总之他就是一个模块打包工具；<br>
 <code>commonJS</code>的模块导出方式为:</p>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/webpack-4x-gao-ji-gai-nian-bi-ji">
-        <h2 class="post-title">WebPack 4.X 高级概念笔记</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-06
-        </span>
-        <span>
-          43 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/webpack-4x-gao-ji-gai-nian-bi-ji" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/webpack-4x-gao-ji-gai-nian-bi-ji.png')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="1-tree-shaking-概念详解">1. Tree Shaking 概念详解</h4>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/webpack4x-ji-chu-zhi-shi-bi-ji">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/webpack4x-ji-chu-zhi-shi-bi-ji.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/webpack-4x-gao-ji-gai-nian-bi-ji">
+                  <h2 class="post-title">WebPack 4.X 高级概念笔记</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-06
+                </div>
+                <div class="post-abstract">
+                  <h4 id="1-tree-shaking-概念详解">1. Tree Shaking 概念详解</h4>
 <h5 id="11-babelpolyfill与babelpreset-env之间的引用小冲突">1.1 babel/polyfill与babel/preset-env之间的引用小冲突</h5>
 <p>在<code>webpack 4.x</code>的版本中，如果我们在业务代码里面引用了<code>impport @babel/polyfill</code>，而且我们还对<code>babel-loader</code>中的这个插件<code>@babel/preset-env</code>配置了<code>useBuiltIns: 'usage'</code>，我们在打包的时候，会提示下面的信息：</p>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/es6-bi-ji">
-        <h2 class="post-title">ES6笔记</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-06
-        </span>
-        <span>
-          25 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/es6-bi-ji" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/es6-bi-ji.png')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="1-变量">1. 变量</h4>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/webpack-4x-gao-ji-gai-nian-bi-ji">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/webpack-4x-gao-ji-gai-nian-bi-ji.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/es6-bi-ji">
+                  <h2 class="post-title">ES6笔记</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-06
+                </div>
+                <div class="post-abstract">
+                  <h4 id="1-变量">1. 变量</h4>
 <ul>
 <li><code>var</code>声明的变量是<code>function scope</code>也就是在函数中可以访问到，并不是在大括号里面声明的，外层就访问不到。<code>let const</code>声明的变量都是<code>block scope</code>块级作用域，也就是在大括号里面可以访问到。</li>
 </ul>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
-        <h2 class="post-title">Webpack底层原理及脚手架工具分析</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-06
-        </span>
-        <span>
-          30 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi.png')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="1-如何编写一个loader">1. 如何编写一个Loader</h4>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/es6-bi-ji">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/es6-bi-ji.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
+                  <h2 class="post-title">Webpack底层原理及脚手架工具分析</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-06
+                </div>
+                <div class="post-abstract">
+                  <h4 id="1-如何编写一个loader">1. 如何编写一个Loader</h4>
 <h5 id="11-实现一个简单的loader">1.1 实现一个简单的Loader</h5>
 <p>我们开始写一个打包之后的文件，将<code>js</code>代码中<code>jie</code>这个字符串替换为<code>world</code>的一个<code>loader</code>，首先我们新建一个功能，使用<code>npm init</code>，然后进行安装<code>webpack</code>：<code>npm install webpack webpack-cli --save-dev</code>，安装完之后，新建一个文件及<code>src</code>以及<code>loaders</code>，然后分别在对应的文件夹中新建<code>index.js</code>以及<code>replace.loaders.js</code>文件。</p>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/suan-fa">
-        <h2 class="post-title">算法</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-06
-        </span>
-        <span>
-          3 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/civI6qmg6" class="post-tag">
-            # 杂谈
-          </a>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/suan-fa" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/suan-fa.png')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="1-动态规划算法">1. 动态规划算法：</h4>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/webpack-di-ceng-yuan-li-ji-jiao-shou-jia-gong-ju-fen-xi.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/suan-fa">
+                  <h2 class="post-title">算法</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-06
+                </div>
+                <div class="post-abstract">
+                  <h4 id="1-动态规划算法">1. 动态规划算法：</h4>
 <p>题目：<br>
 给定一个字符串 (s) 和一个字符模式 (p) ，实现一个支持 '?' 和 '*' 的通配符匹配。</p>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji">
-        <h2 class="post-title">前端笔记</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-06
-        </span>
-        <span>
-          79 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/civI6qmg6" class="post-tag">
-            # 杂谈
-          </a>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji" class="post-feature-image" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/qian-duan-bi-ji.jfif')">
-        </a>
-      
-      <div class="post-abstract">
-        <h5 id="1-js-的对象">1. JS 的对象</h5>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/suan-fa">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/suan-fa.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji">
+                  <h2 class="post-title">前端笔记</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-06
+                </div>
+                <div class="post-abstract">
+                  <h5 id="1-js-的对象">1. JS 的对象</h5>
 <ul>
 <li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。</li>
 </ul>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
-        <h2 class="post-title">WebGIS实战系列 三 项目的重新开始</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-04
-        </span>
-        <span>
-          2 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/To24QfiOA" class="post-tag">
-            # webgis
-          </a>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi" class="post-feature-image" style="background-image: url('https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
-        </a>
-      
-      <div class="post-abstract">
-        <h4 id="说明">说明</h4>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji">
+                  <div class="feature-container" style="background-image: url('https://jiegiser.github.io/newBlog/post-images/qian-duan-bi-ji.jfif')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
+                  <h2 class="post-title">WebGIS实战系列 三 项目的重新开始</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-04
+                </div>
+                <div class="post-abstract">
+                  <h4 id="说明">说明</h4>
 <p>离上次更新该系列文章已经快四个多月。这段时间工作上比较忙以及自己也换了份工作就没有更新过相关内容，最近在做一个管网系统，自己也写了一些小的<code>demo</code>，<code>github</code> <a href="https://github.com/jiegiser/ol5_example">地址</a>（欢迎star），里面有一些用到的天地图的<code>key</code>跟<code>bing</code>地图的<code>key</code>需要大家自己去获取。最近我打算会陆陆续续的更新完这个系列的文章。将自己在项目上的经验进行分享。</p>
 
-      </div>
-    </article>
-  
-    <article class="post">
-      <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
-        <h2 class="post-title">WebGIS实战系列 二、 加载geoserver发布的WMS服务</h2>
-      </a>
-      <div class="post-info">
-        <span>
-          2019-12-04
-        </span>
-        <span>
-          2 min read
-        </span>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/To24QfiOA" class="post-tag">
-            # webgis
-          </a>
-        
-          <a href="https://jiegiser.github.io/newBlog/tag/FRWC_K-us" class="post-tag">
-            # 前端
-          </a>
-        
-      </div>
-      
-        <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu" class="post-feature-image" style="background-image: url('https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
-        </a>
-      
-      <div class="post-abstract">
-        <p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-san-xiang-mu-de-chong-xin-kai-shi">
+                  <div class="feature-container" style="background-image: url('https://img-blog.csdnimg.cn/20191119080341942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
+                  </div>
+                </a>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
+                  <h2 class="post-title">WebGIS实战系列 二、 加载geoserver发布的WMS服务</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-04
+                </div>
+                <div class="post-abstract">
+                  <p>加载<code>wms</code>服务也是很简单，可以参考官网给出的例子：https://developers.arcgis.com/javascript/3/jssamples/layers_wmsresourceinfo.html<br>
 我们这里是加载一个<code>geoserver</code>发布的<code>WMS</code>服务的地图，示例代码如下：</p>
 
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-er-jia-zai-geoserver-fa-bu-de-wms-fu-wu">
+                  <div class="feature-container" style="background-image: url('https://img-blog.csdnimg.cn/20190630181956534.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70')">
+                  </div>
+                </a>
+              
+            </article>
+          
+
+          <div class="pagination-container">
+  
+  
+</div>
+
+        </div>
       </div>
-    </article>
-  
-</div>
+    </div>
 
-        <div class="pagination-container">
-  
-  
-</div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-        <div class="site-footer">
-  Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | 
-  <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
-</div>
+<script type="application/javascript">
 
-<script>
-  hljs.initHighlightingOnLoad()
+AOS.init();
 
-  let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+hljs.initHighlightingOnLoad()
 
-  // This should probably be throttled.
-  // Especially because it triggers during smooth scrolling.
-  // https://lodash.com/docs/4.17.10#throttle
-  // You could do like...
-  // window.addEventListener("scroll", () => {
-  //    _.throttle(doThatStuff, 100);
-  // });
-  // Only not doing it here to keep this Pen dependency-free.
-
-  window.addEventListener("scroll", event => {
-    let fromTop = window.scrollY;
-
-    mainNavLinks.forEach((link, index) => {
-      let section = document.getElementById(decodeURI(link.hash).substring(1));
-      let nextSection = null
-      if (mainNavLinks[index + 1]) {
-        nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-      }
-      if (section.offsetTop <= fromTop) {
-        if (nextSection) {
-          if (nextSection.offsetTop > fromTop) {
-            link.classList.add("current");
-          } else {
-            link.classList.remove("current");    
-          }
-        } else {
-          link.classList.add("current");
-        }
-      } else {
-        link.classList.remove("current");
-      }
-    });
-  });
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
-      </div>
-    </div>
+
+
+
   </body>
 </html>
