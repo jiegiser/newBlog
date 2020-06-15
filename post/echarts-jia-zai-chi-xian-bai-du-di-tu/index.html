@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>echarts加载离线百度地图 | jiegiser的博客</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1592265033672">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1592265033672" class="site-logo">
+        <h1 class="site-title">jiegiser的博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://jiegiser.github.io/newBlog" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://jiegiser.github.io/newBlog/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://jiegiser.github.io/newBlog/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="https://jiegiser.github.io/newBlog/post/about/" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://blog.csdn.net/cj9551" class="site-nav">
+            CSDN
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">echarts加载离线百度地图</h2>
+            <div class="post-date">2020-06-16</div>
+            
+            <div class="post-content">
+              <p>最近在做一个国网的一个项目，需要实现一些热力图以及冒泡式的标注等；而且需要在内网使用，感觉使用 echarts 就可以简单的实现无需加载类似 openlayers ，leaflet 等 webgis 框架然后再发布地图服务实现。下面就写一下实现的过程。</p>
+<!-- more -->
+<h3 id="实现思路">实现思路</h3>
+<ul>
+<li>百度地图API文件</li>
+<li>创建本地工具资源文件getModules.js</li>
+<li>地图瓦片</li>
+</ul>
+<h3 id="百度地图api文件">百度地图API文件</h3>
+<h4 id="下载-api-文件">下载 API 文件</h4>
+<p>首先需要准备离线的百度地图 API 文件，浏览器打开地址：http://api.map.baidu.com/api?v=2.0，不需要申请 key，当然申请也是可以的；打开之后如下：</p>
+<pre><code class="language-js">(function(){ 
+   window.BMap_loadScriptTime = (new Date).getTime(); 
+   document.write('&lt;script type=&quot;text/javascript&quot; src=&quot;http://api.map.baidu.com/getscript?v=2.0&amp;ak=&amp;services=&amp;t=20200327103013&quot;&gt;&lt;/script&gt;');
+})();
+</code></pre>
+<p>复制 script 加载的 src 地址，在浏览器中打开；如下：<br>
+<img src="https://img-blog.csdnimg.cn/20200518161921829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+然后复制里面的内容，保存到自己的项目中命名为：baiduApi.js；这个名字随意起；</p>
+<h4 id="修改-api-文件">修改 API 文件</h4>
+<p>然后需要修改里面的加载方式，进行加载我们本地的资源；首先需要去掉ak验证：搜索charset = 'utf-8'，添加 if (/^http/.test(a)) return;如下：<br>
+<img src="https://img-blog.csdnimg.cn/20200518162304772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<pre><code class="language-js">  function pa(a, b) {
+    // 下面是需要添加的代码
+    // 如果是调用外部资源就退出去
+    if (/^http/.test(a)) return;
+    if (b) {
+      var c = (1E5 * Math.random()).toFixed(0);
+      z._rd[&quot;_cbk&quot; + c] = function(a) {
+        b &amp;&amp; b(a);
+        delete z._rd[&quot;_cbk&quot; + c]
+      };
+      a += &quot;&amp;callback=BMap._rd._cbk&quot; + c
+    }
+    var d = K(&quot;script&quot;, {
+      type: &quot;text/javascript&quot;
+    });
+    d.charset = &quot;utf-8&quot;;
+    d.src = a;
+    d.addEventListener ? d.addEventListener(&quot;load&quot;,
+    function(a) {
+      a = a.target;
+      a.parentNode.removeChild(a)
+    },
+    q) : d.attachEvent &amp;&amp; d.attachEvent(&quot;onreadystatechange&quot;,
+    function() {
+      var a = window.event.srcElement;
+      a &amp;&amp; (&quot;loaded&quot; == a.readyState || &quot;complete&quot; == a.readyState) &amp;&amp; a.parentNode.removeChild(a)
+    });
+    setTimeout(function() {
+      document.getElementsByTagName(&quot;head&quot;)[0].appendChild(d);
+      d = p
+    },
+    1)
+  }
+</code></pre>
+<blockquote>
+<p>可以将复制的百度地图API的代码在 https://www.bejson.com/jshtml_format/这里进行格式化；这样看的比较清楚。</p>
+</blockquote>
+<h3 id="创建本地工具资源文件getmodulesjs">创建本地工具资源文件getModules.js</h3>
+<p>继续在我们保存的百度地图API中搜索 domain.main_domain_cdn.baidu[0]，找到使用它定义的z.ma，修改为z.ma = '';<br>
+<img src="https://img-blog.csdnimg.cn/20200518162606186.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<pre><code class="language-js">  z.dz = window.HOST_TYPE || &quot;0&quot;;
+  z.url = z.l0[z.dz];
+  z.Dp = z.url.proto + z.url.domain.baidumap + &quot;/&quot;;
+  z.oc = z.url.proto + (&quot;2&quot; == z.dz ? z.url.domain.main_domain_nocdn.other: z.url.domain.main_domain_nocdn.baidu) + &quot;/&quot;;
+  z.ma = z.url.proto + (&quot;2&quot; == z.dz ? z.url.domain.main_domain_cdn.other[0] : z.url.domain.main_domain_cdn.baidu[0]) + &quot;/&quot;;
+  // 需要添加的代码
+  z.ma = '';
+  z.hj = z.url.proto + z.url.domain.main_domain_cdn.webmap[0] + &quot;/&quot;;
+</code></pre>
+<h4 id="加载模块短路处理">加载模块短路处理</h4>
+<p>首先创建一个我们本地工具模块保存的脚本，本项目中命名为getModules.js；<br>
+然后在我们保存的百度地图API中搜索搜索 <code>&amp;mod=</code>，替换。那个 console.log(a),是为了给后面创建getModules.js，用于打印出需要加载的工具模块；注意这里的函数 pa，就是我们前面去掉ak验证：添加 if (/^http/.test(a)) return;的方法。<br>
+<img src="https://img-blog.csdnimg.cn/20200518162905207.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<pre><code class="language-js">    load: function(a, b, c) {
+      var d = this.kb(a);
+      if (d.Cd == this.Kj.lq) c &amp;&amp; b();
+      else {
+        if (d.Cd == this.Kj.DG) {
+          this.zK(a);
+          this.NN(a);
+          var e = this;
+          e.PC == q &amp;&amp; (e.PC = o, setTimeout(function() {
+            for (var a = [], b = 0, c = e.Rd.Ln.length; b &lt; c; b++) {
+              var d = e.Rd.Ln[b],
+              l = &quot;&quot;;
+              ja.Zy.tK(d) ? l = ja.Zy.get(d) : (l = &quot;&quot;, a.push(d + &quot;_&quot; + Cc[d]));
+              e.Rd.ew.push({
+                fN: d,
+                YE: l
+              })
+            }
+            e.PC = q;
+            e.Rd.Ln.length = 0;
+            // 需要修改的地方
+            // 0 == a.length ? e.kL() : pa(e.wG.nQ + &quot;&amp;mod=&quot; + a.join(&quot;,&quot;))
+            0 == a.length ? e.kL() : pa(&quot;../../public/data/getmodules.js&quot;)
+            console.log(a)
+          },
+          1));
+          d.Cd = this.Kj.XP
+        }
+        d.av.push(b)
+      }
+    },
+</code></pre>
+<h4 id="创建本地工具资源文件getmodulesjs-2">创建本地工具资源文件getModules.js</h4>
+<p>在这里面放API需要调用的模块，上面打印的数组a里面是需要请求的模块，打印出来，通过下面方式获取，放到getmodules.js,例如 canvablepath_lf2t4w, 通过http://api0.map.bdimg.com/getmodules?=v=2.0&amp;t=20140707&amp;mod=canvablepath_lf2t4w下载。<br>
+<img src="https://img-blog.csdnimg.cn/20200518163523382.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+复制内容保存到getmodules.js文件中，注意：将我们上一步骤打印的a中所有的内容都需要按照这种方法保存到getmodules.js文件中；</p>
+<h3 id="下载地图瓦片">下载地图瓦片</h3>
+<p>首先我们的下载思路是获取到每个瓦片的请求地址，然后通过nodejs进行下载图片；下面只是做了简单的下载瓦片的方法，下载的内容还有有局限性，如果需要比较全的数据可以找一些瓦片地图的下载工具进行下载。</p>
+<h4 id="获取瓦片请求地址">获取瓦片请求地址</h4>
+<p>在保存的百度地图API脚本中搜索getTilesUrl方法：<br>
+<img src="https://img-blog.csdnimg.cn/20200518164211809.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+修改如下</p>
+<pre><code class="language-js">  Kd.getTilesUrl = function(a, b, c) {
+    var d = a.x,
+    a = a.y,
+    e = Tb(&quot;normal&quot;),
+    f = 1,
+    c = Jd[c];
+    this.map.Vx() &amp;&amp; (f = 2);
+    d = this.map.gb.Mw(d, b).ns;
+    var nUrl = (Id[Math.abs(d + a) % Id.length] + &quot;?qt=vtile&amp;x=&quot; + (d + &quot;&quot;).replace(/-/gi, &quot;M&quot;) + &quot;&amp;y=&quot; + (a + &quot;&quot;).replace(/-/gi, &quot;M&quot;) + &quot;&amp;z=&quot; + b + &quot;&amp;styles=&quot; + c + &quot;&amp;scaler=&quot; + f + (6 == x.da.la ? &quot;&amp;color_dep=32&amp;colors=50&quot;: &quot;&quot;) + &quot;&amp;udt=&quot; + e + &quot;&amp;from=jsapi2_0&quot;).replace(/-(\d+)/gi, &quot;M$1&quot;)
+    window.xxxUrls = window.xxxUrls || [];
+    var nname = 'tiles/' + b + '/' + d + '/' + a + '.png'
+    var urlArr = {
+      url: nUrl,
+      name: nname
+    }
+    window.xxxUrls.push(urlArr)
+    return nUrl
+  };
+</code></pre>
+<p>我们将每个瓦片请求的地址存放到了window.xxxUrls 数组中；在浏览器中打印该数组：<br>
+<img src="https://img-blog.csdnimg.cn/20200518164431286.png" alt="在这里插入图片描述"><br>
+先对地图进行拖拽，确保想要的省市都出现在窗口可视范围内，然后会将每个瓦片请求的地址保存到window.xxxUrls 数组中；不过需要放大到每个级别然后进行拖拽显示完成整个需要下载的范围。这样保证将指定级别获取所有范围图片的地址。</p>
+<h4 id="下载瓦片">下载瓦片</h4>
+<p>首先获取到window.xxxUrls 数组中的数据，可以在前端发送 ajax请求，然后进行下载。这里我只做了简单的下载，直接在浏览器中打印window.xxxUrls 数组，然后复制内容，到下面down.js文件：<br>
+<img src="https://img-blog.csdnimg.cn/20200518165154458.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+这里的imgArr 就是window.xxxUrls 数组中的数据；</p>
+<pre><code class="language-js">const imgArr = [{&quot;url&quot;:&quot;http://maponline3.bdimg.com/tile/?qt=vtile&amp;x=6327&amp;y=2356&amp;z=15&amp;styles=pl&amp;scaler=1&amp;udt=20200514&amp;from=jsapi2_0&quot;,&quot;name&quot;:&quot;tiles/15/6327/2356.png&quot;}]
+const newArr = new Set(imgArr); //去重
+const finalArr = Array.from(newArr); 
+//创建目录
+const fs = require('fs');
+// const axios = require('axios');
+
+const request = require('request');
+const path = require('path')
+
+const hostdir = &quot;./&quot;;
+function mkdirSync(dirname) {
+    if (fs.existsSync(dirname)) {
+        return true;
+    } else {
+        if (mkdirSync(path.dirname(dirname))) {   
+            fs.mkdirSync(dirname);
+            return true;
+        }
+    }
+    return false
+}
+var n = 0;
+for (const item of finalArr) {
+  const last = item.name.lastIndexOf('/')
+  if (last &gt; 0) {
+    const name = item.name.substr(last + 1)
+    const dir = item.name.substr(0, last)
+    const dstpath = hostdir + dir + '/' + name
+    if (name.length &amp;&amp; dir.length &amp;&amp; !fs.existsSync(dstpath)) {
+      if (mkdirSync(hostdir + dir)) {
+        ++ n;
+        request(item.url).pipe(fs.createWriteStream(dstpath))
+      }
+    }
+  }
+}
+</code></pre>
+<p>然后运行命令 node down.js，执行完之后就会看到下载的tiles文件夹：<br>
+<img src="https://img-blog.csdnimg.cn/20200518165321646.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="使用离线瓦片进行加载">使用离线瓦片进行加载</h4>
+<p>还是找到我们刚刚修改的getTilesUrl的位置，修改如下：<br>
+注意加载的tiles文件夹的地址要写正确。</p>
+<pre><code class="language-js">  Kd.getTilesUrl = function(a, b, c) {
+    var x = a.x
+    var y = a.y
+    var e = 1
+    var z = a
+    return 'tiles/'+b+'/'+x+'/'+y+'.png';
+  };
+</code></pre>
+<p>这样就完成了百度地图的离线加载。</p>
+<h4 id="echart-中加载百度地图">echart 中加载百度地图</h4>
+<p>首先项目中使用我们下载的百度地图api文件，有两种方式，一种是在public文件夹下的index.html中直接使用：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1.0&quot;&gt;
+  &lt;link rel=&quot;icon&quot; href=&quot;&lt;%= BASE_URL %&gt;favicon.ico&quot;&gt;
+  &lt;title&gt;&lt;%= htmlWebpackPlugin.options.title %&gt;&lt;/title&gt;
+  &lt;script type=&quot;text/javascript&quot; src=&quot;./data/baiduapi.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;noscript&gt;
+    &lt;strong&gt;We're sorry but &lt;%= htmlWebpackPlugin.options.title %&gt; doesn't work properly without JavaScript enabled.
+      Please enable it to continue.&lt;/strong&gt;
+  &lt;/noscript&gt;
+  &lt;div id=&quot;app&quot;&gt;&lt;/div&gt;
+  &lt;!-- built files will be auto injected --&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+<p>另一种是直接在项目的入口文件引入：</p>
+<pre><code class="language-js">import Vue from 'vue'
+import App from './App.vue'
+import '../public/data/baiduapi.js'
+
+Vue.config.productionTip = false
+
+new Vue({
+  render: h =&gt; h(App),
+}).$mount('#app')
+</code></pre>
+<p>该项目中使用vue，整体代码如下：</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;div style=&quot;position: absolute;left: 0px; top: 0px;width: 100%;height: 100%;&quot;&gt;
+    &lt;div id=&quot;main&quot; style=&quot;height: 100%;width: 100%;&quot;&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import echarts from 'echarts';
+import { geoCoordMap, datas } from './data';
+import 'echarts/extension/bmap/bmap';
+export default {
+  name: 'allView',
+  data() {
+    return {
+      options: {},
+      mapChart: null,
+    };
+  },
+  computed: {
+    convertedData() {
+      return [this.convertData(datas), this.convertData(datas.sort((a, b) =&gt; { b.value - a.value; }).slice(0, 6))];
+    }
+  },
+  created() {
+    this.option = {
+      // 百度地图api的设置
+      bmap: {
+        center: [116.404, 39.915],
+        zoom: 15,
+        roam: true,
+      },
+      series: [
+        {
+          name: '全部',
+          type: 'scatter',
+          symbol: 'pin',
+          coordinateSystem: 'bmap',
+          data: this.convertData(datas),
+          symbolSize: val =&gt; {
+            return val[2];
+          },
+          label: {
+            normal: {
+              formatter: '{@[2]}',
+              show: true,
+              textStyle: {
+                color: '#fff',
+                fontSize: 9
+              }
+            },
+            emphasis: {
+              show: true
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: '#F62157'
+            }
+          },
+          zlevel: 6
+        }
+      ]
+    };
+  },
+  mounted() {
+    this.$nextTick(() =&gt; {
+      this.mapChart = echarts.init(document.getElementById('main'));
+      this.mapChart.setOption(this.option);
+      this.mapChart.on('click', 'series.scatter', item =&gt; {
+        console.log(item);
+      });
+    });
+  },
+  methods: {
+    convertData(data) {
+      const res = [];
+      for (let i = 0; i &lt; data.length; i++) {
+        const geoCoord = geoCoordMap[data[i].name];
+        if (geoCoord) {
+          res.push({
+            name: data[i].name,
+            value: geoCoord.concat(data[i].value),
+            imgUrl: data[i].imgUrl
+          });
+        }
+      }
+      console.log(res);
+      return res;
+    }
+  }
+};
+&lt;/script&gt;
+</code></pre>
+<p>data.js文件：</p>
+<pre><code class="language-js">export const geoCoordMap = {
+  '位置1': [90.9180416971, 41.0807155340],
+  '位置2': [123.4965120599, 51.0206466741],
+  '位置3': [100.4728967514, 26.1734892363],
+  '位置4': [121.5121844054, 31.2106872661],
+  '位置5': [111.50148, 31.2458353752],
+  '位置6': [111.50148, 24.2458353752]
+};
+
+export const datas = [
+  {name: '位置1', value: 19, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置2', value: 20, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置3', value: 32, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置4', value: 24, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置5', value: 46, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置6', value: 30, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']}
+];
+
+</code></pre>
+<p>展示效果如下：<br>
+<img src="https://img-blog.csdnimg.cn/20200518172025328.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>参考 https://segmentfault.com/a/1190000016024960</p>
+</blockquote>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-si-ji-yu-react-hookstypescriptarcgis-api-for-js3x-de-li-zi">
+                  <h3 class="post-title">
+                    WebGIS实战系列 四 基于React Hooks、Typescript、arcgis API for js3.x 的例子
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '4018355925b4a033100a',
+        clientSecret: 'dca55db969b5b038fd93d505abde0d058ad3032e',
+        repo: 'newBlog',
+        owner: 'jiegiser',
+        admin: ['jiegiser'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2020-06-15T23:49:39.375Z</updated>
+    <updated>2020-06-15T23:50:37.252Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -10,6 +10,367 @@
     <logo>https://jiegiser.github.io/newBlog/images/avatar.png</logo>
     <icon>https://jiegiser.github.io/newBlog/favicon.ico</icon>
     <rights>All rights reserved 2020, jiegiser的博客</rights>
+    <entry>
+        <title type="html"><![CDATA[echarts加载离线百度地图]]></title>
+        <id>https://jiegiser.github.io/newBlog/post/echarts-jia-zai-chi-xian-bai-du-di-tu</id>
+        <link href="https://jiegiser.github.io/newBlog/post/echarts-jia-zai-chi-xian-bai-du-di-tu">
+        </link>
+        <updated>2020-06-15T23:50:05.000Z</updated>
+        <summary type="html"><![CDATA[<p>最近在做一个国网的一个项目，需要实现一些热力图以及冒泡式的标注等；而且需要在内网使用，感觉使用 echarts 就可以简单的实现无需加载类似 openlayers ，leaflet 等 webgis 框架然后再发布地图服务实现。下面就写一下实现的过程。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>最近在做一个国网的一个项目，需要实现一些热力图以及冒泡式的标注等；而且需要在内网使用，感觉使用 echarts 就可以简单的实现无需加载类似 openlayers ，leaflet 等 webgis 框架然后再发布地图服务实现。下面就写一下实现的过程。</p>
+<!-- more -->
+<h3 id="实现思路">实现思路</h3>
+<ul>
+<li>百度地图API文件</li>
+<li>创建本地工具资源文件getModules.js</li>
+<li>地图瓦片</li>
+</ul>
+<h3 id="百度地图api文件">百度地图API文件</h3>
+<h4 id="下载-api-文件">下载 API 文件</h4>
+<p>首先需要准备离线的百度地图 API 文件，浏览器打开地址：http://api.map.baidu.com/api?v=2.0，不需要申请 key，当然申请也是可以的；打开之后如下：</p>
+<pre><code class="language-js">(function(){ 
+   window.BMap_loadScriptTime = (new Date).getTime(); 
+   document.write('&lt;script type=&quot;text/javascript&quot; src=&quot;http://api.map.baidu.com/getscript?v=2.0&amp;ak=&amp;services=&amp;t=20200327103013&quot;&gt;&lt;/script&gt;');
+})();
+</code></pre>
+<p>复制 script 加载的 src 地址，在浏览器中打开；如下：<br>
+<img src="https://img-blog.csdnimg.cn/20200518161921829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+然后复制里面的内容，保存到自己的项目中命名为：baiduApi.js；这个名字随意起；</p>
+<h4 id="修改-api-文件">修改 API 文件</h4>
+<p>然后需要修改里面的加载方式，进行加载我们本地的资源；首先需要去掉ak验证：搜索charset = 'utf-8'，添加 if (/^http/.test(a)) return;如下：<br>
+<img src="https://img-blog.csdnimg.cn/20200518162304772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<pre><code class="language-js">  function pa(a, b) {
+    // 下面是需要添加的代码
+    // 如果是调用外部资源就退出去
+    if (/^http/.test(a)) return;
+    if (b) {
+      var c = (1E5 * Math.random()).toFixed(0);
+      z._rd[&quot;_cbk&quot; + c] = function(a) {
+        b &amp;&amp; b(a);
+        delete z._rd[&quot;_cbk&quot; + c]
+      };
+      a += &quot;&amp;callback=BMap._rd._cbk&quot; + c
+    }
+    var d = K(&quot;script&quot;, {
+      type: &quot;text/javascript&quot;
+    });
+    d.charset = &quot;utf-8&quot;;
+    d.src = a;
+    d.addEventListener ? d.addEventListener(&quot;load&quot;,
+    function(a) {
+      a = a.target;
+      a.parentNode.removeChild(a)
+    },
+    q) : d.attachEvent &amp;&amp; d.attachEvent(&quot;onreadystatechange&quot;,
+    function() {
+      var a = window.event.srcElement;
+      a &amp;&amp; (&quot;loaded&quot; == a.readyState || &quot;complete&quot; == a.readyState) &amp;&amp; a.parentNode.removeChild(a)
+    });
+    setTimeout(function() {
+      document.getElementsByTagName(&quot;head&quot;)[0].appendChild(d);
+      d = p
+    },
+    1)
+  }
+</code></pre>
+<blockquote>
+<p>可以将复制的百度地图API的代码在 https://www.bejson.com/jshtml_format/这里进行格式化；这样看的比较清楚。</p>
+</blockquote>
+<h3 id="创建本地工具资源文件getmodulesjs">创建本地工具资源文件getModules.js</h3>
+<p>继续在我们保存的百度地图API中搜索 domain.main_domain_cdn.baidu[0]，找到使用它定义的z.ma，修改为z.ma = '';<br>
+<img src="https://img-blog.csdnimg.cn/20200518162606186.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<pre><code class="language-js">  z.dz = window.HOST_TYPE || &quot;0&quot;;
+  z.url = z.l0[z.dz];
+  z.Dp = z.url.proto + z.url.domain.baidumap + &quot;/&quot;;
+  z.oc = z.url.proto + (&quot;2&quot; == z.dz ? z.url.domain.main_domain_nocdn.other: z.url.domain.main_domain_nocdn.baidu) + &quot;/&quot;;
+  z.ma = z.url.proto + (&quot;2&quot; == z.dz ? z.url.domain.main_domain_cdn.other[0] : z.url.domain.main_domain_cdn.baidu[0]) + &quot;/&quot;;
+  // 需要添加的代码
+  z.ma = '';
+  z.hj = z.url.proto + z.url.domain.main_domain_cdn.webmap[0] + &quot;/&quot;;
+</code></pre>
+<h4 id="加载模块短路处理">加载模块短路处理</h4>
+<p>首先创建一个我们本地工具模块保存的脚本，本项目中命名为getModules.js；<br>
+然后在我们保存的百度地图API中搜索搜索 <code>&amp;mod=</code>，替换。那个 console.log(a),是为了给后面创建getModules.js，用于打印出需要加载的工具模块；注意这里的函数 pa，就是我们前面去掉ak验证：添加 if (/^http/.test(a)) return;的方法。<br>
+<img src="https://img-blog.csdnimg.cn/20200518162905207.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<pre><code class="language-js">    load: function(a, b, c) {
+      var d = this.kb(a);
+      if (d.Cd == this.Kj.lq) c &amp;&amp; b();
+      else {
+        if (d.Cd == this.Kj.DG) {
+          this.zK(a);
+          this.NN(a);
+          var e = this;
+          e.PC == q &amp;&amp; (e.PC = o, setTimeout(function() {
+            for (var a = [], b = 0, c = e.Rd.Ln.length; b &lt; c; b++) {
+              var d = e.Rd.Ln[b],
+              l = &quot;&quot;;
+              ja.Zy.tK(d) ? l = ja.Zy.get(d) : (l = &quot;&quot;, a.push(d + &quot;_&quot; + Cc[d]));
+              e.Rd.ew.push({
+                fN: d,
+                YE: l
+              })
+            }
+            e.PC = q;
+            e.Rd.Ln.length = 0;
+            // 需要修改的地方
+            // 0 == a.length ? e.kL() : pa(e.wG.nQ + &quot;&amp;mod=&quot; + a.join(&quot;,&quot;))
+            0 == a.length ? e.kL() : pa(&quot;../../public/data/getmodules.js&quot;)
+            console.log(a)
+          },
+          1));
+          d.Cd = this.Kj.XP
+        }
+        d.av.push(b)
+      }
+    },
+</code></pre>
+<h4 id="创建本地工具资源文件getmodulesjs-2">创建本地工具资源文件getModules.js</h4>
+<p>在这里面放API需要调用的模块，上面打印的数组a里面是需要请求的模块，打印出来，通过下面方式获取，放到getmodules.js,例如 canvablepath_lf2t4w, 通过http://api0.map.bdimg.com/getmodules?=v=2.0&amp;t=20140707&amp;mod=canvablepath_lf2t4w下载。<br>
+<img src="https://img-blog.csdnimg.cn/20200518163523382.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+复制内容保存到getmodules.js文件中，注意：将我们上一步骤打印的a中所有的内容都需要按照这种方法保存到getmodules.js文件中；</p>
+<h3 id="下载地图瓦片">下载地图瓦片</h3>
+<p>首先我们的下载思路是获取到每个瓦片的请求地址，然后通过nodejs进行下载图片；下面只是做了简单的下载瓦片的方法，下载的内容还有有局限性，如果需要比较全的数据可以找一些瓦片地图的下载工具进行下载。</p>
+<h4 id="获取瓦片请求地址">获取瓦片请求地址</h4>
+<p>在保存的百度地图API脚本中搜索getTilesUrl方法：<br>
+<img src="https://img-blog.csdnimg.cn/20200518164211809.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+修改如下</p>
+<pre><code class="language-js">  Kd.getTilesUrl = function(a, b, c) {
+    var d = a.x,
+    a = a.y,
+    e = Tb(&quot;normal&quot;),
+    f = 1,
+    c = Jd[c];
+    this.map.Vx() &amp;&amp; (f = 2);
+    d = this.map.gb.Mw(d, b).ns;
+    var nUrl = (Id[Math.abs(d + a) % Id.length] + &quot;?qt=vtile&amp;x=&quot; + (d + &quot;&quot;).replace(/-/gi, &quot;M&quot;) + &quot;&amp;y=&quot; + (a + &quot;&quot;).replace(/-/gi, &quot;M&quot;) + &quot;&amp;z=&quot; + b + &quot;&amp;styles=&quot; + c + &quot;&amp;scaler=&quot; + f + (6 == x.da.la ? &quot;&amp;color_dep=32&amp;colors=50&quot;: &quot;&quot;) + &quot;&amp;udt=&quot; + e + &quot;&amp;from=jsapi2_0&quot;).replace(/-(\d+)/gi, &quot;M$1&quot;)
+    window.xxxUrls = window.xxxUrls || [];
+    var nname = 'tiles/' + b + '/' + d + '/' + a + '.png'
+    var urlArr = {
+      url: nUrl,
+      name: nname
+    }
+    window.xxxUrls.push(urlArr)
+    return nUrl
+  };
+</code></pre>
+<p>我们将每个瓦片请求的地址存放到了window.xxxUrls 数组中；在浏览器中打印该数组：<br>
+<img src="https://img-blog.csdnimg.cn/20200518164431286.png" alt="在这里插入图片描述"><br>
+先对地图进行拖拽，确保想要的省市都出现在窗口可视范围内，然后会将每个瓦片请求的地址保存到window.xxxUrls 数组中；不过需要放大到每个级别然后进行拖拽显示完成整个需要下载的范围。这样保证将指定级别获取所有范围图片的地址。</p>
+<h4 id="下载瓦片">下载瓦片</h4>
+<p>首先获取到window.xxxUrls 数组中的数据，可以在前端发送 ajax请求，然后进行下载。这里我只做了简单的下载，直接在浏览器中打印window.xxxUrls 数组，然后复制内容，到下面down.js文件：<br>
+<img src="https://img-blog.csdnimg.cn/20200518165154458.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
+这里的imgArr 就是window.xxxUrls 数组中的数据；</p>
+<pre><code class="language-js">const imgArr = [{&quot;url&quot;:&quot;http://maponline3.bdimg.com/tile/?qt=vtile&amp;x=6327&amp;y=2356&amp;z=15&amp;styles=pl&amp;scaler=1&amp;udt=20200514&amp;from=jsapi2_0&quot;,&quot;name&quot;:&quot;tiles/15/6327/2356.png&quot;}]
+const newArr = new Set(imgArr); //去重
+const finalArr = Array.from(newArr); 
+//创建目录
+const fs = require('fs');
+// const axios = require('axios');
+
+const request = require('request');
+const path = require('path')
+
+const hostdir = &quot;./&quot;;
+function mkdirSync(dirname) {
+    if (fs.existsSync(dirname)) {
+        return true;
+    } else {
+        if (mkdirSync(path.dirname(dirname))) {   
+            fs.mkdirSync(dirname);
+            return true;
+        }
+    }
+    return false
+}
+var n = 0;
+for (const item of finalArr) {
+  const last = item.name.lastIndexOf('/')
+  if (last &gt; 0) {
+    const name = item.name.substr(last + 1)
+    const dir = item.name.substr(0, last)
+    const dstpath = hostdir + dir + '/' + name
+    if (name.length &amp;&amp; dir.length &amp;&amp; !fs.existsSync(dstpath)) {
+      if (mkdirSync(hostdir + dir)) {
+        ++ n;
+        request(item.url).pipe(fs.createWriteStream(dstpath))
+      }
+    }
+  }
+}
+</code></pre>
+<p>然后运行命令 node down.js，执行完之后就会看到下载的tiles文件夹：<br>
+<img src="https://img-blog.csdnimg.cn/20200518165321646.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="使用离线瓦片进行加载">使用离线瓦片进行加载</h4>
+<p>还是找到我们刚刚修改的getTilesUrl的位置，修改如下：<br>
+注意加载的tiles文件夹的地址要写正确。</p>
+<pre><code class="language-js">  Kd.getTilesUrl = function(a, b, c) {
+    var x = a.x
+    var y = a.y
+    var e = 1
+    var z = a
+    return 'tiles/'+b+'/'+x+'/'+y+'.png';
+  };
+</code></pre>
+<p>这样就完成了百度地图的离线加载。</p>
+<h4 id="echart-中加载百度地图">echart 中加载百度地图</h4>
+<p>首先项目中使用我们下载的百度地图api文件，有两种方式，一种是在public文件夹下的index.html中直接使用：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1.0&quot;&gt;
+  &lt;link rel=&quot;icon&quot; href=&quot;&lt;%= BASE_URL %&gt;favicon.ico&quot;&gt;
+  &lt;title&gt;&lt;%= htmlWebpackPlugin.options.title %&gt;&lt;/title&gt;
+  &lt;script type=&quot;text/javascript&quot; src=&quot;./data/baiduapi.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+  &lt;noscript&gt;
+    &lt;strong&gt;We're sorry but &lt;%= htmlWebpackPlugin.options.title %&gt; doesn't work properly without JavaScript enabled.
+      Please enable it to continue.&lt;/strong&gt;
+  &lt;/noscript&gt;
+  &lt;div id=&quot;app&quot;&gt;&lt;/div&gt;
+  &lt;!-- built files will be auto injected --&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+<p>另一种是直接在项目的入口文件引入：</p>
+<pre><code class="language-js">import Vue from 'vue'
+import App from './App.vue'
+import '../public/data/baiduapi.js'
+
+Vue.config.productionTip = false
+
+new Vue({
+  render: h =&gt; h(App),
+}).$mount('#app')
+</code></pre>
+<p>该项目中使用vue，整体代码如下：</p>
+<pre><code class="language-js">&lt;template&gt;
+  &lt;div style=&quot;position: absolute;left: 0px; top: 0px;width: 100%;height: 100%;&quot;&gt;
+    &lt;div id=&quot;main&quot; style=&quot;height: 100%;width: 100%;&quot;&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import echarts from 'echarts';
+import { geoCoordMap, datas } from './data';
+import 'echarts/extension/bmap/bmap';
+export default {
+  name: 'allView',
+  data() {
+    return {
+      options: {},
+      mapChart: null,
+    };
+  },
+  computed: {
+    convertedData() {
+      return [this.convertData(datas), this.convertData(datas.sort((a, b) =&gt; { b.value - a.value; }).slice(0, 6))];
+    }
+  },
+  created() {
+    this.option = {
+      // 百度地图api的设置
+      bmap: {
+        center: [116.404, 39.915],
+        zoom: 15,
+        roam: true,
+      },
+      series: [
+        {
+          name: '全部',
+          type: 'scatter',
+          symbol: 'pin',
+          coordinateSystem: 'bmap',
+          data: this.convertData(datas),
+          symbolSize: val =&gt; {
+            return val[2];
+          },
+          label: {
+            normal: {
+              formatter: '{@[2]}',
+              show: true,
+              textStyle: {
+                color: '#fff',
+                fontSize: 9
+              }
+            },
+            emphasis: {
+              show: true
+            }
+          },
+          itemStyle: {
+            normal: {
+              color: '#F62157'
+            }
+          },
+          zlevel: 6
+        }
+      ]
+    };
+  },
+  mounted() {
+    this.$nextTick(() =&gt; {
+      this.mapChart = echarts.init(document.getElementById('main'));
+      this.mapChart.setOption(this.option);
+      this.mapChart.on('click', 'series.scatter', item =&gt; {
+        console.log(item);
+      });
+    });
+  },
+  methods: {
+    convertData(data) {
+      const res = [];
+      for (let i = 0; i &lt; data.length; i++) {
+        const geoCoord = geoCoordMap[data[i].name];
+        if (geoCoord) {
+          res.push({
+            name: data[i].name,
+            value: geoCoord.concat(data[i].value),
+            imgUrl: data[i].imgUrl
+          });
+        }
+      }
+      console.log(res);
+      return res;
+    }
+  }
+};
+&lt;/script&gt;
+</code></pre>
+<p>data.js文件：</p>
+<pre><code class="language-js">export const geoCoordMap = {
+  '位置1': [90.9180416971, 41.0807155340],
+  '位置2': [123.4965120599, 51.0206466741],
+  '位置3': [100.4728967514, 26.1734892363],
+  '位置4': [121.5121844054, 31.2106872661],
+  '位置5': [111.50148, 31.2458353752],
+  '位置6': [111.50148, 24.2458353752]
+};
+
+export const datas = [
+  {name: '位置1', value: 19, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置2', value: 20, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置3', value: 32, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置4', value: 24, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置5', value: 46, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']},
+  {name: '位置6', value: 30, imgUrl: ['http://localhost:8030/ad.jpg', 'http://localhost:8030/ad.jpg']}
+];
+
+</code></pre>
+<p>展示效果如下：<br>
+<img src="https://img-blog.csdnimg.cn/20200518172025328.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<p>参考 https://segmentfault.com/a/1190000016024960</p>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[WebGIS实战系列 四 基于React Hooks、Typescript、arcgis API for js3.x 的例子]]></title>
         <id>https://jiegiser.github.io/newBlog/post/webgis-shi-zhan-xi-lie-si-ji-yu-react-hookstypescriptarcgis-api-for-js3x-de-li-zi</id>
@@ -6886,2198 +7247,6 @@ var twoSum = function(nums, target) {
     }
 };
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[前端笔记]]></title>
-        <id>https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji</id>
-        <link href="https://jiegiser.github.io/newBlog/post/qian-duan-bi-ji">
-        </link>
-        <updated>2019-12-06T00:50:02.000Z</updated>
-        <summary type="html"><![CDATA[<h5 id="1-js-的对象">1. JS 的对象</h5>
-<ul>
-<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。</li>
-</ul>
-]]></summary>
-        <content type="html"><![CDATA[<h5 id="1-js-的对象">1. JS 的对象</h5>
-<ul>
-<li><code>JS</code>对象中独有的特性：对象具有高度的动态性，因为<code>JavaScript</code> 赋予了使用在运行时为对象添加状态和行为的能力。<code>JavaSCrpipt</code>允许运行时向对象添加属性，这就跟绝大多数基于类的、静态的对象设计完全不同。</li>
-</ul>
-<!-- more -->
-<p>使用内置函数 <code>Object.getOwnPropertyDescripter</code>来查看设置的属性的描述属性。我们可以使用<code>Object.defineProperty</code>来修改属性的特征。实际上<code>JavaSCript</code>对象的运行时是一个&quot;属性的集合&quot;，属性以字符串或者<code>Symbol</code>为<code>key</code>，以数据属性特征值或者访问器属性特征值为<code>value</code>。</p>
-<ul>
-<li><code>typeOf</code>:<code>typeof</code>返回数据类型的字符串表达，</li>
-<li><code>unddefined</code>是声明了未赋值，如果直接使用没有定义的变量会直接提示<code>is not defined</code>，值<code>null</code>是一个字面量，它不像<code>undefined</code>是全局对象的一个属性。<code>null</code>是表示缺少的标识，指示变量未指向任何对象。把<code>null</code>作为尚未创建的对象，也许更好理解。在 <code>APIs</code>中，<code>null</code>常在返回类型是对象，但没关联值的地方使用。</li>
-</ul>
-<pre><code class="language-js">// foo不存在，它从来没有被定义过或者是初始化过：
-foo;
-&quot;ReferenceError: foo is not defined&quot;
-
-// foo现在已经是知存在的，但是它没有类型或者是值：
-var foo = null; 
-foo;
-null
-</code></pre>
-<ul>
-<li><code>null</code> 与 <code>undefined</code> 的不同点：<br>
-当检测 <code>null</code> 或 <code>undefined</code>时，注意相等<code>（==）</code>与全等<code>（===）</code>两个操作符的区别 ，前者会执行类型转换：</li>
-</ul>
-<pre><code class="language-js">typeof null        // &quot;object&quot; (因为一些以前的原因而不是'null')
-typeof undefined   // &quot;undefined&quot;
-null === undefined // false
-null  == undefined // true
-null === null // true
-null == null // true
-!null //true
-isNaN(1 + null) // false
-isNaN(1 + undefined) // true
-</code></pre>
-<ul>
-<li><code>instanceof</code>是判断对象的具体类型，<code>a instanceof b</code>是<code>a</code>是否<code>b</code>的一个实例，也就是说<code>b</code>是不是<code>a</code>的一个构造函数。<br>
-<code>typeof</code>不能判断的是：<code>null</code>与<code>object</code>，与<code>array</code>，<code>instanceof</code>返回值为布尔类型。</li>
-<li><code>===</code>只能判断<code>undefined</code>以及<code>null</code>，</li>
-<li>什么时候赋值为<code>null</code>：1. 定义对象的时候，进行初始赋值，表名将要赋值为对象。编程严谨。2. 销毁对象。垃圾回收机制回收。</li>
-<li>严格区别变量类型与数据类型：1. 数据的类型：分为基本类型以及对象类型。2. 变量的类型：基本类型（保存的基本类型的数据）以及引用类型（保存的地址）。</li>
-</ul>
-<h5 id="2-await-与-async">2. await 与 async</h5>
-<ul>
-<li><code>async</code>与<code>await</code>可以不同时出现，但是如果函数里面是包含了<code>await</code>那么这个函数必须要是<code>async</code>，<code>await</code>就是说他会等待这个<code>promise</code>对象返回结果，一旦返回结果才会去执行下面的代码，在函数前面加上一个<code>async</code>他会自动将这个函数转换为<code>promise</code>对象，返回的结果就是<code>resolve()</code>返回的内容。</li>
-</ul>
-<pre><code class="language-js">async function getSyncData() {
-  let time = await getSyncTime()
-  let data = `endTime - startTime = ${time}`
-  return data
-}
-</code></pre>
-<h5 id="3-js-数据">3. JS 数据</h5>
-<ul>
-<li>
-<p>什么是数据：存储在内存中代表特定信息的东西。本是二进制数据。</p>
-</li>
-<li>
-<p>什么是内存：内存条通电以后产生的可以存储数据的空间（临时的数据）。内存产生和死亡：内存条 == 》通电== 》存储数据== 》处理数据== 》断电== 》内存空间和数据都消失。</p>
-</li>
-<li>
-<p>内存的两个数据：内存存储的数据以及地址值。内存分类：栈（全局变量、局部变量），堆（对象）</p>
-</li>
-<li>
-<p>两个引用变量指向同一个对象：变量存储的是对象的内存地址。通过一个变量修改对象内部数据，其他变量看到的是修改之后的数据。两个引用变量指向同一个对象，让其中一个引用变量指向另一个对象，另一个引用变量依然指向前一个对象。要想改变一个引用对象，一个是改变地址，一个是改变对象的值。需要注意的是在函数中调用对象的时候，是将变量存储的对象的地址复制给了参数。注意这里的复制了一份地址。</p>
-</li>
-<li>
-<p>改变一个引用变量的值，就是变量需要存储这个引用变量的地址值。</p>
-</li>
-<li>
-<p><code>js</code>在调用函数时传递变量参数时，是值传递还是引用传递：理解1：都是（基本/地址值）传递。理解2：可能是值传递，也可能是引用传递（地址值）。</p>
-</li>
-<li>
-<p><strong>简单数据类型和复杂数据类型在内存中的存储</strong><br>
-基本数据类型:<br>
-指的是 简单的数据类型，也叫值类型，有数字<code>Number</code>、字符串<code>String</code>、布尔<code>Boolean</code>、未定义<code>Undefined</code>、空<code>Null</code><br>
-引用数据类型<br>
-指的是 复杂的数据类型， 也叫引用类型，有数组<code>Array</code>、函数<code>Function</code>、对象等<br>
-存可以分为栈区 和 堆区<br>
-栈区：用来存储用 基本类型的数据 和 引用类型数据的地址。<br>
-堆区：用来存储 引用类型数据的数据。<br>
-基本类型数据传递给函数的参数时:<br>
-基本类型数据在复制时（一个变量名赋值给另一个新的变量名），会在栈区申请一块的空间存放一个新的数据，并且新的变量名会指向新的数据。<br>
-引用类型数据传:递给函数的参数时<br>
-引用类型数据在复制时（一个变量名赋值给另一个新的变量名），会在栈区申请一块的空间存放堆区中的引用类型数据的地址，并且新的变量名会指向栈区中存放地址的空间。</p>
-</li>
-<li>
-<p>什么时候必须使用['属性名']的方式：1. 属性名包含特殊字符（-或者空格），2. 变量名不确定（动态定义变量）。</p>
-</li>
-<li>
-<p><code>test.call/apply(obj)</code>：临时让<code>test</code>称为<code>obj</code>的方法进行调用。</p>
-</li>
-<li>
-<p>什么函数是回调函数：1. 你定义的 2. 你没有调用 3. 但最终他执行了（在某个时刻，或者在某个条件下）。</p>
-</li>
-<li>
-<p><code>IIFE</code>：匿名函数自调用。作用：隐藏实现、不会污染外部（全局）命名空间。，用它来编写<code>js</code>模块。</p>
-</li>
-</ul>
-<pre><code class="language-js">(function () {
-
- console.log('---')
-})()
-</code></pre>
-<ul>
-<li><code>this</code>的指向：是指向调用他的对象。如果使用<code>call /apply</code>就是指向传入的对象比如：<code>setColor.call(obj,'black')</code>，这里的<code>setColor</code>函数中如果打印	<code>this</code>就是指向<code>obj</code>。<br>
-比如<code>var test = p.setColor test()</code>;这里的<code>this</code>是指向的<code>window</code>，因为在赋值给<code>test</code>的时候，并没有执行那个函数。后面调用<code>test</code>就是想当于<code>window.test()</code>，所以这里的<code>this</code>是指向的<code>window</code>。</li>
-<li><code>this</code>是什么：所有函数内部都有一个变量<code>this</code>，他的值是调用当前函数的当前对象。任何函数本质上都是通过某个对象来调用的。函数必须通过对象来调用。如果没有指定就是<code>window</code>。</li>
-<li>如何确定<code>this</code>的值：<code>test()</code>：<code>window</code>，<code>p.test()</code>：<code>p</code>，<code>new test()</code>：新创建的对象，<code>p.call(obj)</code>：<code>obj</code></li>
-<li>关于分号的问题：<code>js</code>一条语句的后面可以不加分号。<br>
-在下面两种情况下不急分号会出问题：</li>
-</ul>
-<ol>
-<li>小括号开头的前一句语句：匿名函数：在小括号前加也行，在第一条语句后面加也行。</li>
-</ol>
-<pre><code class="language-js">var a = 'a'
-;(function () {
-  console.log('a')
-})()
-</code></pre>
-<ol start="2">
-<li>中方括号开头的前一条语句：</li>
-</ol>
-<pre><code class="language-js">var a = 4
-;[1, 3].forEach((item) =&gt; {
-  console.log(item)
-})
-</code></pre>
-<p>如果不加分号会理解为：<code>4[1, 3].forEach()</code>。<br>
-<img src="https://img-blog.csdnimg.cn/20190721140033231.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<ul>
-<li>
-<p>函数的<code>prototype</code>：<br>
-1 . 函数的<code>prototype</code>属性：<br>
-每个函数都有一个<code>prototype</code>属性，他默认指向一个<code>Object</code>空对象（即称为：原型对象），原型对象中有一个属性<code>constructor</code>，他指向函数对象。<br>
-2 .给原型对象添加属性（一般都是方法）：作用：函数的所有实例对象自动拥有原型中的属性（方法）</p>
-</li>
-<li>
-<p>显示原型与隐式原型：<br>
-1  每一个函数都有一个<code>prototype</code>,也就是显示原型（属性）<br>
-2  每一个实例对象都有一个<code>__proro__</code>可以称为隐式原型（属性）<br>
-3  对象的隐式原型的值为其对应构造函数的显示原型的值<br>
-4  内存结构<br>
-5  总结：<br>
-函数的<code>prototype</code>属性：在定义函数时自动添加的，默认值为一个空<code>Object</code>对象。<br>
-对象的<code>__proto__</code>属性：创建对象时自动添加的，默认值为构造函数的<code>prototype</code>属性值。<br>
-程序员能直接操作显示原型，但不能直接操作隐式原型（ES6之前）<br>
-<img src="https://img-blog.csdnimg.cn/20190721161031898.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20190721170937773.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-上图是一个原型链的图解：</p>
-<ul>
-<li>
-<p>访问一个对象的属性时，</p>
-<ul>
-<li>现在自身属性中查找，找到返回，如果没有，再沿着<code>__proto__</code>这条链向上查找，找到返回，日过最终没找到，返回<code>undefined</code>.</li>
-<li>别名：隐式原型链。</li>
-<li>作用：查找对象的属性（方法）。</li>
-</ul>
-</li>
-<li>
-<p>构造函数/原型/实体对象的关系---作用域链是找属性，变量，原型链找方法。<img src="https://img-blog.csdnimg.cn/20190721172502859.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-实例的<code>__proto__</code>指向的是他的构造函数的原型对象（构造函数的显示原型（<code>prototype</code>））</p>
-</li>
-<li>
-<p>函数的显示原型指向的对象默认是空<code>Object</code>实例对象（但<code>Ovject</code>不满足）。</p>
-</li>
-<li>
-<p>所有函数都是<code>Function</code>的实例。包含他本身（<code>Function</code>）。<code>Function.__proto__ === FUnction.prototype</code>。</p>
-</li>
-<li>
-<p><code>Object</code>的原型对象是原型链尽头：<code>Object.prototype.__proto__=null</code>。</p>
-</li>
-<li>
-<p>读取对象的属性值时：会自动到原型链中查找。</p>
-</li>
-<li>
-<p>设置对象的属性值时：不会查找原型链，如果当前对象中没有此属性，直接添加此属性并设置其值。</p>
-</li>
-<li>
-<p>方法一般定义在原型中，属性一般通过构造函数定义在对象本身上。</p>
-</li>
-</ul>
-<h5 id="4-js-知识">4. JS 知识</h5>
-<h6 id="41-基本类型">4.1 基本类型：</h6>
-<p>基本类型有6种：<code>undefined</code>、<code>nul</code>l、<code>boolean</code>、<code>string</code>、<code>number</code>、<code>symbol</code>；注意没有<code>object</code>。<br>
-虽然<code>typeof null</code>返回的是<code>object</code>，但是<code>null</code>不是对象，而是基本数据类型的一种。基本数据存储在栈内存，存储的值。复杂数据类型的值存储在堆内存中，地址（指向堆中的值）存储在栈内存。当我们吧对象赋值给另外一个变量的时候，赋值的是地址指向同一块内存空间，当其中一个对象改变时，另一个对象也会发生变化。</p>
-<h6 id="42-typeof-与-instanceof">4.2 typeof 与 instanceof</h6>
-<p>首先 <code>typeof</code>能够正确的判断基本数据类型，但是除了 <code>null</code>, <code>typeof null</code>输出的是对象。<code>instanceof</code>是通过原型链判断的，<code>A instanceof B,</code> 在<code>A</code>的原型链中层层查找，是否有原型等于<code>B.prototype</code>，如果一直找到A的原型链的顶端(<code>null;即Object.__proto__.__proto__</code>),仍然不等于<code>B.prototype</code>，那么返回<code>false</code>，否则返回<code>true</code>。</p>
-<pre><code class="language-js">function instance_of(L, R) {
-//L 表示左表达式，R 表示右表达式 
-var O = R.prototype;
-// 取 R 的显式原型 
-L = L.__proto__; 
-// 取 L 的隐式原型 
-while (true) { 
-  if (L === null) 
-  //已经找到顶层 
-  return false; 
-  if (O === L) 
-  //当 O 严格等于 L 时，返回 true 
-  return true; 
-  L = L.__proto__; 
-  //继续向上一层原型链查找 
- } 
-}
-</code></pre>
-<h6 id="43-for-offor-in-和-foreachmap-的区别">4.3  for of，for in 和 forEach，map 的区别</h6>
-<p><code>for...of</code>循环：具有 iterator 接口，就可以用<code>for...of</code>循环遍历它的成员(属性值)。<code>for...of</code>循环可以使用的范围包括数组、<code>Set</code> 和 <code>Map</code>结构、某些类似数组的对象、<code>Generator</code>对象，以及字符串。<code>for...of</code>循环调用遍历器接口，数组的遍历器接口只返回具有数字索引的属性。对于普通的对象，<code>for...of</code>结构不能直接使用，会报错，必须部署了<code>Iterator</code>接口后才能使用。可以中断循环。<br>
-<code>for...in</code>循环：遍历对象自身的和继承的可枚举的属性, 不能直接获取属性值。可以中断循环。<br>
-<code>forEach</code>: 只能遍历数组，不能中断，没有返回值(或认为返回值是<code>undefined</code>)。<br>
-<code>map</code>: 只能遍历数组，不能中断，返回值是修改后的数组。</p>
-<h6 id="44-箭头函数">4.4  箭头函数</h6>
-<p>箭头函数看上去是匿名函数的一种简写，但实际上，箭头函数和匿名函数有个明显的区别：箭头函数内部的this是词法作用域，由上下文确定，回顾前面的例子，由于<code>JavaScript</code>函数对<code>this</code>绑定的错误处理，下面的例子无法得到预期结果：</p>
-<pre><code class="language-js">var obj = {
-    birth: 1990,
-    getAge: function () {
-        var b = this.birth; // 1990
-        var fn = function () {
-            return new Date().getFullYear() - this.birth; // this指向window或undefined
-        };
-        return fn();
-    }
-};
-</code></pre>
-<p>现在，箭头函数完全修复了<code>this</code>的指向，<code>this</code>总是指向词法作用域，也就是外层调用者<code>obj</code>：</p>
-<pre><code class="language-js">var obj = {
-    birth: 1990,
-    getAge: function () {
-        var b = this.birth; // 1990
-        var fn = () =&gt; new Date().getFullYear() - this.birth; // this指向obj对象
-        return fn();
-    }
-};
-obj.getAge(); // 25
-</code></pre>
-<p>由于this在箭头函数中已经按照词法作用域绑定了，所以，用<code>call()</code>或者<code>apply()</code>调用箭头函数时，无法对<code>this</code>进行绑定，即传入的第一个参数被忽略.</p>
-<h6 id="45-词法作用域">4.5 词法作用域</h6>
-<p>要明白js中有预定义以及作用域链的特性。词法作用域，也叫静态作用域，它的作用域是指在词法分析阶段就确定了，不会改变。动态作用域是在运行时根据程序的流程信息来动态确定的，而不是在写代码时进行静态确定的。<code>Javascript</code>函数的作用域是词法作用域，比如下面的代码；我们说过，词法作用域是写代码的时候就静态确定下来的。<code>Javascript</code>中的作用域就是词法作用域（事实上大部分语言都是基于词法作用域的）</p>
-<pre><code class="language-js">var a = 2;
-
-function foo() {
-  console.log(a); // 会输出2
-}
-
-function bar() {
-  var a = 3;
-  foo();
-}
-
-bar();
-</code></pre>
-<p>但是如果<code>foo</code>函数是<code>bar</code>的一个属性的话，会获取到3，这里结果是2；是因为在函数定义的时候已经确定了定义域。<br>
-词法作用域，也叫静态作用域，它的作用域是指在词法分析阶段就确定了，不会改变。动态作用域是在运行时根据程序的流程信息来动态确定的，而不是在写代码时进行静态确定的。</p>
-<h6 id="46-call与apply-bind-函数">4.6 call与apply、bind 函数</h6>
-<blockquote>
-<p>https://blog.csdn.net/u010176097/article/details/80348447</p>
-</blockquote>
-<h6 id="47-this的指向">4.7 this的指向</h6>
-<h6 id="48-promise">4.8 Promise</h6>
-<p>主要用于异步计算:</p>
-<ul>
-<li>可以将异步操作队列化，按照期望的顺序执行，返回符合预期的结果</li>
-<li>可以在对象之间传递和操作<code>promise</code>，帮助我们处理队列</li>
-</ul>
-<p>异步回调的问题：</p>
-<ul>
-<li>之前处理异步是通过纯粹的回调函数的形式进行处理</li>
-<li>很容易进入到回调地狱中，剥夺了函数<code>return</code>的能力</li>
-<li>问题可以解决，但是难以读懂，维护困难</li>
-<li>稍有不慎就会踏入回调地狱 - 嵌套层次深，不好维护</li>
-</ul>
-<p>Promise</p>
-<ul>
-<li><code>promise</code>是一个对象，对象和函数的区别就是对象可以保存状态，函数不可以（闭包除外）</li>
-<li>并未剥夺函数<code>return</code>的能力，因此无需层层传递<code>callback</code>，进行回调获取数据</li>
-<li>代码风格，容易理解，便于维护</li>
-<li>多个异步等待合并便于解决</li>
-</ul>
-<pre><code class="language-js">new Promise(
-  function (resolve, reject) {
-    // 一段耗时的异步操作
-    resolve('成功') // 数据处理完成
-    // reject('失败') // 数据处理出错
-  }
-).then(
-  (res) =&gt; {console.log(res)},  // 成功
-  (err) =&gt; {console.log(err)} // 失败
-)
-</code></pre>
-<p>Promise可以并行处理若干个异步任务：</p>
-<pre><code class="language-js">var p1 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 500, 'P1');
-});
-var p2 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 600, 'P2');
-});
-// 同时执行p1和p2，并在它们都完成后执行then:
-Promise.all([p1, p2]).then(function (results) {
-    console.log(results); // 获得一个Array: ['P1', 'P2']
-});
-</code></pre>
-<p>有些时候，多个异步任务是为了容错。比如，同时向两个<code>URL</code>读取用户的个人信息，只需要获得先返回的结果即可。这种情况下，用<code>Promise.race()</code>实现：</p>
-<pre><code class="language-js">var p1 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 500, 'P1');
-});
-var p2 = new Promise(function (resolve, reject) {
-    setTimeout(resolve, 600, 'P2');
-});
-Promise.race([p1, p2]).then(function (result) {
-    console.log(result); // 'P1'
-});
-</code></pre>
-<p>下面的代码是<code>promise</code>实现一个发送<code>Ajax</code>请求：</p>
-<pre><code class="language-js">const getJSON = function(url) {
-  const promise = new Promise(function(resolve, reject){
-    const handler = function() {
-      if (this.readyState !== 4) {
-        return;
-      }
-      if (this.status === 200) {
-        resolve(this.response);
-      } else {
-        reject(new Error(this.statusText));
-      }
-    };
-    const client = new XMLHttpRequest();
-    client.open(&quot;GET&quot;, url);
-    client.onreadystatechange = handler;
-    client.responseType = &quot;json&quot;;
-    client.setRequestHeader(&quot;Accept&quot;, &quot;application/json&quot;);
-    client.send();
-
-  });
-
-  return promise;
-};
-
-getJSON(&quot;/posts.json&quot;).then(function(json) {
-  console.log('Contents: ' + json);
-}, function(error) {
-  console.error('出错了', error);
-});
-</code></pre>
-<h6 id="49-asyncawait">4.9 async/await</h6>
-<p>在<code>async/await</code>之前，我们有三种方式写异步代码：嵌套回调、以<code>Promise</code>为主的链式回调、使用<code>Generators</code>。<br>
-但是，这三种写起来都不够优雅，ES7做了优化改进，<code>async/await</code>应运而生，<code>async/await</code>相比较<code>Promise</code> 对象<code>then</code> 函数的嵌套，与 <code>Generator</code> 执行的繁琐（需要借助<code>co</code>才能自动执行，否则得手动调用<code>next()</code> ）， <code>Async/Await</code>可以让你轻松写出同步风格的代码同时又拥有异步机制，更加简洁，逻辑更加清晰。<br>
-<code>async/await</code>特点<br>
-<code>async/await</code>更加语义化，<code>async</code> 是“异步”的简写，<code>async function</code>用于申明一个<code>function</code>是异步的；<code>await</code>，可以认为是<code>async wait</code>的简写， 用于等待一个异步方法执行完成；<br>
-<code>async/await</code>是一个用同步思维解决异步问题的方案（等结果出来之后，代码才会继续往下执行）<br>
-可以通过多层 <code>async function</code>的同步写法代替传统的<code>callback</code>嵌套<br>
-<code>async function</code>语法<br>
-自动将常规函数转换成<code>Promise</code>，返回值也是一个<code>Promise</code>对象<br>
-只有async函数内部的异步操作执行完，才会执行then方法指定的回调函数<br>
-异步函数内部可以使用<code>await</code>。</p>
-<pre><code class="language-js">async function name([param[, param[, ... param]]]) { statements }
-name: 函数名称。
-param:  要传递给函数的参数的名称
-statements: 函数体语句。
-返回值: 返回的Promise对象会以async function的返回值进行解析，或者以该函数抛出的异常进行回绝。
-
-async function dd(){console.log('ddd')}
-dd().then(err =&gt; {console.log(err)})
-</code></pre>
-<p><code>await</code>语法<br>
-<code>await</code>放置在<code>Promise</code>调用之前，await 强制后面的代码等待，直到<code>Promise</code>对象<code>resolve</code>，得到<code>resolve</code>的值作为<code>await</code>表达式的运算结果<br>
-<code>await</code>只能在<code>async</code>函数内部使用,用在普通函数里就会报错。<br>
-错误处理<br>
-在<code>async</code>函数里，无论是<code>Promise reject</code>的数据还是逻辑报错，都会被默默吞掉,所以最好把<code>await</code>放入<code>try{}catch{}</code>中，<code>catch</code>能够捕捉到<code>Promise</code>对象<code>rejected</code>的数据或者抛出的异常：</p>
-<pre><code class="language-js">function timeout(ms) {
-  return new Promise((resolve, reject) =&gt; {
-    setTimeout(() =&gt; {reject('error')}, ms);  //reject模拟出错，返回error
-  });
-}
-async function asyncPrint(ms) {
-  try {
-     console.log('start');
-     await timeout(ms);  //这里返回了错误
-     console.log('end');  //所以这句代码不会被执行了
-  } catch(err) {
-     console.log(err); //这里捕捉到错误error
-  }
-}
-asyncPrint(1000);
-</code></pre>
-<p><code>async</code>函数返回一个<code>Promise</code> 对象。<code>async</code>函数内部<code>return</code>语句返回的值，会成为<code>then</code>方法回调函数的参数,如下面代码：</p>
-<pre><code class="language-js">async function f() {
-  return 'hello world';
-}
-
-f().then(v =&gt; console.log(v))
-// &quot;hello world&quot;
-</code></pre>
-<p>上面代码中，函数f内部return命令返回的值，会被then方法回调函数接收到。<code>async</code>函数内部抛出错误，会导致返回的 <code>Promise</code>对象变为<code>reject</code>状态。抛出的错误对象会被<code>catch</code>方法回调函数接收到：</p>
-<pre><code class="language-js">async function f() {
-  throw new Error('出错了');
-}
-
-f().then(
-  v =&gt; console.log(v),
-  e =&gt; console.log(e)
-)
-// Error: 出错了
-</code></pre>
-<p><code>async</code>函数返回的 <code>Promise</code>对象，必须等到内部所有<code>await</code>命令后面的<code>Promise</code>对象执行完，才会发生状态改变，除非遇到<code>return</code>语句或者抛出错误。也就是说，只有<code>async</code>函数内部的异步操作执行完，才会执行<code>then</code>方法指定的回调函数。</p>
-<pre><code class="language-js">async function f() {
-  await Promise.reject('出错了');
-}
-
-f()
-.then(v =&gt; console.log(v))
-.catch(e =&gt; console.log(e))
-// 出错了
-</code></pre>
-<p>注意，上面代码中，await语句前面没有<code>return</code>，但是<code>reject</code>方法的参数依然传入了<code>catch</code>方法的回调函数。这里如果在<code>await</code>前面加上<code>return</code>，效果是一样的。任何一个<code>await</code>语句后面的 <code>Promise</code>对象变为<code>reject</code>状态，那么整个<code>async</code>函数都会中断执行。</p>
-<pre><code class="language-js">async function f() {
-  await Promise.reject('出错了');
-  await Promise.resolve('hello world'); // 不会执行
-}
-</code></pre>
-<p>有时，我们希望即使前一个异步操作失败，也不要中断后面的异步操作。这时可以将第一个<code>await</code>放在<code>try...catch</code>结构里面，这样不管这个异步操作是否成功，第二个<code>await</code>都会执行。如果有多个<code>await</code>命令，可以统一放在<code>try...catch</code>结构里面.</p>
-<pre><code class="language-js">async function f() {
-  try {
-    await Promise.reject('出错了');
-  } catch(e) {
-  }
-  return await Promise.resolve('hello world');
-}
-
-f()
-.then(v =&gt; console.log(v))
-// hello world
-</code></pre>
-<p>另一种方法是<code>await</code>后面的 <code>Promise</code>对象再跟一个<code>catch</code>方法，处理前面可能出现的错误。</p>
-<pre><code class="language-js">async function f() {
-  await Promise.reject('出错了')
-    .catch(e =&gt; console.log(e));
-  return await Promise.resolve('hello world');
-}
-
-f()
-.then(v =&gt; console.log(v))
-// 出错了
-// hello world
-</code></pre>
-<p>多个<code>await</code>命令后面的异步操作，如果不存在继发关系，最好让它们同时触发:</p>
-<pre><code class="language-js">let foo = await getFoo();
-let bar = await getBar();
-</code></pre>
-<p>上面代码中，<code>getFoo</code>和<code>getBar</code>是两个独立的异步操作（即互不依赖），被写成继发关系。这样比较耗时，因为只有<code>getFoo</code>完成以后，才会执行<code>getBar</code>，完全可以让它们同时触发。</p>
-<pre><code class="language-js">// 写法一
-let [foo, bar] = await Promise.all([getFoo(), getBar()]);
-
-// 写法二
-let fooPromise = getFoo();
-let barPromise = getBar();
-let foo = await fooPromise;
-let bar = await barPromise;
-</code></pre>
-<p><code>await</code>命令只能用在<code>async</code>函数之中，如果用在普通函数，就会报错:</p>
-<pre><code class="language-js">async function dbFuc(db) {
-  let docs = [{}, {}, {}];
-
-  // 报错
-  docs.forEach(function (doc) {
-    await db.post(doc);
-  });
-}
-</code></pre>
-<p>上面代码会报错，因为<code>await</code>用在普通函数之中了。但是，如果将<code>forEach</code>方法的参数改成<code>async</code>函数，也有问题:</p>
-<pre><code class="language-js">function dbFuc(db) { //这里不需要 async
-  let docs = [{}, {}, {}];
-
-  // 可能得到错误结果
-  docs.forEach(async function (doc) {
-    await db.post(doc);
-  });
-}
-</code></pre>
-<p>上面代码可能不会正常工作，原因是这时三个<code>db.post</code>操作将是并发执行，也就是同时执行，而不是继发执行。正确的写法是采用<code>for</code>循环(注意<code>map</code>也是并发的):</p>
-<pre><code class="language-js">async function dbFuc(db) {
-  let docs = [{}, {}, {}];
-
-  for (let doc of docs) {
-    await db.post(doc);
-  }
-}
-</code></pre>
-<p><mark>如果确实希望多个请求并发执行，可以使用<code>Promise.all</code>方法。当三个请求都会<code>resolved</code>时，下面两种写法效果相同</mark>:</p>
-<pre><code class="language-js">async function dbFuc(db) {
-  let docs = [{}, {}, {}];
-  let promises = docs.map((doc) =&gt; db.post(doc));
-
-  let results = await Promise.all(promises);
-  console.log(results);
-}
-
-// 或者使用下面的写法
-
-async function dbFuc(db) {
-  let docs = [{}, {}, {}];
-  let promises = docs.map((doc) =&gt; db.post(doc));
-
-  let results = [];
-  for (let promise of promises) {
-    results.push(await promise);
-  }
-  console.log(results);
-}
-</code></pre>
-<p>实例：按照顺序完成异步操作：<br>
-实际开发中，经常遇到一组异步操作，需要按照顺序完成。比如，依次远程读取一组 URL，然后按照读取的顺序输出结果。</p>
-<pre><code class="language-js">async function logInOrder(urls) {
-  // 并发读取远程URL
-  const textPromises = urls.map(async url =&gt; {
-    const response = await fetch(url);
-    return response.text();
-  });
-
-  // 按次序输出
-  for (const textPromise of textPromises) {
-    console.log(await textPromise);
-  }
-}
-</code></pre>
-<p>上面代码中，虽然<code>map</code>方法的参数是<code>async</code>函数，但它是并发执行的，因为只有<code>async</code>函数内部是继发执行，外部不受影响。后面的<code>for..of</code>循环内部使用了<code>await</code>，因此实现了按顺序输出。</p>
-<blockquote>
-<p>其他文章 https://juejin.im/post/5b727f546fb9a009c72caf79</p>
-</blockquote>
-<h6 id="410-作用域">4.10 作用域</h6>
-<p>作用域也可以看做是一套依据名称查找变量的规则。那我们再细看一下这个规则，在当前作用域中无法找到某个变量时，引擎就会在外层嵌套的作用域中继续查找，直到找到该变量， 或抵达最外层的作用域(也就是全局作用域)为止。对应到实际问题来说，就是我们熟悉的函数或者变量可以在什么地方调用。</p>
-<p><strong>JS中的作用域类型</strong></p>
-<ul>
-<li>函数作用域</li>
-</ul>
-<p>函数作用域是js中最常见的作用域了，函数作用域给我们最直观的体会就是，内部函数可以调用外部函数中的变量。一层层的函数，很直观的就形成了嵌套的作用域。我们常常听到的“如果在函数内部我们给一个未定义的变量赋值，这个变量会转变为一个全局变量”，我们从对标识符的操作的角度来理解这句话。</p>
-<pre><code class="language-js">var a = 1;
-
-function foo(){
-// b第一次出现在函数foo中
-    b = a ;
-}
-
-foo();
-
-// 全局可以访问到b
-console.log(b); //1
-</code></pre>
-<ul>
-<li>块作用域</li>
-</ul>
-<p>除了函数作用域，JS也提供块作用域。我们应该明确，作用域是针对标识符来说的，块作用域把标识符限制在<code>{}</code>中。<br>
-<code>ES6</code>提供的<code>let</code>,<code>const</code>方法声明的标识符都会固定于块中。常被大家忽略的<code>try/catch</code>的<code>catch</code>语句也会创建一个块作用域。</p>
-<ul>
-<li>改变函数作用域的方法</li>
-</ul>
-<p>一般说来词法作用域在代码编译阶段就已经确定，这种确定性其实是很有好处的，代码在执行过程中，能够预测在执行过程中如何对它们进行查找。能够提高代码运行阶段的执行效率。不过<code>JS</code>也提供动态改变作用域的方法。<code>eval()</code>函数和<code>with</code>关键字。</p>
-<ol>
-<li><code>eval()</code>方法：</li>
-</ol>
-<p>这个方法接受一个字符串为参数，并将其中的内容视为好像在书写时就存在于程序中这个位置的代码。换句话说，可以在你写的代码中用程序生成代码并运行，就好像代码是写在那个位置的一样。</p>
-<pre><code class="language-js"> function foo(str,a){
-     eval(str);//欺骗作用域,词法阶段阶段foo()函数中并没有定义标识符，但是在函数运行阶段却临时定义了一个b；
-     console.log(a,b);
- }
- 
- var b = 2;
- 
- foo(&quot;var b =3;&quot;,1);//1,3
-
- // 严格模式下，`eval()`会产生自己的作用域，无法修改所在的作用域
- function foo(str){
-     'use strict';
-     eval(str);
-     console.log(a);//ReferenceError: a is not de ned
- }
- 
- foo('var a =2');
-</code></pre>
-<p><code>eval()</code>有时候挺有用，但是性能消耗很大，可能也会带来安全隐患，因此不推荐使用。</p>
-<ul>
-<li><code>with</code>关键字：</li>
-</ul>
-<p><code>with</code>通常被当作重复引用同一个对象中的多个属性的快捷方式。</p>
-<pre><code class="language-js">    var obj = { 
-        a: 1,
-      b: 2,
-      c: 3 
-      };
-    // 单调乏味的重复 &quot;obj&quot; obj.a = 2;
-    obj.b = 3;
-    obj.c = 4;
-    // 简单的快捷方式 
-   with (obj) {
-        a = 3;
-        b = 4;
-        c = 5;
-    }
-    function foo(obj) { 
-        with (obj) {
-            a = 2; 
-        }
-    }
-    var o1 = { 
-        a: 3
-    };
-    var o2 = { 
-        b: 3
-    };
-    foo( o1 );
-    console.log( o1.a ); // 2
-    
-    foo( o2 );
-    console.log( o2.a ); // undefined
-    
-    console.log( a ); // 2——不好，a被泄漏到全局作用域上了!
-    
-    // 执行了LHS查询，不存在就在全局创建了一个。
-    // with 声明实际上是根据你传递给它的对象凭空创建了一个全新的词法作用域。 
-</code></pre>
-<p><code>with</code>也会带来性能的损耗。</p>
-<ul>
-<li>声明提升</li>
-</ul>
-<p>作用域关系到的是标识符的作用范围，而标识符的作用范围和它的声明位置是密切相关的。在js中有一些关键字是专门用来声明标识符的（比如<code>va</code>r,<code>let</code>,<code>const</code>），非匿名函数的定义也会声明标识符。<br>
-关于声明也许大家都听说过声明提升一词。我们来分析一下造成声明提升的原因。<br>
-我们已经知道引擎会在解释<code>JavaScript</code>代码之前首先对其进行编译。编译阶段中的一部分工作就是找到所有的声明，并用合适的作用域将它们关联起来（词法作用域的核心）。<br>
-这样的话，声明好像被提到了前面。<br>
-值得注意的是每个作用域都会进行提升操作。声明会被提升到所在作用域的顶部。<br>
-不过并非所有的声明都会被提升，不同声明提升的权重也不同，具体来说函数声明会被提升，函数表达式不会被提升（就算是有名称的函数表达式也不会提升）。<br>
-通过<code>var</code>定义的变量会提升，而<code>let</code>和<code>const</code>进行的声明不会提升。<br>
-函数声明和变量声明都会被提升。但是一个值得注意的细节也就是函数会首先被提升，然后才是变量，也就是说如果一个变量声明和一个函数声明同名，那么就算在语句顺序上变量声明在前，该标识符还是会指向相关函数。<br>
-如果变量或函数有重复声明以会第一次声明为主。<br>
-最后一点需要注意的是：<br>
-声明本身会被提升，而包括函数表达式的赋值在内的赋值操作并不会提升。</p>
-<h6 id="411-this指向">4.11 this指向</h6>
-<ul>
-<li>函数调用</li>
-</ul>
-<p><code>JS</code>（<code>ES5</code>）里面有三种函数调用形式：</p>
-<pre><code class="language-js">func(p1, p2) 
-obj.child.method(p1, p2)
-func.call(context, p1, p2) // 先不讲 apply
-</code></pre>
-<p>一定要记住，第三种调用形式，才是正常调用形式，其他两种都是语法糖，可以等价地变为<code>call</code>形式：</p>
-<pre><code class="language-js">func(p1, p2)等价于 func.call(undefined, p1, p2);
-
-obj.child.method(p1, p2) 等价于 obj.child.method.call(obj.child, p1, p2);
-</code></pre>
-<p>这样，<code>this</code> 就好解释了 <code>this</code>就是上面 <code>context</code>。<code>this</code>是你 <code>call</code>一个函数时传的 <code>context</code>，由于你从来不用 <code>call</code>形式的函数调用，所以你一直不知道。<br>
-先看<code>func(p1, p2)</code>中的 <code>this</code>如何确定：</p>
-<pre><code class="language-js">当你写下面代码时
-
-function func(){
-  console.log(this)
-}
-
-func()
-
-等价于
-
-function func(){
-  console.log(this)
-}
-
-func.call(undefined) // 可以简写为 func.call()
-</code></pre>
-<p>按理说打印出来的<code>this</code>应该就是 <code>undefined</code>了吧，但是浏览器里有一条规则：</p>
-<blockquote>
-<p>如果你传的<code>context</code>就 <code>null</code> 或者 <code>undefined</code>，那么<code>window</code>对象就是默认的<code>context</code>（严格模式下默认 <code>context</code>是 <code>undefined</code>）</p>
-</blockquote>
-<p>因此上面的打印结果是<code>window</code>。如果你希望这里的<code>this</code>不是<code>window</code>，很简单：</p>
-<pre><code class="language-js">func.call(obj) // 那么里面的 this 就是 obj 对象了     
-</code></pre>
-<p>所以经常看到的面试题这样解答：</p>
-<pre><code class="language-js">var obj = {
-  foo: function(){
-    console.log(this)
-  }
-}
-
-var bar = obj.foo
-obj.foo() // 转换为 obj.foo.call(obj)，this 就是 obj
-bar() 
-// 转换为 bar.call()
-// 由于没有传 context
-// 所以 this 就是 undefined
-// 最后浏览器给你一个默认的 this —— window 对象    
-</code></pre>
-<ul>
-<li>[] 语法</li>
-</ul>
-<p>如下代码：</p>
-<pre><code class="language-js">function fn (){ console.log(this) }
-var arr = [fn, fn2]
-arr[0]() // 这里面的 this 又是什么呢？ 
-</code></pre>
-<p>我们可以把 <code>arr[0]( )</code> 想象为<code>arr.0( )</code>，虽然后者的语法错了，但是形式与转换代码里的 <code>obj.child.method(p1, p2)</code>对应上了，于是就可以愉快的转换了：</p>
-<pre><code class="language-js">        arr[0]() 
-假想为    arr.0()
-然后转换为 arr.0.call(arr)
-那么里面的 this 就是 arr 了
-</code></pre>
-<ul>
-<li>小结</li>
-</ul>
-<blockquote>
-<p>this 就是你 call 一个函数时，传入的第一个参数。<br>
-如果你的函数调用不是 call 形式， 请将其转换为 call 形式</p>
-</blockquote>
-<h6 id="412-闭包closure">4.12 闭包(closure)</h6>
-<p>闭包在<code>JavaScript</code>中常用来实现对象数据的私有，在事件处理和回调函数中也常常会用到它，此外还有偏函数应用（<code>partial applications</code>）和柯里化（<code>currying</code>），以及其他函数式编程模式。<br>
-在函数外访问了函数内的标识符，如下面代码：</p>
-<pre><code class="language-js">    function foo() {
-        var a = 2;
-    
-        function bar() {
-            console.log(a);
-        }
-        return bar;
-    }
-    var baz = foo();
-    baz(); // 2 —— 这就是闭包的效果。在函数外访问了函数内的标识符
-    
-    // bar()函数持有对其父作用域的引用，而使得父作用域没有被销毁，这就是闭包
-</code></pre>
-<p>如定义一个模块，采用闭包：</p>
-<pre><code class="language-js">    function CoolModule() {
-        var something = &quot;cool&quot;;
-        var another = [1, 2, 3];
-    
-        function doSomething() {
-            console.log(something);
-        }
-    
-        function doAnother() {
-            console.log(another.join(&quot; ! &quot;));
-        }
-    
-    // 返回的是一个对象，对象中可能包含各种函数
-        return {
-            doSomething: doSomething,
-            doAnother: doAnother
-        };
-    }
-
-    var foo = CoolModule();
-// 在外面调用返回对象中的方法就形成了闭包
-    foo.doSomething(); // cool
-    foo.doAnother(); // 1 ! 2 ! 3
-</code></pre>
-<ul>
-<li><code>setTimeout</code>函数之循环和闭包</li>
-</ul>
-<p>https://www.jianshu.com/p/e5225ba4a025</p>
-<ul>
-<li>闭包的缺陷</li>
-</ul>
-<p>闭包的缺点就是常驻内存会增大内存使用量，并且使用不当很容易造成内存泄露。<br>
-如果不是因为某些特殊任务而需要闭包，在没有必要的情况下，在其它函数中创建函数是不明智的，因为闭包对脚本性能具有负面影响，包括处理速度和内存消耗。</p>
-<h6 id="413-原型链">4.13 原型链</h6>
-<p>所有的函数都有一个特殊的属性: <code>prototype</code>(原型)，<code>prototype</code>属性是一个指针，指向的是一个对象(原型对象)，原型对象中的方法和属性都可以被函数的实例所共享。所谓的函数实例是指以函数作为构造函数创建的对象，这些对象实例都可以共享构造函数的原型的方法</p>
-<p>要知道属性<code>__proto__</code>是指向的他的构造函数的原型对象，而它的构造函数的原型对象有一个<code>constructor</code>属性指向的是构造函数本身。<br>
-<img src="https://img-blog.csdnimg.cn/20190922143626644.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="https://user-gold-cdn.xitu.io/2017/6/28/5999753fd5f1cc8e86e030c1555e0b51?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>
-执行上面代码时，首先会在对象实例<code>person</code>中查找属性<code>toString</code>方法，我们发现实例中不存在<code>toString</code>属性。然后我们转到<code>person</code>内部指针<code>[[Prototype]]</code>指向的<code>Person</code>原型对象去寻找<code>toString</code>属性，结果是仍然不存在。这找不到我们就放弃了？开玩笑，我们这么有毅力。我们会再接着到<code>Person</code>原型对象的内部指针<code>[[Prototype]]</code>指向的<code>Object</code>原型对象中查找，这次我们发现其中确实存在<code>toString</code>属性，然后我们执行<code>toString方法</code>。发现了没有，这一连串的原型形成了一条链，这就是原型链。</p>
-<h6 id="414-几种继承方式">4.14 几种继承方式</h6>
-<ol>
-<li>原型链实现继承</li>
-</ol>
-<pre><code class="language-js">function Parent () {
-   this.name = '张三';
-
-Parent.prototype.getName = function () {
-   console.log(this.name);
-}
-function Child () {
-
-}
-Child.prototype = new Parent();
-var child1 = new Child();
-console.log(child1.getName()) // 张三
-</code></pre>
-<p>存在的问题：</p>
-<ul>
-<li>引用类型的属性被所有实例共享，举个例子：</li>
-</ul>
-<pre><code class="language-js">function Parent () {
-    this.names = ['张三', '李四'];
-}
-function Child () {
-
-}
-Child.prototype = new Parent();
-var child1 = new Child();
-child1.names.push('王五');
-console.log(child1.names); // [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;]
-var child2 = new Child();
-console.log(child2.names); // [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;]
-</code></pre>
-<ul>
-<li>在创建<code>Child</code>的实例时，不能向<code>Parent</code>传参</li>
-</ul>
-<ol start="2">
-<li>构造函数实现继承</li>
-</ol>
-<pre><code class="language-js">function Parent () {
-    this.names = ['张三', '李四'];
-}
-
-function Child () {
-    Parent.call(this);
-}
-
-var child1 = new Child();
-
-child1.names.push('王五');
-
-console.log(child1.names); // [&quot;张三&quot;, &quot;李四&quot;, &quot;王五&quot;]
-
-var child2 = new Child();
-
-console.log(child2.names); // [&quot;张三&quot;, &quot;李四&quot;]
-</code></pre>
-<blockquote>
-<p>https://juejin.im/post/5d259684e51d454d56535874</p>
-</blockquote>
-<h6 id="415-js-的暂时性死区">4.15 js 的暂时性死区</h6>
-<p>在代码块内，使用<code>let</code>、<code>const</code>命令声明变量之前，该变量都是不可用的。这在语法上，称为“暂时性死区”（<code>temporal dead zone</code>，简称 <code>TDZ</code>）。<br>
-所以说“暂时性死区”也意味着<code>typeof</code>不再是一个百分之百安全的操作。</p>
-<pre><code class="language-js">typeof x; // ReferenceError
-let x;
-</code></pre>
-<h6 id="416-es6-中的-map-对象跟原生的对象之间的区别">4.16 ES6 中的 map 对象跟原生的对象之间的区别</h6>
-<p><code>object</code>和<code>Map</code>存储的都是键值对组合。但是：<br>
-<code>object</code>的键的类型是 字符串；<br>
-<code>map</code>的键的类型是 可以是任意类型；<br>
-另外注意，<code>object</code>获取键值使用<code>Object.keys</code>（返回数组）；<br>
-<code>Map</code>获取键值使用 <code>map变量.keys()</code> (返回迭代器)。</p>
-<pre><code class="language-js">            let a = {
-                o: 1
-            };
-            // string
-            console.log(typeof Object.keys(a)[0]);
-            let map = new Map();
-            map.set(a, 'content');
-            // 输出是object 也可以是任何类型
-            console.log(map.keys().next());
-</code></pre>
-<p>优点：</p>
-<ul>
-<li>避免了引用类型的属性被所有实例共享</li>
-<li>可以在 Child 中向 Parent 传参</li>
-</ul>
-<blockquote>
-<p>https://juejin.im/post/5d2d51cb51882563453244b6</p>
-</blockquote>
-<h6 id="417-es6-中的-set-对象">4.17 ES6 中的 Set 对象</h6>
-<p>在<code>Set</code>对象内部，两个<code>NaN</code>是相等的：</p>
-<pre><code class="language-js">let set = new Set();
-let a = NaN;
-let b = NaN;
-set.add(a);
-set.add(b);
-set // Set {NaN}
-</code></pre>
-<p>另外，两个对象总是不相等的。</p>
-<pre><code class="language-js">let set = new Set();
-
-set.add({});
-set.size // 1
-
-set.add({});
-set.size // 2
-</code></pre>
-<p><code>WeakSet</code> 结构与 <code>Set</code> 类似，也是不重复的值的集合。但是，它与<code>Set</code>有两个区别。<code>WeakSet</code>的成员只能是对象，而不能是其他类型的值。<br>
-<code>Set</code>相关的操作有：<code>add、delete、has、size属性</code> 对应<code>map</code>的操作：<code>set、get、has、delete、size属性</code></p>
-<h6 id="418-事件的捕获与冒泡">4.18 事件的捕获与冒泡</h6>
-<blockquote>
-<p>https://juejin.im/post/5acf3130f265da23a1424a99</p>
-</blockquote>
-<h6 id="419-数组与对象的深拷贝">4.19 数组与对象的深拷贝</h6>
-<p>实现代码如下：</p>
-<pre><code class="language-js">        // 数组的深拷贝
-        // slice
-        let arr = [1, 2, 30]
-        let arrTo = arr.slice(0)
-
-        // concat
-        let arr1 = [1,2, 3]
-        let arrTo1 = arr1.concat()
-
-        // for of 直接遍历
-        let arr2 = [1, 2, 30]
-        function copyArr(arr2) {
-            let newArray = []
-            for (let item of arr2) {
-                newArray.push(item)
-            }
-        }
-
-        // 对象的深拷贝
-        // 1. 直接遍历
-        let obj = {name: 'ddd', job: 'dalao'}
-        function copyObj(obj) {
-            let newObj = {}
-            for (let item in obj) {
-                newObj[item] = obj[item]
-            }
-            return newObj
-        }
-        // 2. es6的 Object.assign（注意这里其实不是深拷贝，如果拷贝的源对象中有一个属性为对象，那么它也只指向那个引用。）
-        let obj1 = { name: 'ddd', job: 'dalao' }
-        let copyObj = Object.assign({}, obj)
-        // 下面拷贝将会污染变量
-		let obj1 = { a: 0 , b: { c: 0}}; 
-		let obj2 = Object.assign({}, obj1); 
-		console.log(JSON.stringify(obj2)); // { a: 0, b: { c: 0}} 
-		obj2.b.c = 3; 
-		console.log(JSON.stringify(obj1)); // { a: 1, b: { c: 3}} 
-		console.log(JSON.stringify(obj2)); // { a: 2, b: { c: 3}} 
- 
-        // 3. 使用JSON.parse以及JSON.stringify方法--但是这种简单粗暴的方法有其局限性。当值为undefined、function、symbol 会在转换过程中被忽略;所以，对象值有这三种的话用这种方法会导致属性丢失。
-		obj1 = { a: 0 , b: { c: 0}}; 
-		let obj3 = JSON.parse(JSON.stringify(obj1)); 
-		obj1.a = 4; 
-		obj1.b.c = 4; 
-		console.log(JSON.stringify(obj3)); // { a: 0, b: { c: 0}}
-		
-		// 4. 通过函数实现深拷贝
-		function deepCopy(obj) {
-		      var result = Array.isArray(obj) ? [] : {};
-		      for (var key in obj) {
-		        if (obj.hasOwnProperty(key)) {
-		          if (typeof obj[key] === 'object' &amp;&amp; obj[key]!==null) {
-		            result[key] = deepCopy(obj[key]);   //递归复制
-		          } else {
-		            result[key] = obj[key];
-		          }
-		        }
-		      }
-		      return result;
-		    }
-</code></pre>
-<h6 id="412-实现队列与堆栈">4.12 实现队列与堆栈</h6>
-<p>队列:是一种支持先进先出(<code>FIFO</code>)的集合,即先被插入的数据,先被取出!<br>
-堆栈:是一种支持后进先出(<code>LIFO</code>)的集合,即后被插入的数据,先被取出!</p>
-<p>在<code>JavaScript</code>中实现队列和数组主要是通过数组，<code>js</code>数组中提供了以下几个方法可以让我们很方便实现队列和堆栈：</p>
-<p><code>shift</code>:从数组中把第一个元素删除，并返回这个元素的值。</p>
-<p><code>unshift</code>: 在数组的开头添加一个或更多元素，并返回新的长度</p>
-<p><code>push</code>:在数组的中末尾添加元素，并返回新的长度</p>
-<p><code>pop</code>:从数组中把最后一个元素删除，并返回这个元素的值。</p>
-<ul>
-<li>实现队列</li>
-</ul>
-<pre><code class="language-js">var queue = new Array();
-// unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
-queue.unshift(1);
-queue.unshift(2);
-queue.unshift(3);
-queue.unshift(4);
-// pop() 方法用于删除并返回数组的最后一个元素。
-var first = queue.pop();
-console.log(first); // 结果为1，先进先出
-</code></pre>
-<ul>
-<li>实现堆栈</li>
-</ul>
-<pre><code class="language-js">var stack = new Array();
-stack.push(1);
-stack.push(2);
-stack.push(3);
-stack.push(4);
-var first = stack.pop();
-console.log(first);// 结果为4，先进后出
-</code></pre>
-<p>需要知道的是：堆是动态分配内存，内存大小不一，也不会自动释放。栈是自动分配相对固定大小的内存空间，并由系统自动释放。<br>
-<code>javascript</code>的基本类型就<code>5</code>种:<code>Undefined</code>、<code>Null</code>、<code>Boolean</code>、<code>Number</code>和<code>String</code>，它们都是直接按值存储在栈中的，每种类型的数据占用的内存空间的大小是确定的，并由系统自动分配和自动释放。这样带来的好处就是，内存可以及时得到回收，相对于堆来说，更加容易管理内存空间。</p>
-<p><code>javascript</code>中其他类型的数据被称为引用类型的数据 : 如对象(<code>Object</code>)、数组(<code>Array</code>)、函数(<code>Function</code>) …，它们是通过拷贝和<code>new</code>出来的，这样的数据存储于堆中。其实，说存储于堆中，也不太准确，因为，引用类型的数据的地址指针是存储于栈中的，当我们想要访问引用类型的值的时候，需要先从栈中获得对象的地址指针，然后，在通过地址指针找到堆中的所需要的数据。</p>
-<h5 id="5-vue相关">5. vue相关</h5>
-<h6 id="51-vue-cli">5.1 vue-cli</h6>
-<ul>
-<li>初始化后的<code>package.js</code>文件</li>
-</ul>
-<p>项目初始化之后，<code>package.js</code>内容如下：</p>
-<pre><code class="language-js">{
-  &quot;name&quot;: &quot;my-project&quot;,
-  &quot;version&quot;: &quot;0.1.0&quot;,
-  &quot;private&quot;: true,
-  &quot;scripts&quot;: {
-    &quot;serve&quot;: &quot;vue-cli-service serve&quot;,
-    &quot;build&quot;: &quot;vue-cli-service build&quot;,
-    &quot;lint&quot;: &quot;vue-cli-service lint&quot;
-  },
-  &quot;dependencies&quot;: {
-    &quot;core-js&quot;: &quot;^2.6.5&quot;,
-    &quot;vue&quot;: &quot;^2.6.10&quot;
-  },
-  &quot;devDependencies&quot;: {
-    &quot;@vue/cli-plugin-babel&quot;: &quot;^3.11.0&quot;,
-    &quot;@vue/cli-plugin-eslint&quot;: &quot;^3.11.0&quot;,
-    &quot;@vue/cli-service&quot;: &quot;^3.11.0&quot;,
-    &quot;babel-eslint&quot;: &quot;^10.0.1&quot;,
-    &quot;eslint&quot;: &quot;^5.16.0&quot;,
-    &quot;eslint-plugin-vue&quot;: &quot;^5.0.0&quot;,
-    &quot;vue-template-compiler&quot;: &quot;^2.6.10&quot;
-  },
-  &quot;eslintConfig&quot;: {
-    &quot;root&quot;: true,
-    &quot;env&quot;: {
-      &quot;node&quot;: true
-    },
-    &quot;extends&quot;: [
-      &quot;plugin:vue/essential&quot;,
-      &quot;eslint:recommended&quot;
-    ],
-    &quot;rules&quot;: {},
-    &quot;parserOptions&quot;: {
-      &quot;parser&quot;: &quot;babel-eslint&quot;
-    }
-  },
-  &quot;postcss&quot;: {
-    &quot;plugins&quot;: {
-      &quot;autoprefixer&quot;: {}
-    }
-  },
-  &quot;browserslist&quot;: [
-    &quot;&gt; 1%&quot;,
-    &quot;last 2 versions&quot;
-  ]
-}
-</code></pre>
-<h6 id="52-vue-router-中-hash-模式与-history-模式的对比">5.2 vue-router 中 hash 模式与 history 模式的对比</h6>
-<p>在<code>vue</code>的路由配置中有<code>mode</code>选项 最直观的区别就是在<code>url</code>中<code>hash</code>带了一个很丑的<code>#</code> 而<code>history</code>是没有<code>#</code>的。<br>
-<code>vue-router</code> 默认 <code>hash</code>模式 —— 使用<code>URL</code> 的 <code>hash</code>来模拟一个完整的 <code>URL</code>，于是当 <code>URL</code> 改变时，页面不会重新加载。<br>
-如果不想要很丑的 <code>hash</code>，我们可以用路由的 <code>history</code> 模式，这种模式充分利用<code>history.pushState API</code>来完成 <code>URL</code> 跳转而无须重新加载页面。</p>
-<pre><code class="language-js">const router = new VueRouter({
-  mode: 'history',
-  routes: [...]
-})
-</code></pre>
-<p>当使用 <code>history</code>模式时，<code>URL</code> 就像正常的<code>url</code>，例如 http://yoursite.com/user/id，也好看！</p>
-<p>不过这种模式要玩好，还需要后台配置支持。因为我们的应用是个单页客户端应用，如果后台没有正确的配置，当用户在浏览器直接访问 http://oursite.com/user/id 就会返回 404，这就不好看了。</p>
-<p>所以呢，要在服务端增加一个覆盖所有情况的候选资源：如果<code>URL</code> 匹配不到任何静态资源，则应该返回同一个<code>index.html</code>页面，这个页面就是你 <code>app</code>依赖的页面。</p>
-<ul>
-<li>两者的区别：</li>
-</ul>
-<ol>
-<li><code>hash</code>特点：比如这个 <code>URL</code>：<code>http://www.abc.com/#/hello</code>，<code>hash</code>的值为<code>#/hello</code>，<code>hash</code>虽然出现在 <code>URL</code>中，但不会被包括在<code>HTTP</code> 请求中，对后端完全没有影响，因此改变 <code>hash</code> 不会重新加载页面。</li>
-<li><code>history</code>特点： 利用了<code>HTML5 History Interface</code> 中新增的 <code>pushState()</code> 和 <code>replaceState()</code>方法。（需要特定浏览器支持）这两个方法应用于浏览器的历史记录栈，在当前已有的 <code>back</code>、<code>forward</code>、<code>go</code> 的基础之上，它们提供了对历史记录进行修改的功能。只是当它们执行修改时，虽然改变了当前的 <code>URL</code>，但浏览器不会立即向后端发送请求。</li>
-</ol>
-<ul>
-<li><code>hash</code>模式</li>
-</ul>
-<p><code>hash</code>模式背后的原理是<code>onhashchange</code>事件,可以在<code>window</code>对象上监听这个事件:</p>
-<pre><code class="language-js">window.onhashchange = function(event){
-     console.log(event.oldURL, event.newURL);
-     let hash = location.hash.slice(1); 
-     document.body.style.color = hash;
-}
-</code></pre>
-<ul>
-<li><code>history</code> 模式</li>
-</ul>
-<p>修改历史状态包括了<code>pushState</code>,<code>replaceState</code>,两个方法,这两个方法接收三个参数:<code>stateObj</code>,<code>title</code>,<code>url</code>：</p>
-<pre><code class="language-js">history.pushState({color:'red'}, 'red', 'red')
-history.back();
-setTimeout(function(){
-    history.forward();
- },0)
-window.onpopstate = function(event){
-     console.log(event.state)
-     if(event.state &amp;&amp; event.state.color === 'red'){
-           document.body.style.color = 'red';
-      }
-}
-</code></pre>
-<p>通过<code>pushstate</code>把页面的状态保存在<code>state</code>对象中，当页面的<code>url</code>再变回这个<code>url</code>时，可以通过<code>event.state</code>取到这个<code>state</code>对象，从而可以对页面状态进行还原，这里的页面状态就是页面字体颜色，其实滚动条的位置，阅读进度，组件的开关的这些页面状态都可以存储到<code>state</code>的里面。</p>
-<p>通过<code>history api</code>，我们丢掉了丑陋的#，但是它也有个问题：不怕前进，不怕后退，就怕刷新，<code>f5</code>，（如果后端没有准备的话）,因为刷新是实实在在地去请求服务器的,不玩虚的。<br>
-在<code>hash</code>模式下，前端路由修改的是<code>#</code>中的信息，而浏览器请求时是不带它玩的，所以没有问题.但是在<code>history</code>下，你可以自由的修改<code>path</code>，当刷新时，如果服务器中没有相应的响应或者资源，会分分钟刷出一个<code>404</code>来。</p>
-<ul>
-<li>总结</li>
-</ul>
-<ol>
-<li><code>hash</code> 模式下，仅<code>hash</code> 符号之前的内容会被包含在请求中，如<code>http://www.abc.com</code>，因此对于后端来说，即使没有做到对路由的全覆盖，也不会返回<code>404</code>错误。<br>
-2.<code>history</code> 模式下，前端的 <code>URL</code> 必须和实际向后端发起请求的<code>URL</code> 一致，如<code>http://www.abc.com/book/id</code>。如果后端缺少对<code>/book/id</code> 的路由处理，将返回 <code>404</code> 错误。<code>Vue-Router</code> 官网里如此描述：“不过这种模式要玩好，还需要后台配置支持……所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 <code>URL</code> 匹配不到任何静态资源，则应该返回同一个 <code>index.html</code> 页面，这个页面就是你 <code>app</code>依赖的页面。”</li>
-<li>结合自身例子，对于一般的<code>Vue</code> + <code>Vue-Router</code>+<code>Webpack</code> + <code>XXX</code> 形式的 <code>Web</code> 开发场景，用<code>history</code> 模式即可，只需在后端（<code>Apache</code>或 <code>Nginx</code>）进行简单的路由配置，同时搭配前端路由的 <code>404</code> 页面支持。</li>
-</ol>
-<h6 id="53-组件之间的调用">5.3 组件之间的调用</h6>
-<p>父组件调用子组件的方法：<code>this.$refs.子组件ref的值.方法名</code>,或者可以通过调用<code>this.$children</code>或者到所有子组件的数组，按照调用关系的先后顺序的数组，然后调用子组件的方法。</p>
-<h6 id="54-对mvvm的理解">5.4 对MVVM的理解</h6>
-<p><code>MVVM</code>是<code>Model-View-ViewModel</code>的缩写，<code>Model</code>代表数据模型负责业务逻辑和数据封装，<code>View</code>代表<code>UI</code>组件负责界面和显示，<code>ViewModel</code>监听模型数据的改变和控制视图行为，处理用户交互，简单来说就是通过双向数据绑定把<code>View</code>层和<code>Model</code>层连接起来。在<code>MVVM</code>架构下，<code>View</code>和<code>Model</code>没有直接联系，而是通过<code>ViewModel</code>进行交互，我们只关注业务逻辑，不需要手动操作<code>DOM</code>，不需要关注<code>View</code>和<code>Model</code>的同步工作。</p>
-<h6 id="55-vue等单页面应用及优缺点">5.5 vue等单页面应用及优缺点</h6>
-<p><code>vue</code>核心是一个响应的数据绑定系统，<code>mvvm</code>，数据驱动，组件化，轻量，简洁，高效，快速，模块友好。</p>
-<p>缺点：不支持低版本浏览器，最低到IE9，不利于SEO的优化，首页加载时间较长，不可以使用浏览器的导航按钮需要自行实现前进后退。</p>
-<h6 id="56-route和router的区别">5.6 route和router的区别</h6>
-<p><code>route</code>是路由信息对象，包括<code>path</code>,<code>params</code>,<code>hash</code>,<code>query</code>,<code>fullPath</code>,<code>matched</code>,<code>name</code>等路由信息参数。<br>
-router是路由实例对象，包括了路由的跳转方法，钩子函数。</p>
-<h6 id="57-vue-router的routes中name属性作用详解">5.7 vue-router的routes中name属性作用详解</h6>
-<p>我们一般配置路由如下：</p>
-<pre><code class="language-js">export default new Router({
-  mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'Hello',
-      component: Hello
-    }, {
-      path: '/text',
-      name: 'text',
-      component: text
-    }, {
-      path: '/text/:id',
-      component: param
-    }
-  ]
-})
-</code></pre>
-<p>第一种用法：<br>
-通过<code>name</code>属性，为一个页面中不同的<code>router-view</code>渲染不同的组件,如：将上面代码的<code>Hello</code>渲染在 <code>name</code>为<code>Hello</code>的<code>router-view</code>中，将<code>text</code>渲染在<code>name</code>为<code>text</code>的<code>router-view</code>中。不设置<code>name</code>的将为默认的渲染组件。</p>
-<pre><code class="language-html">&lt;template&gt;
-  &lt;div id=&quot;app&quot;&gt;
-     &lt;router-view&gt;&lt;/router-view&gt;
-     &lt;router-view  name=&quot;Hello&quot;&gt;&lt;/router-view&gt; //将渲染Hello组件
-     &lt;router-view  name=&quot;text&quot;&gt;&lt;/router-view&gt;   //将渲染text组件
-  &lt;/div&gt;
-&lt;/template&gt;
-</code></pre>
-<p>第二种用法：<br>
-可以用<code>name</code>传参 使用<code>$router.name</code>获取组件<code>name</code>值</p>
-<pre><code class="language-html"> &lt;template&gt;
-  &lt;div id=&quot;app&quot;&gt;
-    &lt;p&gt;{{ $route.name }}&lt;/p&gt; //可以获取到渲染进来的组件的name值
-    &lt;router-view&gt;&lt;/router-view&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-</code></pre>
-<p>第三种用法：<br>
-用于<code>pramas</code>传参的引入 <code>pramas</code>必须用<code>name</code>来引入 <code>query</code>可以用<code>name</code>或者<code>path</code>来引入</p>
-<blockquote>
-<p>链接：https://blog.csdn.net/alokka/article/details/84318734</p>
-</blockquote>
-<h6 id="58-vue的声明周期">5.8 vue的声明周期</h6>
-<p><a href="https://cn.vuejs.org/v2/guide/instance.html#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%9B%BE%E7%A4%BA">声明周期</a><br>
-生命周期共分为<code>8</code>个阶段创建前/后，载入前/后，更新前/后，销毁前/后<br>
-创建前/后：在<code>beforeCreated</code>阶段，<code>vue</code>实例的挂载元素<code>el</code>和数据对象<code>data</code>都为<code>undefined</code>，还未初始化。<code>created</code>阶段，<code>vue</code>实例的数据对象<code>data</code>有了，<code>el</code>还没有。<br>
-载入前后：在<code>beforeMount</code>阶段，<code>vue</code>实例的<code>el</code>和<code>data</code>都初始化了，但还是挂载之前为虚拟的<code>dom</code>节点，<code>data.message</code>还未替换。在<code>mounted</code>阶段，<code>vue</code>实例挂载完成，<code>data.message</code>成功渲染<br>
-更新前/后：当<code>data</code>变化时，会触发<code>beforeUpdated</code>和<code>updated</code>方法<br>
-销毁前/后：<code>beforeDestroy</code>在实例销毁前调用，实例仍然完全可用。<code>destroy</code>在实例销毁之后调用，调用后所有事件监听器会被移除，所有子实例也会被销毁。<br>
-生命周期的作用？<br>
-生命周期中有多个事件钩子，让我们在控制整个<code>Vue</code>实例的过程中更容易形成好的逻辑。</p>
-<h6 id="59-vue如何自定义一个过滤器">5.9 vue如何自定义一个过滤器</h6>
-<pre><code class="language-js">&lt;input type=&quot;text&quot; v-model=&quot;msg&quot; /&gt;
-{{msg | capitalize}}
-
-data(){
-    return{
-        msg: ''
-    }
-},
-filters: {
-    capitalize: function(value){
-        if(!value) return &quot;&quot;;
-        value = value.toString();
-        return value.charAt(0).toUpperCase()+value.slice(1)
-    }
-}
-</code></pre>
-<h6 id="510-computed和watch区别">5.10 computed和watch区别</h6>
-<p><code>computed</code>是计算属性，依赖其他属性计算值，并且<code>computed</code>的值有缓存，只有当计算值变化才会返回内容。<br>
-<code>watch</code>监听到值的变化就会执行回调，在回调中可以进行一些逻辑操作。<br>
-一般来说需要依赖别的属性来动态获得值的时候可以使用<code>computed</code>，对于监听到值的变化需要做一些复杂业务逻辑的情况可以使用<code>watch</code><br>
-另外<code>computed</code>和<code>watch</code>还支持对象的写法</p>
-<pre><code class="language-js">data: {
-    firstName: 'Chen',
-    lastName: 'Miao',
-    fullName: 'Chen Miao'
-},
-watch: {
-    firstName: function(val){
-        this.fullName = val+ ' '+this.lastName
-    },
-    lastName: function(val){
-        this.fullName = this.firstName+ ' '+val
-    }
-},
-computed: {
-    anoFullName: function(){
-        return this.firstName+' '+this.lastName
-    }
-}
-
-</code></pre>
-<h6 id="511-extend能做什么">5.11 extend能做什么</h6>
-<p>作用是扩展组件生成一个构造器，通常与<code>$mount</code>一起使用。</p>
-<pre><code class="language-js">// 创建组件构造器
-let Component = Vue.extend({
-    template: '&lt;div&gt;test&lt;/div&gt;'
-})
-// 挂载到#app上
-new Component().$mount('#app')
-
-// 扩展已有组件
-let SuperComponent = Vue.extend(Component)
-new SuperComponent({
-    created(){
-        console.log(1)
-    }
-})
-new SuperComponent().$mount('#app')
-
-</code></pre>
-<h6 id="512-mixin和mixins区别">5.12 mixin和mixins区别</h6>
-<p><code>mixin</code>用于全局混入，会影响到每个组件实例，通常插件都是这样做初始化的。</p>
-<pre><code class="language-js">Vue.mixin({
-    beforeCreate(){
-        // 会影响到每个组件的beforeCreate钩子函数
-    }
-})
-</code></pre>
-<p><code>mixins</code>最常用的扩展组件的方式。如果多个组件有相同的业务逻辑，就可将这些逻辑剥离出来，通过<code>mixins</code>混入代码。需要注意：<code>mixins</code>混入的钩子函数会先于组件内的钩子函数执行，并且在遇到同名选项的时候也会有选择性的进行合并。<br>
-在组件中进行混入如下：</p>
-<pre><code class="language-js">import { isShowFooter } from '../../../mixins/isShowFooter.js'
-import { navbar } from '../../../mixins/navbar.js'
-import api from '@/api/index'
-export default {
-  mixins: [isShowFooter, navbar],
-</code></pre>
-<p><code>isShowFooter.js</code>中的内容：</p>
-<pre><code class="language-js">import { mapMutations } from 'vuex'
-export const isShowFooter = {
-  data() {
-    return {}
-  },
-  created() {
-    this.initState()
-  },
-  methods: {
-    ...mapMutations(['footerIsShow']),
-    initState() {
-      this.footerIsShow(false)
-    }
-  }
-}
-
-</code></pre>
-<p>这里是通过控制一个<code>state</code>来判断是否显示组件；比如上面的代码，要显示底部的工具条，在布局的组件里面直接调用底部工具组件：</p>
-<pre><code class="language-js">&lt;template&gt;
-  &lt;div&gt;
-    &lt;router-view&gt;&lt;/router-view&gt;
-    &lt;Footer v-show=&quot;show&quot;&gt;&lt;/Footer&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-
-&lt;script&gt;
-import Footer from '../../components/footer/Footer'
-import { mapState, mapMutations } from 'vuex'
-export default {
-  components: {
-    Footer
-  },
-  computed: {
-    ...mapState({
-      show: state =&gt; state.index.show
-    })
-  },
-  watch: {
-    '$route': function (to, from) {
-      const navListPath = ['/work', '/info', '/my', '/address'];
-      const isIncludePath = navListPath.some((nav) =&gt; {
-        return nav === to.path
-      })
-      // 共用组件时   刷新问题
-      if (isIncludePath) {
-        this.footerIsShow('true')
-      }
-    }
-  },
-  mounted () {
-  },
-  methods: {
-    ...mapMutations(['footerIsShow'])
-  }
-}
-&lt;/script&gt;
-
-&lt;style lang=&quot;scss&quot; scoped&gt;
-&lt;/style&gt;
-</code></pre>
-<p><a href="https://cn.vuejs.org/v2/guide/mixins.html">官网</a></p>
-<h6 id="513-如何使用vuenexttick">5.13 如何使用vue.nextTick()</h6>
-<p><code>nextTick</code>可以使我们在下次<code>DOM</code>更新循环结束之后执行延迟回调，用于获得更新后的<code>DOM</code>。</p>
-<pre><code class="language-js">data:function(){
-    return {
-        message: '没有更新'
-    }
-},
-methods: {
-    updateMessage: function(){
-        this.message='更新完成'
-        console.log(this.$el.textContent) // '没有更新'
-        this.$nextTick(function(){
-          console.log(this.$el.textContent)// '更新完成'  
-        })
-    }
-}
-
-</code></pre>
-<h6 id="514-transition-过渡的实现原理">5.14 transition 过渡的实现原理</h6>
-<pre><code class="language-html">&lt;transition name=&quot;fade1&quot;&gt;
-    &lt;router-view&gt;&lt;/router-view&gt;
-&lt;/transition&gt;
-</code></pre>
-<p>类名介绍：<br>
-v-enter:定义进入过渡的开始状态<br>
-v-enter-active:定义进入过渡生效时的状态<br>
-v-enter:定义进入过渡的结束状态<br>
-v-leave:定义离开过渡的开始状态<br>
-v-leave-active:定义离开过渡生效时的状态<br>
-v-leave-to:定义离开过渡的结束状态</p>
-<h6 id="515-非父子组件通讯">5.15 非父子组件通讯</h6>
-<ol>
-<li>新建一个<code>bus.js</code>文件:</li>
-</ol>
-<pre><code class="language-js">import Vue from 'vue';
-export default new Vue();
-</code></pre>
-<ol start="2">
-<li>使用它</li>
-</ol>
-<pre><code class="language-js">&lt;div @click=&quot;addCart&quot;&gt;添加&lt;/div&gt;
-import Bus from 'bus.js';
-export default{
-    methods: {
-        addCart(event){
-            Bus.$emit('getTarget', event.target)
-        }
-    }
-}
-// 另一组件
-export default{
-    created(){
-        Bus.$on('getTarget', target =&gt;{
-            console.log(target)
-        })
-    }
-}
-
-</code></pre>
-<h6 id="516-vue-router">5.16 vue-Router</h6>
-<p>普通路由</p>
-<pre><code class="language-js">router.push('home')
-router.push({path: 'home')
-</code></pre>
-<p>命名路由</p>
-<pre><code class="language-js">const router=new VueRouter({
-    routes: [{
-        path: '/user',
-        name: 'user',
-        component: User
-    }]
-})
-
-&lt;router-link :to=&quot;{name: 'user'}&quot;&gt;&lt;/router-link&gt;
-router.push({
-    name: 'user'
-})
-</code></pre>
-<h6 id="517-vuex中的mapstate-mapmutation-mapactions">5.17 vuex中的mapState、mapMutation、mapActions</h6>
-<p><img src="https://img-blog.csdnimg.cn/20191012141859888.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-在子组件中使用<code>mapState</code>辅助函数，使用最想扩展运算符，如下代码：</p>
-<pre><code class="language-js">  computed: {
-    ...mapState({
-      show: state =&gt; state.index.show
-    })
-  },
-</code></pre>
-<p>其中<code>show</code>是<code>index</code>模块中的<code>state</code>中存储的值。<br>
-如果不使用对象扩展运算符：</p>
-<pre><code class="language-js">// 在单独构建的版本中辅助函数为 Vuex.mapState
-import { mapState } from 'vuex'
-
-export default {
-  // ...
-  computed: mapState({
-    // 箭头函数可使代码更简练
-    count: state =&gt; state.count,
-
-    // 传字符串参数 'count' 等同于 `state =&gt; state.count`
-    countAlias: 'count',
-
-    // 为了能够使用 `this` 获取局部状态，必须使用常规函数
-    countPlusLocalState (state) {
-      return state.count + this.localCount
-    }
-  })
-}
-</code></pre>
-<p>如果是<code>mapMutation</code>：</p>
-<pre><code class="language-js">  methods: {
-    ...mapMutations(['footerIsShow'])
-  }
-</code></pre>
-<p><code>mapActions</code>的如下代码：</p>
-<pre><code class="language-js">  methods: {
-    ...mapMutations(['isFooterShow']),
-    ...mapActions(['login']),
-  }
-</code></pre>
-<h6 id="518-vue的双向数据绑定原理的理解">5.18 vue的双向数据绑定原理的理解</h6>
-<p><code>vue.js</code>是采用数据劫持结合发布者-订阅者模式的方式，通过 <code>Object.definePorperty()</code>来劫持各个属性的<code>setter</code>，<code>getter</code>，在数据变动时发布消息给订阅者，触发相应的监听回调。<br>
-<code>MVVM</code>作为数据绑定的入口，整合<code>Observer</code>，<code>Compile</code>和<code>Watcher</code>三者，通过<code>Observer</code>来监听自己的<code>model</code>数据变化，通过<code>Compile</code>来解析编译模板指定（解析{{}}），最终利用<code>Watcher</code>搭起<code>Observer</code>和<code>Compile</code>之间的通信桥梁，达到数据变化-&gt;视图更新；视图交互变化<code>input</code>-&gt;数据<code>model</code>变更的双向绑定效果<br>
-实现简单的双向绑定</p>
-<pre><code class="language-js">&lt;input type=&quot;text&quot; id=&quot;inp&quot; /&gt;
-&lt;div id=&quot;show&quot;&gt;&lt;/div&gt;
-&lt;script type=&quot;text/javascript&quot;&gt;
-var inp = document.getElementById('inp');
-var show = document.getElementById('show');
-var obj = {};
-function watch(obj, key, callback){
-    var val = obj[key];
-    Object.defineProperty(obj, key, {
-        get: function(){
-            return val;
-        },
-        set: function(newVal){
-            callback(newVal, this)
-        }
-    })
-}
-watch(obj, &quot;input&quot;, function(val){
-    show.innerHTML = val
-})
-inp.addEventListener('keyup', function(e){
-    obj.input = e.target.value
-})
-&lt;/script&gt;
-</code></pre>
-<h5 id="6-数据结构">6. 数据结构</h5>
-<h6 id="61-数组与链表的区别">6.1 数组与链表的区别</h6>
-<ul>
-<li>什么是链表</li>
-</ul>
-<p>链表是一种上一个元素的引用指向下一个元素的存储结构，链表通过指针来连接元素与元素；<br>
-链表是线性表的一种，所谓的线性表包含顺序线性表和链表，顺序线性表是用数组实现的，在内存中有顺序排列，通过改变数组大小实现。而链表不是用顺序实现的，用指针实现，<code>在内存中不连续</code>。意思就是说，链表就是将一系列不连续的内存联系起来，将那种碎片内存进行合理的利用，解决空间的问题。所以，链表允许插入和删除表上任意位置上的节点，但是不允许随即存取。链表有很多种不同的类型：单向链表、双向链表及循环链表</p>
-<ul>
-<li>单向链表</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/2019092508112968.png" alt="在这里插入图片描述"><br>
-单向链表包含两个域，一个是信息域，一个是指针域。也就是单向链表的节点被分成两部分，一部分是保存或显示关于节点的信息，第二部分存储下一个节点的地址，而最后一个节点则指向一个空值。</p>
-<ul>
-<li>双向链表</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20190925081342576.png" alt="在这里插入图片描述"><br>
-从上图可以很清晰的看出，每个节点有2个链接，一个是指向前一个节点（当此链接为第一个链接时，指向的是空值或空列表），另一个则指向后一个节点（当此链接为最后一个链接时，指向的是空值或空列表）。意思就是说双向链表有2个指针，一个是指向前一个节点的指针，另一个则指向后一个节点的指针。</p>
-<ul>
-<li>循环链表</li>
-</ul>
-<p><img src="https://img-blog.csdnimg.cn/20190925081447237.png" alt="在这里插入图片描述"><br>
-循环链表就是首节点和末节点被连接在一起。循环链表中第一个节点之前就是最后一个节点，反之亦然。</p>
-<ul>
-<li>数组和链表的区别</li>
-</ul>
-<p>不同：链表是链式的存储结构；数组是顺序的存储结构。<br>
-链表通过指针来连接元素与元素，数组则是把所有元素按次序依次存储。<br>
-<code>链表的插入删除元素相对数组较为简单，不需要移动元素，且较为容易实现长度扩充，但是寻找某个元素较为困难</code>；<br>
-<code>数组寻找某个元素较为简单，但插入与删除比较复杂，由于最大长度需要再编程一开始时指定，故当达到最大长度时，扩充长度不如链表方便</code>。</p>
-<p>相同：两种结构均可实现数据的顺序存储，构造出来的模型呈线性结构。</p>
-<ul>
-<li>链表的应用、代码实践</li>
-</ul>
-<p><strong>约瑟夫问题</strong><br>
-传说在公园1世纪的犹太战争中，犹太约瑟夫是公元一世纪著名的历史学家。在罗马人占领乔塔帕特后，39 个犹太人与约瑟夫及他的朋友躲到一个洞中，39个犹太人决定宁愿死也不要被敌人俘虏，于是决定了一个流传千古的自杀方式，41个人排成一个圆圈，由第1个人开始报数，每报到第3人该人就必须自杀，然后再由下一个人重新报数，直到所有人都自杀身亡为止。然而约瑟夫和他的朋友并不想遵从这个约定，约瑟夫要他的朋友先假装遵从，他将朋友与自己安排在第_个和第_个位置，于是逃过了这场死亡游戏,你知道安排在了第几个嘛？</p>
-<pre><code class="language-js">                        //节点类
-			function Node(elemnt) {
-				this.item = elemnt;
-				this.next = null;
-			}
-			//循环列表需要修改一下构造函数，和遍历时候的判断条件
-			//构造函数如下；希望从后向前遍历，又不想要建立双向链表，就使用循环链表。
-			function Llist() {
-				this.head = new Node(&quot;1&quot;);
-				this.head.next = this.head;
-				this.remove = remove;
-				this.insert = insert;
-				this.find = find;
-				this.display = display;
-				//..........
-			}
-			function find(number) {
-				var curr = this.head;
-				while (curr.item != number) {
-					curr = curr.next;
-				}
-				return curr;
-			}
-			function insert(element, newElement) {
-				var preNode = this.find(element);
-				var current = new Node(newElement);
-				current.next = preNode.next;
-				preNode.next = current;
-			}
-			function remove() {
-				var current = this.head;
-				console.log(&quot;remove&quot;);		
-                       //跳过两个，杀死一个
-			while(current.next.next != null &amp;&amp; current.item!=current.next.next.item){
-					var temp = current.next.next;
-					current.next.next = temp.next;
-					current = temp.next;
-					temp.next = null;
-				}
-				return current;
-			}
-			function display(flag,current) {
-				var crr = this.head;				
-				if(flag){
-					while(crr.next.item!=&quot;1&quot;){
-						console.log(crr.item);
-						crr=crr.next;
-					}
-				   }else{   //最后只剩两个直接输出
-					console.log(current.item);
-					console.log(current.next.item);
-				}
-			}
-			var Clist = new Llist();
-                        //输入排序
-			for (var i = 1; i &lt; 41; i++){
-				Clist.insert(i.toString(),(i + 1).toString());
-			}
-                        //先输出所有
-			Clist.display(1,null);
-                        //通过remove返回最后杀死后的结果其中一个节点
-			Clist.display(0,Clist.remove());  //16,31
-
-</code></pre>
-<blockquote>
-<p>摘自原文链接：https://blog.csdn.net/m0_37631322/article/details/81777855<br>
-其他文章：https://zhuanlan.zhihu.com/p/71625297</p>
-</blockquote>
-<h6 id="62-堆与栈">6.2 堆与栈</h6>
-<ul>
-<li>栈的定义</li>
-</ul>
-<ol>
-<li>后进者先出，先进者后出，简称 后进先出（<code>LIFO</code>），这就是典型的栈结构。</li>
-<li>新添加的或待删除的元素都保存在栈的末尾，称作栈顶，另一端就叫栈底。</li>
-<li>在栈里，新元素都靠近栈顶，旧元素都接近栈底。</li>
-<li>从栈的操作特性来看，是一种 操作受限的线性表，只允许在一端插入和删除数据。</li>
-<li>不包含任何元素的栈称为空栈。<br>
-栈也被用在编程语言的编译器和内存中保存变量、方法调用等，比如函数的调用栈。</li>
-</ol>
-<ul>
-<li>栈的实现（方法）</li>
-</ul>
-<ol>
-<li><code>push</code>(<code>element</code>)：添加一个（或几个）新元素到栈顶。</li>
-<li><code>pop()</code>：移除栈顶的元素，同时返回被移除的元素。</li>
-<li><code>peek()</code>：返回栈顶的元素，不对栈做任何修改。</li>
-<li><code>isEmpty()</code>：如果栈里没有任何元素就返回 true，否则返回 false。</li>
-<li><code>clear()</code>：移除栈里的所有元素。</li>
-<li><code>size()</code>：返回栈里的元素个数。</li>
-</ol>
-<pre><code class="language-js">// Stack类
-function Stack() {
-  this.items = [];
-
-  // 添加新元素到栈顶
-  this.push = function(element) {
-    this.items.push(element);
-  };
-  // 移除栈顶元素，同时返回被移除的元素
-  this.pop = function() {
-    return this.items.pop();
-  };
-  // 查看栈顶元素
-  this.peek = function() {
-    return this.items[this.items.length - 1];
-  };
-  // 判断是否为空栈
-  this.isEmpty = function() {
-    return this.items.length === 0;
-  };
-  // 清空栈
-  this.clear = function() {
-    this.items = [];
-  };
-  // 查询栈的长度
-  this.size = function() {
-    return this.items.length;
-  };
-  // 打印栈里的元素
-  this.print = function() {
-    console.log(this.items.toString());
-  };
-}
-</code></pre>
-<ul>
-<li>测试</li>
-</ul>
-<pre><code class="language-js">// 创建Stack实例
-var stack = new Stack();
-console.log(stack.isEmpty()); // true
-stack.push(5); // undefined
-stack.push(8); // undefined
-console.log(stack.peek()); // 8
-stack.push(11); // undefined
-console.log(stack.size()); // 3
-console.log(stack.isEmpty()); // false
-stack.push(15); // undefined
-stack.pop(); // 15
-console.log(stack.size()); // 3
-stack.print(); // 5,8,11
-stack.clear(); // undefined
-console.log(stack.size()); // 0
-</code></pre>
-<ul>
-<li>栈的应用实例：实现一个前端路由以及函数调用栈（在其他模块）</li>
-</ul>
-<h5 id="7-其他">7. 其他</h5>
-<h6 id="71-es5-实现定义常量">7.1 es5 实现定义常量</h6>
-<p>这里涉及到了一个方法，<code>Object.defineProperty()</code>，该方法是<code>ES5</code>规范中的，该方法的作用是在对象上定义一个新属性，或者修改对象的一个现有属性，并对该属性加以描述，返回这个对象，我们来看一下浏览器兼容性：</p>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>Firefox (Gecko)</th>
-<th>Chrome</th>
-<th>Internet Explorer</th>
-<th>Opera</th>
-<th>Safari</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>基本支持</td>
-<td>4.0 (2)</td>
-<td>5</td>
-<td>9 [1]</td>
-<td>11.60</td>
-<td>5.1 [2]</td>
-</tr>
-</tbody>
-</table>
-<p><code>IE8</code>是不支持的，不过<code>IE8</code>也对该方法进行了实现，只能在DOM对象上适用，而且有一些独特的地方。<br>
-<code>Object.defineProperty()</code>方法可以定义对象属性的数据描述和存储描述，这里我们只讲数据描述符，不对存储描述符讲解，数据描述符有以下选项：</p>
-<blockquote>
-<p><code>configurable</code><br>
-当且仅当该属性的 <code>configurable</code> 为 <code>true</code>时，该属性的描述符（<code>enumerable</code>、<code>value</code>、<code>writable</code>）才能够被改变，也能够被删除。默认为 <code>false</code>。<br>
-<code>enumerable</code><br>
-当且仅当该属性的 <code>enumerable</code>为 <code>true</code>时，该属性才能够出现在对象的枚举属性中。默认为 <code>false</code>。<br>
-<code>value</code><br>
-该属性对应的值。可以是任何有效的 <code>JavaScript</code> 值（数值，对象，函数等）。默认为<code>undefined</code>。<br>
-<code>writable</code><br>
-当且仅当该属性的 <code>writable</code>为<code>true</code>时，该属性才能被赋值运算符改变。默认为<code>false</code>。</p>
-</blockquote>
-<p>注意，当我们用常规方法定义属性的时候，其除 <code>value</code>以外的数据描述符默认均为<code>true</code>，当我们用 <code>Object.defineProperty()</code> 定义属性的时候，默认为 <code>false</code>。<br>
-也就是说，当我们把<code>writable</code> 设置为 false 的时候，该属性是只读的，也就满足了常量了性质，我们把常量封装在<code>CONST</code>命名空间里面：</p>
-<pre><code class="language-js">var CONST = {};
-Object.defineProperty(CONST, &quot;A&quot;, {
-    value: 1,
-    writable: false, //设置属性只读
-    configurable: true,
-    enumerable: true
-});
-console.log(CONST.A);  //1
-CONST.A = 2; //在严格模式下会抛错，在非严格模式下静默失败，修改无效。
-</code></pre>
-<p>可以对一个变量定义常量：</p>
-<pre><code class="language-js">//const cconst=1; 这可以用下面的这行模仿
-Object.defineProperty(window, &quot;cconst&quot;, {writable: false, value: 1});
-//然后我们尝试修改看看
-cconst= 3;
-console.log(cconst);    //发现输出是1，发现并改不了
-</code></pre>
-<p>或者可以通过<code>Object.defineProperty</code>来设置<code>setter</code>和<code>getter</code>函数来实现,封装成一个<code>setConst</code>函数：</p>
-<pre><code class="language-js">function setConst(name, value) {
-  Object.defineProperty(window, name, {
-    set(x) {
-      throw new Error(`Assignment to constant variable ${name}`);
-    },
-    get() {
-      return value;
-    }
-  })
-}
-
-setConst('name','jack');
-name = 'rose';
-//Uncaught Error: Assignment to constant variable name
-</code></pre>
-<blockquote>
-<p>https://www.cnblogs.com/dong-xu/p/6239199.html<br>
-https://segmentfault.com/a/1190000016344599<br>
-https://www.zhihu.com/question/277800597<br>
-https://www.cnblogs.com/chen-cong/p/7862832.html</p>
-</blockquote>
-<h6 id="73-javascript实现前端路由">7.3 JavaScript实现前端路由</h6>
-<p>实现是有两种方法：一种是 在数组后面进行增加与删除，另外一种是 利用栈的后进先出原理。</p>
-<ul>
-<li>在数组最后进行 增加与删除</li>
-</ul>
-<p>通过监听路由的变化事件 <code>hashchange</code>，与路由的第一次加载事件<code>load</code>，判断如下情况：</p>
-<ol>
-<li><code>url</code> 存在于浏览记录中即为后退，后退时，把当前路由后面的浏览记录删除。</li>
-<li><code>url</code>不存在于浏览记录中即为前进，前进时，往数组里面<code>push</code> 当前的路由。</li>
-<li><code>url</code>在浏览记录的末端即为刷新，刷新时，不对路由数组做任何操作。</li>
-</ol>
-<p>另外，应用的路由路径中可能允许相同的路由出现多次（例如 <code>A -&gt; B -&gt; A</code>），所以给每个路由添加一个<code>key</code>值来区分相同路由的不同实例。</p>
-<blockquote>
-<p>注意：这个浏览记录需要存储在 sessionStorage 中，这样用户刷新后浏览记录也可以恢复。</p>
-</blockquote>
-<p>实现代码：</p>
-<pre><code class="language-js">// 路由构造函数
-function Router() {
-        this.routes = {}; //保存注册的所有路由
-        this.routerViewId = &quot;#routerView&quot;; // 路由挂载点 
-        this.stackPages = true; // 多级页面缓存
-        this.history = []; // 路由历史
-}
-
-Router.prototype = {
-        init: function(config) {
-            var self = this;
-            //页面首次加载 匹配路由
-            window.addEventListener('load', function(event) {
-                // console.log('load', event);
-                self.historyChange(event)
-            }, false)
-
-            //路由切换
-            window.addEventListener('hashchange', function(event) {
-                // console.log('hashchange', event);
-                self.historyChange(event)
-            }, false)
-
-        },
-        // 路由历史纪录变化
-        historyChange: function(event) {
-            var currentHash = util.getParamsUrl();
-            var nameStr = &quot;router-history&quot;
-            this.history = window.sessionStorage[nameStr] ? JSON.parse(window.sessionStorage[nameStr]) : []
-
-            var back = false, // 后退
-                refresh = false, // 刷新
-                forward = false, // 前进
-                index = 0,
-                len = this.history.length;
-
-            // 比较当前路由的状态，得出是后退、前进、刷新的状态。
-            for (var i = 0; i &lt; len; i++) {
-                var h = this.history[i];
-                if (h.hash === currentHash.path &amp;&amp; h.key === currentHash.query.key) {
-                    index = i
-                    if (i === len - 1) {
-                        refresh = true
-                    } else {
-                        back = true
-                    }
-                    break;
-                } else {
-                    forward = true
-                }
-            }
-            if (back) {
-                 // 后退，把历史纪录的最后一项删除
-                this.historyFlag = 'back'
-                this.history.length = index + 1
-            } else if (refresh) {
-                 // 刷新，不做其他操作
-                this.historyFlag = 'refresh'
-            } else {
-                // 前进，添加一条历史纪录
-                this.historyFlag = 'forward'
-                var item = {
-                    key: currentHash.query.key,
-                    hash: currentHash.path,
-                    query: currentHash.query
-                }
-                this.history.push(item)
-            }
-            // 如果不需要页面缓存功能，每次都是刷新操作
-            if (!this.stackPages) {
-                this.historyFlag = 'forward'
-            }
-            window.sessionStorage[nameStr] = JSON.stringify(this.history)
-        },
-    }
-</code></pre>
-<ul>
-<li>利用栈的 后进者先出，先进者后出 原理</li>
-</ul>
-<p>首先<code>javascript</code>实现一个顺序栈：</p>
-<pre><code class="language-js">// 基于数组实现的顺序栈
-class ArrayStack {
-  constructor(n) {
-      this.items = [];  // 数组
-      this.count = 0;   // 栈中元素个数
-      this.n = n;       // 栈的大小
-  }
-
-  // 入栈操作
-  push(item) {
-    // 数组空间不够了，直接返回 false，入栈失败。
-    if (this.count === this.n) return false;
-    // 将 item 放到下标为 count 的位置，并且 count 加一
-    this.items[this.count] = item;
-    ++this.count;
-    return true;
-  }
-  
-  // 出栈操作
-  pop() {
-    // 栈为空，则直接返回 null
-    if (this.count == 0) return null;
-    // 返回下标为 count-1 的数组元素，并且栈中元素个数 count 减一
-    let tmp = items[this.count-1];
-    --this.count;
-    return tmp;
-  }
-}
-</code></pre>
-<ul>
-<li>栈的经典应用: 函数调用栈</li>
-</ul>
-<p>操作系统给每个线程分配了一块独立的内存空间，这块内存被组织成“栈”这种结构, 用来存储函数调用时的临时变量。每进入一个函数，就会将临时变量作为一个栈帧入栈，当被调用函数执行完成，返回之后，将这个函数对应的栈帧出栈。为了让你更好地理解，我们一块来看下这段代码的执行过程。</p>
-<pre><code class="language-js">function add(x, y) {
-   let sum = 0;
-   sum = x + y;
-   return sum;
-}
-
-function main() {
-   let a = 1; 
-   let ret = 0;
-   let res = 0;
-   ret = add(3, 5);
-   res = a + ret;
-   console.log(&quot;res: &quot;, res);
-   reuturn 0;
-}
-
-main();
-</code></pre>
-<p>上面代码也很简单，就是执行<code>main</code>函数求和，<code>main</code> 函数里面又调用了<code>add</code> 函数，先调用的先进入栈。<br>
-执行过程如下：<br>
-<img src="https://img-blog.csdnimg.cn/20190926083856500.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<ul>
-<li>用两个栈实现浏览器的前进、后退功能。</li>
-</ul>
-<p>我们使用两个栈，X 和 Y，我们把首次浏览的页面依次压入栈 X，当点击后退按钮时，再依次从栈 X 中出栈，并将出栈的数据依次放入栈 Y。当我们点击前进按钮时，我们依次从栈 Y 中取出数据，放入栈 X 中。当栈 X 中没有数据时，那就说明没有页面可以继续后退浏览了。当栈 Y 中没有数据，那就说明没有页面可以点击前进按钮浏览了。<br>
-比如你顺序查看了<code>a</code>，<code>b</code>，<code>c</code> 三个页面，我们就依次把 <code>a</code>，<code>b</code>，<code>c</code> 压入栈，这个时候，两个栈的数据如下：<br>
-<img src="https://img-blog.csdnimg.cn/20190926084110353.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-当你通过浏览器的后退按钮，从页面 c 后退到页面 a 之后，我们就依次把 c 和 b 从栈 X 中弹出，并且依次放入到栈 Y。这个时候，两个栈的数据就是这个样子：<br>
-<img src="https://img-blog.csdnimg.cn/20190926084155679.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-这个时候你又想看页面 b，于是你又点击前进按钮回到 b 页面，我们就把 b 再从栈 Y 中出栈，放入栈 X 中。此时两个栈的数据是这个样子：<br>
-<img src="https://img-blog.csdnimg.cn/20190926084221164.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-这个时候，你通过页面 b 又跳转到新的页面 d 了，页面 c 就无法再通过前进、后退按钮重复查看了，所以需要清空栈 Y。此时两个栈的数据这个样子：<br>
-<img src="https://img-blog.csdnimg.cn/20190926084251523.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>
-其实就是在第一个方法的代码里面， 添加多一份路由历史纪录的数组即可，对这两份历史纪录的操作如上面示例图所示即可，也就是对数组的增加和删除操作而已。</p>
-<h6 id="72-const-声明的变量不可以改变声明的对象属性为何可以改变">7.2 const 声明的变量不可以改变，声明的对象属性为何可以改变</h6>
-<p>因为对象是引用类型的，使用<code>const</code>定义的变量中保存的仅是对象的指针，这就意味着，<code>const</code>仅保证指针不发生改变，修改对象的属性不会改变对象的指针，所以是被允许的。也就是说<code>const</code>定义的引用类型只要指针不发生改变，其他的不论如何改变都是允许的。<br>
-<code>const</code>声明创建一个值的只读引用。但这并不意味着它所持有的值是不可变的，只是变量标识符不能重新分配。例如，在引用内容是对象的情况下，这意味着可以改变对象的内容（例如，其参数）。</p>
-<h6 id="73-jquery-与-vue之间的对比">7.3 jQuery 与 vue之间的对比</h6>
-<p><code>jquery</code> 是以操作<code>dom</code>为主，做了数据处理之后还需要对<code>dom</code>进行操作。<code>vue.js</code>是以操作数据为主，不操作<code>dom</code>，也就是传说中的双向数据绑定，你只需要操作数据就好，<code>dom</code>自动更新。这只是对初学者来说最大的不同。<code>jquery</code>只是一个类库，只是提供了很多的方法，不能算框架，而<code>vue.js</code>是一个框架，有一套完整的体系。</p>
-<h6 id="74-从输入url到看到页面发生的全过程">7.4 从输入URL到看到页面发生的全过程</h6>
-<p>总体来看主要是下面的流程：<br>
-①、浏览器构建HTTP Request请求<br>
-②、网络传输<br>
-③、务器构建HTTP Response 响应<br>
-④、网络传输<br>
-⑤浏览器渲染页面<br>
-<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9waWMueGlhb2h1b2NoYWkuc2l0ZS9ibG9nL2h0dHBVcmwxLnBuZw?x-oss-process=image/format,png" alt="在这里插入图片描述"><br>
-1、首先浏览器主进程接管，开了一个下载线程。</p>
-<p>2、然后进行HTTP请求（DNS查询、IP寻址等等），中间会有三次捂手，等待响应，开始下载响应报文。</p>
-<p>3、将下载完的内容转交给Renderer进程管理。</p>
-<p>4、Renderer进程开始解析css rule tree和dom tree，这两个过程是并行的，所以一般我会把link标签放在页面顶部。</p>
-<p>5、解析绘制过程中，当浏览器遇到link标签或者script、img等标签，浏览器会去下载这些内容，遇到时候缓存的使用缓存，不适用缓存的重新下载资源。</p>
-<p>6、css rule tree和dom tree生成完了之后，开始合成render tree，这个时候浏览器会进行layout，开始计算每一个节点的位置，然后进行绘制。</p>
-<p>绘制结束后，关闭TCP连接，过程有四次挥手。</p>
-<h6 id="75-三次握手四次挥手">7.5 三次握手，四次挥手</h6>
-<h6 id="76-数组去重">7.6 数组去重</h6>
-<ol>
-<li>可以使用<code>set</code>对象的特性进行去重：</li>
-</ol>
-<pre><code class="language-js">// 去除数组的重复成员
-[...new Set(array)]
-</code></pre>
-<p>上面的方法也可以用于，去除字符串里面的重复字符。</p>
-<pre><code class="language-js">[...new Set('ababbc')].join('')
-// &quot;abc&quot;
-</code></pre>
-<h6 id="78-原生js无缝滚动效果的简单实现">7.8 原生Js无缝滚动效果的简单实现</h6>
-<p>无缝滚动，前提条件是子box的高度要大于父box的高度，这样才有必要去滚动，否则直接展示就可以了。增添了鼠标移入停止和移出继续滚动的效果。增加了间歇性无缝滚动效果。</p>
-<pre><code class="language-html">&lt;span style=&quot;font-family: Arial, Helvetica, sans-serif; background-color: rgb(255, 255, 255);&quot;&gt;&lt;/span&gt;&lt;pre name=&quot;code&quot; class=&quot;html&quot;&gt;&lt;!-- 
-Time:2016.8.5
-Author:Joel
-1.html标签&lt;marquee&gt;，可以考察一下在html5标准下使用什么来实现
-可以设置滚动区域的宽高
-behavior ＝ “alternate”  两端之间来回滚动
-behavior ＝ “scroll”  由一端到另一端，重复滚动
-behavior ＝ “slide”  由一端到另一端，不重复
-direction  滚动的方向（down，up，left，right）
-loop  （滚动的次数，loop ＝ －1 表示无限滚动，默认为－1）
-scrollamount  设置活动字幕的滚动速度
-scrolldelay  设置活动字幕两次滚动之间的延迟时间
-2.onmouseover = &quot;this.stop()&quot;
-3.onmouseout = &quot;this.start()&quot;
-4.父元素设置高度 滚动元素也需要设置高度 而且滚动元素的高度必须大于父元素 这样才能滚动
-5.setTimeout(表达式，延迟时间) 仅执行1次
---&gt;
-&lt;!doctype html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-&lt;head&gt;
-	&lt;meta charset=&quot;UTF-8&quot;&gt;
-	&lt;title&gt;InfoRoll&lt;/title&gt;
-	&lt;style&gt;
-		.box{
-			width:300px;
-			border: 1px solid #8f8f8f;
-		}
-		dl dt{
-			text-align: center;
-			margin-bottom: 20px;
-		}
- 
-		.box1{
-			height:150px;
-			width:200px;
-			border:1px solid #8f8f8f;
- 
-			margin: 0 auto;
-			overflow: hidden;
-		}
-		ul{
-            height: 200px; 
-		}
-		ul li{
-			height: 24px;
-		}
-		p{
-			text-align: center;
-		}
-	&lt;/style&gt;
- 
-	&lt;script type=&quot;text/javascript&quot;&gt;
-	
- 
-	window.onload = function(){
-		//无缝滚动效果
-		// var box1 = document.getElementsByClassName(&quot;box1&quot;);
-		// var com1 = document.getElementsByClassName(&quot;com1&quot;);
-		// var com2 = document.getElementsByClassName(&quot;com2&quot;);
- 
-		// com2[0].innerHTML = com1[0].innerHTML;
-		// var myscr = function(){
-  //       	if(box1[0].scrollTop &gt;= com1[0].offsetHeight){
-		// 		box1[0].scrollTop = 0;
-		// 	}
-		// 	else{
-		// 		box1[0].scrollTop++;
-		// 	}        	
-  //       }
- 
-  //       //这里出现了很诡异的问题。如果使用function myscr(){}，传入&quot;myscr()&quot;会一直报错，不知道是什么问题。
- 
-  //       var timer = setInterval(myscr,50);
- 
-  //       box1[0].onmouseover = function(){
-  //       	clearInterval(timer);
-  //       }
-  //       box1[0].onmouseout = function(){  
-  //           timer = setInterval(myscr,50); 	
-  //       }	
-     	//间歇性滚动效果
-		var box1 = document.getElementsByClassName(&quot;box1&quot;);
-		box1[0].scrollTop = 0;
-		var liHeight = 24;
-		var timer;
-		function startMove(){
-		   box1[0].scrollTop++;
-		    timer = setInterval(myscr,50);
-		}
-	    function myscr(){
-	       if(box1[0].scrollTop % liHeight == 0){
-	       	  clearInterval(timer);
-	       	  setTimeout(startMove,2000);
-	       	  }
-	       	else{
-	       		box1[0].scrollTop++;
-	       		if(box1[0].scrollTop &gt;= box1[0].scrollHeight / 2){
-	       			box1[0].scrollTop = 0;
-	       		}
-	       	}
-	    }
-	    setTimeout(startMove,2000);
-	}
- 
-	&lt;/script&gt;
-&lt;/head&gt;
-&lt;body&gt;
-	&lt;!--几种滚动实例--&gt;
-	&lt;!-- &lt;section class = &quot;box&quot;&gt;
-	  &lt;dl&gt;
-	  	&lt;dt&gt;默认滚动&lt;/dt&gt;
-	  	&lt;dd&gt;&lt;marquee&gt;默认滚动&lt;/marquee&gt;&lt;/dd&gt;
-	  &lt;/dl&gt;
-	  &lt;dl&gt;
-	  	&lt;dt&gt;文字滚动(向右)&lt;/dt&gt;
-	  	&lt;dd&gt;&lt;marquee direction=&quot;right&quot;&gt;向右走...&lt;/marquee&gt;&lt;/dd&gt;
-	  &lt;/dl&gt;
-	  &lt;dl&gt;
-	  	&lt;dt&gt;文字滚动(来回滚动)&lt;/dt&gt;
-	  	&lt;dd&gt;&lt;marquee behavior = &quot;alternate&quot; loop = &quot;－1&quot; scrollamount = &quot;20&quot;&gt;来回滚动...&lt;/marquee&gt;&lt;/dd&gt;
-	  &lt;/dl&gt;
-	  &lt;dl&gt;
-	  	&lt;dt&gt;向上滚....&lt;/dt&gt;
-	  	&lt;dd&gt;&lt;marquee direction=&quot;up&quot; width = &quot;300px&quot; height = &quot;100px&quot;&gt;向上走起...&lt;/marquee&gt;&lt;/dd&gt;
-	  &lt;/dl&gt;
-	&lt;/section&gt; --&gt;
- 
-	&lt;!--实现无缝滚动效果--&gt;
-	&lt;div class = &quot;box1&quot;&gt;
-		&lt;ul class = &quot;com1&quot;&gt;
-          &lt;li&gt;1&lt;/li&gt;
-          &lt;li&gt;2&lt;/li&gt;
-          &lt;li&gt;3&lt;/li&gt;
-          &lt;li&gt;4&lt;/li&gt;
-          &lt;li&gt;5&lt;/li&gt;
-          &lt;li&gt;6&lt;/li&gt;
-          &lt;li&gt;7&lt;/li&gt;
-          &lt;li&gt;8&lt;/li&gt;
-          &lt;li&gt;9&lt;/li&gt;
-		&lt;/ul&gt;
-		&lt;ul class = &quot;com2&quot;&gt;
-		&lt;/ul&gt;
- 	&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-<pre><code class="language-html">&lt;span style=&quot;font-family: Arial, Helvetica, sans-serif; background-color: rgb(255, 255, 255);&quot;&gt;
-&lt;/span&gt;
-</code></pre>
-<pre><code class="language-html">&lt;span style=&quot;font-family: Arial, Helvetica, sans-serif; background-color: rgb(255, 255, 255);&quot;&gt;小结：&lt;/span&gt;
-</code></pre>
-<blockquote>
-<p>https://blog.csdn.net/my_coding2015/article/details/52133364</p>
-</blockquote>
-<h6 id="79-如何实现一个弹幕">7.9 如何实现一个弹幕</h6>
-<h6 id="710-js数组的堆与栈实现">7.10 js数组的堆与栈实现</h6>
-<h6 id="711-4-如果有成千上万个菜单如何绑定点击事件">7.11 4. 如果有成千上万个菜单，如何绑定点击事件</h6>
-<p>第一种：<code>for</code>循环,会大大消耗性能：</p>
-<pre><code class="language-js">            //获取所有li的节点
-            var list =  document.getElementsByTagName(&quot;li&quot;);
-            //给每个li绑定事件
-            for(var i = 0;i&lt;list.length;i++){
-                list[i].ondblclick = function(){
-                    //弹出对应的li节点里面的内容
-                    alert(this.innerHTML);
-                    this.style.color = &quot;red&quot;;
-             }
-</code></pre>
-<p>或者循环中使用立即执行函数来实现。</p>
-<pre><code class="language-js">  var ulInLis = document.getElementById(&quot;ul&quot;).getElementsByTagName(&quot;li&quot;);
-        for ( var i = 0; i &lt; ulInLis.length; i++) {
-            (function() {
-                var l = i;
-                ulInLis[l].onclick = function() {
-                    console.log(l);
-                    console.log(ulInLis[l]);
-                }
-            })();
-        }
-</code></pre>
-<p>第二种：在父级通过<code>addEventListener</code>绑定点击事件，并阻止事件冒泡：</p>
-<pre><code class="language-js">        let ulDom = document.getElementsByTagName('ul')
-        ulDom[0].addEventListener('click', (dom) =&gt; {
-            // dom.preventDefault()
-            dom.target.onclick = (de) =&gt; {
-                alert(de.target.innerText)
-            }
-        }, true)
-</code></pre>
-<h5 id="8-css-相关">8 css 相关</h5>
-<h6 id="81-实现元素的水平垂直居中">8.1 实现元素的水平垂直居中</h6>
-<p>第一种：定位+负边距</p>
-<pre><code class="language-css">.box{
-    position:absolute;
-    left:50%;
-    top:50%;
-    margin-left:-150px;
-    margin-top:-100px;
-    padding:20px;
-    width:300px;
-    height:200px;
-    background:#41D7FB;
-}
-</code></pre>
-<p>第二种：定位+自适应边距</p>
-<pre><code class="language-css">.box{
-    position:absolute;
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
-    margin:auto;
-    padding:20px;
-    width:300px;
-    height:200px;
-    background:#41D7FB;
-}
-</code></pre>
-<p>第三种： 定位+<code>CSS3</code>位移</p>
-<pre><code class="language-css">.box{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform: translate(-50%, -50%);
-    padding:20px;
-    width:300px;
-    height:200px;
-    background:#41D7FB;
-}
-</code></pre>
-<p>第四种：<code>Flex</code>布局实现</p>
-<pre><code class="language-css">html{
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    align-items:center;
-}
-.box{
-    padding:20px;
-    width:300px;
-    height:200px;
-    background:#41D7FB;
-}
-</code></pre>
-<p>第五种：<code>table-cell</code>配合<code>inline-block</code></p>
-<pre><code class="language-css">.table{
-    display:table;
-    width:100%;
-    height:600px;
-}
-.table-row{
-    display: table-row;
-}
-.table-cell{
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.box{
-    display: inline-block;
-    padding:20px;
-    width:300px;
-    height:200px;
-    background:#41D7FB;
-}
-</code></pre>
-<h6 id="82-用伪类清除浮动">8.2 用伪类清除浮动</h6>
-<p>之前我们一般使用</p>
-<pre><code class="language-html">&lt;div sytle=&quot;clear:both&quot;&gt;&lt;/div&gt;
-</code></pre>
-<p>来解决，但这样会增加无语义的标签，下面是用after伪类实现，兼容多种浏览器:</p>
-<pre><code class="language-css">.clearfix:after{
-     content:&quot;.&quot;;  
-     display:block;
-     height:0;
-     clear:both;
-     visibility:hidden;
-}
-</code></pre>
-<p>为兼容<code>IE6</code>,<code>IE7</code>，因为<code>ie6</code>,<code>ie7</code>不能用<code>after</code>伪类。加上下面代码:</p>
-<pre><code class="language-css">.clearfix{zoom:1}
-</code></pre>
-<h5 id="9-git">9 git</h5>
-<p>创建分支：<code>git branch b1</code><br>
-切换分支：<code>git checkout b1</code></p>
 ]]></content>
     </entry>
 </feed>
