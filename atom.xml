@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiegiser.github.io/newBlog</id>
     <title>jiegiser的博客</title>
-    <updated>2020-06-15T10:16:43.203Z</updated>
+    <updated>2020-06-15T10:18:51.871Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiegiser.github.io/newBlog"/>
     <link rel="self" href="https://jiegiser.github.io/newBlog/atom.xml"/>
@@ -19,113 +19,11 @@
         <summary type="html"><![CDATA[<p>此例子是基于 React Hooks、TS 以及 arcgis api for js 的例子；该项目还在完善中；<br>
 github地址：https://github.com/jiegiser/arcgis3.x_examples 觉得不错的话可以给个 <code>star</code>；<br>
 已完成下面内容：</p>
-<hr>
-<h3 id="加载-osm-地图">加载 osm 地图（√）</h3>
-<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20200524210528571.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="加载天地图">加载天地图（√）</h3>
-<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/20200524210559834.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="加载高德地图">加载高德地图（√）</h3>
-<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/20200524210613361.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="加载百度地图">加载百度地图（√）</h3>
-<figure data-type="image" tabindex="4"><img src="https://img-blog.csdnimg.cn/20200605151239691.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="人员定位">人员定位（√）</h3>
-<figure data-type="image" tabindex="5"><img src="https://img-blog.csdnimg.cn/20200525115318971.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="线标注">线标注（√）</h3>
-<figure data-type="image" tabindex="6"><img src="https://img-blog.csdnimg.cn/20200531121048345.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="加载热力图">加载热力图（√）</h3>
-<figure data-type="image" tabindex="7"><img src="https://img-blog.csdnimg.cn/20200604194734583.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="自定义绘制箭头路线">自定义绘制箭头路线（√）</h3>
-<figure data-type="image" tabindex="8"><img src="https://img-blog.csdnimg.cn/20200606164950852.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<h3 id="项目存在的问题">项目存在的问题</h3>
-<ul>
-<li>没有充分发挥 ts 的作用；后续完善 arcgis api 的 ts 支持。</li>
-</ul>
-<p>通过查资料发现 esri 发布的 @types/arcgis-js-api 虽然是有 3.x 的版本，但是只支持 4 的版本导出 __esri 命名空间以及直接使用:</p>
-<pre><code class="language-js">import Map from 'esri/map'
-const map = new Map()
-</code></pre>
-<ul>
-<li>解决方法</li>
-</ul>
-<p>可以通过下面的方法来进行类型注释：</p>
-<pre><code class="language-js">import React, { useEffect } from 'react';
-import * as esriLoader from 'esri-loader';
-import IMap from 'esri/map';
-import IPoint from 'esri/geometry/Point'
-import ISpatialReference from 'esri/SpatialReference'
-const options = {
-  url: 'http://localhost/arcgis/init.js',
-}
-//加载脚本
-esriLoader.loadScript(options)
-esriLoader.loadCss(`http://localhost/arcgis/esri/css/esri.css`)
-const PathReplay: React.FC = () =&gt; {
-  useEffect(() =&gt; {
-    initMap()
-  }, [])
-  const initMap =  () =&gt; {
-    esriLoader.loadModules([
-      'esri/map',
-      'esri/geometry/Point',
-      'esri/SpatialReference'
-    ])
-      .then(([Map, Point, SpatialReference]) =&gt; {
-        const map: IMap = new Map('mapCon', {
-          basemap: 'osm',
-          center: [0, 0],
-          zoom: 0
-        })
-        const spatialRe: ISpatialReference = new SpatialReference({
-          wkid: 4326
-        })
-        // 矢量注记图层
-        const PointObj: IPoint = new Point({
-          x: 114.41703647375107,
-          y: 23.10750961303711,
-          spatialReference: spatialRe
-        })
-        map.centerAndZoom(PointObj, 11)
-      })
-      .catch(err =&gt; {
-        console.error(err)
-      })
-  }
-  return (
-    &lt;div id=&quot;mapCon&quot;&gt;
-    &lt;/div&gt;
-  )
-}
-export default PathReplay;
-</code></pre>
-<p>这样写 arcgis API 就会有对应的提示：</p>
-<figure data-type="image" tabindex="9"><img src="https://img-blog.csdnimg.cn/20200525150404695.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
-<hr>
-<p>更新</p>
-<h3 id="react-hooks-中-ts-类型注释">react hooks 中 ts 类型注释</h3>
-<pre><code class="language-js">// 可以推断 age 是 number类型
-const [age, setAge] = useState(20);
-
-// 初始化值为 null 或者 undefined时，需要显示指定 name 的类型,
-// name 为 string 或者 undefined
-const [name, setName] = useState&lt;string&gt;();
-
-// 初始化值为一个对象时
-interface People {
-    name: string;
-    age: number;
-    country?: string;
-}
-const [owner, setOwner] = useState&lt;People&gt;({name: 'jiegiser', age: 18});
-
-// 初始化值是一个数组时
-const [members, setMembers] = useState&lt;People[]&gt;([]);
-
-</code></pre>
 ]]></summary>
         <content type="html"><![CDATA[<p>此例子是基于 React Hooks、TS 以及 arcgis api for js 的例子；该项目还在完善中；<br>
 github地址：https://github.com/jiegiser/arcgis3.x_examples 觉得不错的话可以给个 <code>star</code>；<br>
 已完成下面内容：</p>
-<hr>
+<h2 id="-more-"><!-- more --></h2>
 <h3 id="加载-osm-地图">加载 osm 地图（√）</h3>
 <figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/20200524210528571.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NqOTU1MQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></figure>
 <h3 id="加载天地图">加载天地图（√）</h3>
