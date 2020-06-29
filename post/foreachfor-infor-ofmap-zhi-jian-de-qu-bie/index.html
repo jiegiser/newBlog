@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>forEach、for  in、for  of、map 之间的区别 | jiegiser的博客</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiegiser.github.io/newBlog/favicon.ico?v=1593473718399">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiegiser.github.io/newBlog/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiegiser.github.io/newBlog">
+        <img src="https://jiegiser.github.io/newBlog/images/avatar.png?v=1593473718399" class="site-logo">
+        <h1 class="site-title">jiegiser的博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://jiegiser.github.io/newBlog" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://jiegiser.github.io/newBlog/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://jiegiser.github.io/newBlog/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="https://jiegiser.github.io/newBlog/post/about/" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://blog.csdn.net/cj9551" class="site-nav">
+            CSDN
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/jiegiser" target="_blank">jiegiser</a> | <a class="rss" href="https://jiegiser.github.io/newBlog/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">forEach、for  in、for  of、map 之间的区别</h2>
+            <div class="post-date">2020-06-30</div>
+            
+              <div class="feature-container" style="background-image: url('data:image/png;base64,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')">
+              </div>
+            
+            <div class="post-content">
+              <h2 id="one-foreach">1️⃣ forEach</h2>
+<p>该方法是对数组的每个元素执行一次给定的函数；他的返回值是 undefined；</p>
+<h3 id="语法">语法</h3>
+<blockquote>
+<p>arr.forEach(callback(currentValue [, index [, array]])[, thisArg])</p>
+</blockquote>
+<h3 id="参数">参数</h3>
+<p>callback<br>
+为数组中每个元素执行的函数，该函数接收一至三个参数：<br>
+currentValue<br>
+数组中正在处理的当前元素。<br>
+index 可选<br>
+数组中正在处理的当前元素的索引。<br>
+array 可选<br>
+forEach() 方法正在操作的数组。<br>
+thisArg 可选</p>
+<p>可选参数。当执行回调函数 callback 时，用作 this 的值</p>
+<blockquote>
+<p>如果 thisArg 参数有值，则每次 callback 函数被调用时，this 都会指向 thisArg 参数。如果省略了 thisArg 参数，或者其值为 null 或 undefined，this 则指向全局对象.</p>
+</blockquote>
+<h3 id="使用">使用</h3>
+<pre><code class="language-js">const array1 = ['a', 'b', 'c'];
+
+array1.forEach((item, index, arr) =&gt; {
+  console.log(item, index, arr)
+  // a 0 [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+  // b 1 [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+  // c 2 [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+})
+</code></pre>
+<h3 id="不同点">不同点</h3>
+<ul>
+<li>与 map() 或者 reduce() 不同的是，它总是返回 undefined 值，并且不可链式调用。</li>
+<li>不会改变原数组</li>
+<li>与 for...of 不同的是他对于空缺的数组单元不进行任何操作；map、for...in 也不会进行操作；</li>
+</ul>
+<pre><code class="language-js">[1,3,,7].forEach(item =&gt; console.log(item)) // 1, 3. 7
+
+for(let i in [1,3,,7]) {
+  console.log(i) // 0, 1, 3
+}
+
+for(let i of [1,3,,7]) {
+  console.log(i) // 1, 3, undefined, 7
+}
+</code></pre>
+<ul>
+<li>不能使用 breck 跳出循环（报错），使用 return 会跳过本次循环，不会跳出循环(可以在 forEach 代码中使用 return )</li>
+</ul>
+<pre><code class="language-js">const array1 = ['a', 'b', 'c'];
+
+array1.forEach(element =&gt; {
+  if(element === 'a') {
+    return
+  }
+  console.log(element) // 'b', 'c'
+});
+</code></pre>
+<p>针对这个问题可以使用数组的另外两个方法 some() 与 every()</p>
+<pre><code class="language-js">// some()：当内部return true时跳出整个循环
+const arr = [1,2,3,4,5];
+const num = 3;
+arr.some(function(v){
+   if(v === num) {
+       return true;
+   }
+   console.log(v); // 1, 3, true
+});
+
+// every()：当内部return false时跳出整个循环
+var arr = [1,2,3,4,5];
+var num = 3;
+arr.every(function(v){
+  if(v == num) {
+    return false;
+  }else{
+    console.log(v);
+    return true;
+  }
+});
+// 1, 2, false
+</code></pre>
+<h2 id="two-forin">2️⃣ for...in</h2>
+<p>for...in语句以任意顺序遍历一个对象的除Symbol以外的可枚举属性；可以使用 break 跳出循环；在代码中使用 return 会直接报错；在函数体中使用可以跳出循环。</p>
+<h3 id="语法-2">语法</h3>
+<blockquote>
+<p>for (variable in object)<br>
+statement</p>
+</blockquote>
+<p>variable<br>
+在每次迭代时，variable会被赋值为不同的属性名。<br>
+object<br>
+非Symbol类型的可枚举属性被迭代的对象。</p>
+<h4 id="仅迭代自身的属性">仅迭代自身的属性</h4>
+<p>如果你只要考虑对象本身的属性，而不是它的原型，那么使用 getOwnPropertyNames() 或执行 hasOwnProperty() 来确定某属性是否是对象本身的属性（也能使用propertyIsEnumerable）。或者，如果你知道不会有任何外部代码干扰，您可以使用检查方法扩展内置原型。</p>
+<pre><code class="language-js">var triangle = {a: 1, b: 2, c: 3};
+
+function ColoredTriangle() {
+  this.color = 'red';
+}
+
+ColoredTriangle.prototype = triangle;
+
+var obj = new ColoredTriangle();
+
+for (var prop in obj) {
+  if (obj.hasOwnProperty(prop)) {
+    console.log(`obj.${prop} = ${obj[prop]}`);
+  } 
+}
+
+// Output:
+// &quot;obj.color = red&quot;
+</code></pre>
+<h3 id="示例">示例</h3>
+<pre><code class="language-js">//for in 应用于数组
+Array.prototype.sayHello = function(){
+    console.log(&quot;Hello&quot;)
+}
+Array.prototype.str = 'world';
+var myArray = [1,2,10,30,100];
+myArray.name='数组';
+
+for(let index in myArray){
+    console.log(index);
+}
+//输出结果如下
+// 0,1,2,3,4,name,str,sayHello
+
+//for in  应用于对象中
+Object.prototype.sayHello = function(){
+    console.log('Hello');
+}
+Obeject.prototype.str = 'World';
+var myObject = {name:'zhangsan',age:100};
+
+for(let index in myObject){
+    console.log(index);
+}
+//输出结果
+// name,age,str,sayHello
+// 首先输出的是对象的属性名，再是对象原型中的属性和方法，
+// 如果不想让其输出原型中的属性和方法，可以使用 hasOwnProperty 方法进行过滤
+for(let index in myObject){
+    if(myObject.hasOwnProperty(index)){
+        console.log(index)
+    }
+}
+//输出结果为
+name,age
+//你也可以用Object.keys()方法获取所有的自身可枚举属性组成的数组。
+Object.keys(myObject)
+</code></pre>
+<h3 id="遍历数组的缺点">遍历数组的缺点</h3>
+<p>可以看出 for in 应用于数组循环返回的是数组的下标和数组的属性和原型上的方法和属性，而 for in 应用于对象循环返回的是对象的属性名和原型中的方法和属性。<br>
+使用for in 也可以遍历数组，但是会存在以下问题：</p>
+<ol>
+<li>index 索引为字符串型数字，不能直接进行几何运算</li>
+<li>遍历顺序有可能不是按照实际数组的内部顺序</li>
+<li>使用 for in 会遍历数组所有的可枚举属性，包括原型。例如上栗的原型方法 method 和 name 属性</li>
+</ol>
+<h2 id="three-forof">3️⃣ for...of</h2>
+<p>for...of 语句在可迭代对象（包括 Array，Map，Set，String，TypedArray，arguments 对象等等）上创建一个迭代循环，调用自定义迭代钩子，并为每个不同属性的值执行语句<br>
+也是不能使用 return ，会报错；在函数体中使用会跳出循环。</p>
+<blockquote>
+<p>不能遍历对象</p>
+</blockquote>
+<h3 id="语法-3">语法</h3>
+<blockquote>
+<p>for (variable of iterable) {<br>
+//statements<br>
+}</p>
+</blockquote>
+<p>variable<br>
+在每次迭代中，将不同属性的值分配给变量。<br>
+iterable<br>
+被迭代枚举其属性的对象。</p>
+<h3 id="示例-2">示例</h3>
+<pre><code class="language-js">// 遍历对象 --报错
+Object.prototype.sayHello = function(){
+    console.log('Hello');
+}
+var myObject = {
+    name:'zhangsan',
+    age:10
+}
+
+for(let key of myObject){
+    consoloe.log(key); // typeError
+}
+
+// 遍历数组
+Array.prototype.sayHello = function(){
+    console.log(&quot;Hello&quot;);
+}
+var myArray = [1,200,3,400,100];
+for(let key of myArray){
+  console.log(key); // 1, 200, 3, 400, 100
+}
+
+// 遍历字符串
+let iterable = &quot;boo&quot;;
+
+for (let value of iterable) {
+  console.log(value); // 'b', 'o', 'o'
+}
+
+// 迭代 TypedArray
+let iterable = new Uint8Array([0x00, 0xff]);
+for (let value of iterable) {
+  console.log(value); // 0 255
+}
+
+// 迭代Map
+let iterable = new Map([[&quot;a&quot;, 1], [&quot;b&quot;, 2], [&quot;c&quot;, 3]]);
+
+for (let entry of iterable) { =
+  console.log(entry); // [&quot;a&quot;, 1] [&quot;b&quot;, 2] [&quot;c&quot;, 3]
+}
+for (let [key, value] of iterable) {
+  console.log(value); // 1 2 3
+}
+
+// 迭代 Set
+let iterable = new Set([1, 1, 2, 2, 3, 3]);
+
+for (let value of iterable) {
+  console.log(value); // 1 2 3
+}
+
+// 迭代 arguments 对象
+(function() {
+  for (let argument of arguments) {
+    console.log(argument); // 1 2 3
+  }
+})(1, 2, 3);
+
+// 迭代 DOM 集合
+let articleParagraphs = document.querySelectorAll(&quot;article &gt; p&quot;);
+for (let paragraph of articleParagraphs) {
+  paragraph.classList.add(&quot;read&quot;);
+}
+</code></pre>
+<h3 id="跳出循环">跳出循环</h3>
+<p>对于 for...of 的循环，可以由 break, throw  continue 或 return 终止。在这些情况下，迭代器关闭。</p>
+<h3 id="与-forin-的区别">与 for...in 的区别</h3>
+<ul>
+<li>for in 遍历的是数组的索引（即键名），而 for of 遍历的是数组元素值。 所以 for in 更适合遍历对象，不要使用 for in 遍历数组。</li>
+<li>for of 不能遍历对象；</li>
+<li>for in 可以遍历可迭代对象；包括 Array，Map，Set，String，TypedArray，arguments 对象等等</li>
+<li>for in 语句以任意顺序迭代对象的可枚举属性。</li>
+</ul>
+<h2 id="four-map">4️⃣ map</h2>
+<p>map() 方法创建一个新数组，其结果是该数组中的每个元素是调用一次提供的函数后的返回值；不能使用 break 跳出循环；使用 return 该项返回为 undefined；<br>
+他不会改变原数组。</p>
+<pre><code class="language-js">const array1 = [1, 4, 9, 16];
+
+const map1 = array1.map(x =&gt; {
+  if(x === 1) {
+    return 
+  } 
+  return x * 2
+});
+
+console.log(map1); // [undefined, 8, 18, 32]
+
+</code></pre>
+<h3 id="语法-4">语法</h3>
+<blockquote>
+<p>var new_array = arr.map(function callback(currentValue[, index[, array]]) {<br>
+// Return element for new_array<br>
+}[, thisArg])</p>
+</blockquote>
+<h3 id="参数-2">参数</h3>
+<p>callback<br>
+生成新数组元素的函数，使用三个参数：<br>
+currentValue<br>
+callback 数组中正在处理的当前元素。<br>
+index可选<br>
+callback 数组中正在处理的当前元素的索引。<br>
+array可选<br>
+map 方法调用的数组。<br>
+thisArg可选<br>
+执行 callback 函数时值被用作this。</p>
+<h3 id="返回值">返回值</h3>
+<p>一个由原数组每个元素执行回调函数的结果组成的新数组。如果你不打算使用返回的新数组，那没必要使用 map 方法，可以使用 foreach 或者 for of 方法。</p>
+<pre><code class="language-js">var numbers = [1, 4, 9];
+var doubles = numbers.map(function(num) {
+  return num * 2;
+});
+
+// doubles 数组的值为： [2, 8, 18]
+// numbers 数组未被修改： [1, 4, 9]
+</code></pre>
+<h2 id="pencil2-补充说明">✏️ 补充说明</h2>
+<p>return 语句就是用于指定函数返回的值。return 语句只能出现在函数体内，出现在代码中的其他任何地方造成语法错误！<br>
+但是在 forEach 中，return 并不会报错,在函数体中使用 return，也不会跳出循环；只是跳出本次循环；而在 for in 以及 for of 中会直接跳出循环，如果外层有嵌套 for 循环也会进行终止。</p>
+<pre><code class="language-js">//  return false;  终止循环 如果 for 循环中嵌套了 for 循环也将会终止
+//  break;  用于跳出最近的一次循环，如果 for 循环中嵌套了 for 循环嵌套的循环将会继续执行
+function mapItem () {
+  [1, 2, 3].forEach(item =&gt; {
+    if (item === 1) {
+      return 
+    }
+    console.log(item) // 2, 3
+  })
+}
+</code></pre>
+<p>for in 和 for of 会跳出循环</p>
+<pre><code class="language-js">function mapItem () {
+  for(let i in [1, 2, 3]) {
+    if (i === '1') {
+      return
+    }
+    console.log(i) // 不执行
+  }
+}
+
+function mapItem () {
+  for(let i of [1, 2, 3]) {
+    if (i === 1) {
+      return
+    }
+    console.log(i) // 不执行
+  }
+}
+</code></pre>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jiegiser.github.io/newBlog/post/echarts-jia-zai-chi-xian-bai-du-di-tu">
+                  <h3 class="post-title">
+                    echarts加载离线百度地图
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '4018355925b4a033100a',
+        clientSecret: 'dca55db969b5b038fd93d505abde0d058ad3032e',
+        repo: 'newBlog',
+        owner: 'jiegiser',
+        admin: ['jiegiser'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
